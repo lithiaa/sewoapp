@@ -23,7 +23,6 @@ import 'package:sewoapp/home/about_card.dart';
 import 'package:sewoapp/home/custom_carousel_slider.dart';
 import 'package:sewoapp/login/login_screen.dart';
 import 'package:sewoapp/widgets/slider_widget.dart';
-import 'package:carousel_slider/carousel_slider.dart';
 import 'package:shimmer/shimmer.dart';
 
 

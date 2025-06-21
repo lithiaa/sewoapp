@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:carousel_slider/carousel_slider.dart';
+import 'package:flutter_carousel_slider/carousel_slider.dart';
 import 'package:sewoapp/data_katalog/data_katalog_screen.dart';
 
 class CustomCarouselSlider extends StatefulWidget {
@@ -37,29 +37,26 @@ class _CustomCarouselSliderState extends State<CustomCarouselSlider> {
           padding: const EdgeInsets.symmetric(horizontal: 10),
           child: Stack(
             children: [
-              CarouselSlider(
-                options: CarouselOptions(
-                  height: 130.0,
+              SizedBox(
+                height: 130.0,
+                child: CarouselSlider(
                   viewportFraction: 1.0,
-                  autoPlay: true,
-                  autoPlayAnimationDuration: const Duration(milliseconds: 1000),
-                  autoPlayCurve: Curves.fastOutSlowIn,
-                  onPageChanged: (index, reason) {
+                  enableAutoSlider: true,
+                  autoSliderDelay: const Duration(milliseconds: 3000),
+                  onSlideChanged: (index) {
                     setState(() {
                       _currentIndex = index;
                     });
                   },
-                ),
-                items: _sliderItems.asMap().entries.map((entry) {
-                  final idx = entry.key;
-                  final item = entry.value;
-                  return Builder(builder: (BuildContext context) {
+                  children: _sliderItems.asMap().entries.map((entry) {
+                    final idx = entry.key;
+                    final item = entry.value;
                     return _SliderItem(
                       item: item,
                       onTap: () => _navigateToKatalog('Promo', 'Promo ${idx + 1}'),
                     );
-                  });
-                }).toList(),
+                  }).toList(),
+                ),
               ),
               Positioned(
                 bottom: 10,

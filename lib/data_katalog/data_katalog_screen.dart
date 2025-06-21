@@ -1,4 +1,4 @@
-import 'package:badges/badges.dart';
+import 'package:badges/badges.dart' as badges;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sewoapp/config/config_session_manager.dart';
@@ -265,7 +265,7 @@ class _DataKatalogScreenState extends State<DataKatalogScreen> {
                               onTap: () {
                                 Navigator.of(context).pushNamed(DataCartScreen.routeName);
                               },
-                              child: Badge(
+                              child: badges.Badge(
                                 badgeContent: Text(
                                   state is DataCartLoadSuccess && state.data.result.isNotEmpty
                                       ? "${state.data.result.first.totalProduk()}"

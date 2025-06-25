@@ -5,7 +5,7 @@ class ConfigGlobal {
   static const lupaPassword = false;
   static const login = true;
   static const register = true;
-   static const baseUrl = "http://192.168.18.5/sewo";
+  static const baseUrl = "https://sewoapp.lithiaproject.com/sewoapp_website/";
   //static const baseUrl ="https://localhost.scode.web.id/2025-sewo";
 
   static const jumlahDashboardGrid = 4;

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:sewoapp/data_cart/data/data_cart.dart';
 import 'package:sewoapp/data_cart/data_cart_screen.dart';
 import 'package:sewoapp/data_katalog/data_katalog_screen.dart';
+import 'package:sewoapp/emissions_calculator/emissions_calculator.dart';
 import 'package:sewoapp/frame/frame_screen.dart';
 
 class HomeApp extends StatefulWidget {
@@ -53,6 +54,9 @@ class _HomeAppState extends State<HomeApp> {
                     _buildCircleMenuButton("SeMolis", Icons.moped, () {
                       _navigateToKatalog('SeMolis', 'SeMolis');
                     }),
+                    _buildCircleMenuButton("Emissions Calculator", Icons.calculate, () {
+                      Navigator.pushNamed(context, '/emissions');
+                    }),
                   ],
                 ),
               ),
@@ -72,6 +76,12 @@ class _HomeAppState extends State<HomeApp> {
       },
     );
   }
+
+  /*void _navigateToEmissionsCalculator() {
+    Navigator.of(context).pushNamed(
+        EmissionsCalculatorPage.routeName
+    );
+  }*/
 
   Widget _buildCircleMenuButton(String text, IconData icon, VoidCallback onPressed) {
     return Expanded(

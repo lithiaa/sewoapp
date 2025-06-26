@@ -24,6 +24,7 @@ import 'package:sewoapp/data_pemesanan/bloc/data_pemesanan_hapus_bloc.dart';
 import 'package:sewoapp/data_pemesanan/bloc/data_pemesanan_simpan_bloc.dart';
 import 'package:sewoapp/data_pemesanan/bloc/data_pemesanan_ubah_bloc.dart';
 import 'package:sewoapp/data_pemesanan/data_pemesanan_screen.dart';
+import 'package:sewoapp/emissions_calculator/emissions_calculator.dart';
 import 'package:sewoapp/home/home_screen.dart';
 import 'package:sewoapp/login/login_screen.dart';
 import 'package:sewoapp/frame/frame_screen.dart';
@@ -144,6 +145,7 @@ class MyApp extends StatelessWidget {
               ],
               child: const DataPemesananScreen(),
             ),
+        EmissionsCalculatorPage.routeName: (context) => EmissionsCalculatorPage(),
       },
       theme: ThemeData(
         primaryColor: Style.buttonBackgroundColor,

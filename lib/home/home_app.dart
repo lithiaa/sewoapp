@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import '../config/config_global.dart';
 import 'package:sewoapp/data_cart/data/data_cart.dart';
 import 'package:sewoapp/data_cart/data_cart_screen.dart';
 import 'package:sewoapp/data_katalog/data_katalog_screen.dart';
 import 'package:sewoapp/frame/frame_screen.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class HomeApp extends StatefulWidget {
   final GlobalKey<ScaffoldState> scaffoldKey;
@@ -40,7 +42,7 @@ class _HomeAppState extends State<HomeApp> {
                           () {
                             Navigator.of(context).pushNamed(
                               FrameScreen.routeName,
-                              arguments: 'https://localhost.scode.web.id/2025-sewo/location.php', // URL tujuan
+                              arguments: '${ConfigGlobal.baseUrl}map.php', // URL tujuan
                             );
                       },
                     ),

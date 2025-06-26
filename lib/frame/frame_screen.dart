@@ -27,9 +27,11 @@ class _FrameScreenState extends State<FrameScreen> {
 
     _controller = WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
+      ..setUserAgent('Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Mobile Safari/537.36')
       ..setNavigationDelegate(
         NavigationDelegate(
           onPageStarted: (String url) async {
+            debugPrint("Page started loading: $url");
             if (url.contains('google.com/maps')) {
               final uri = Uri.parse(url);
               if (await canLaunchUrl(uri)) {
@@ -38,14 +40,23 @@ class _FrameScreenState extends State<FrameScreen> {
               Navigator.of(context).pop();
             }
           },
+          onPageFinished: (String url) {
+            debugPrint("Page finished loading: $url");
+          },
           onWebResourceError: (WebResourceError error) {
+            debugPrint("WebView Error: ${error.description}");
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('Tidak bisa terhubung'),
+              SnackBar(
+                content: Text('Error loading page: ${error.description}'),
                 backgroundColor: Colors.redAccent,
+                duration: const Duration(seconds: 5),
               ),
             );
-            Navigator.of(context).pop();
+            // Don't automatically pop, let user decide
+          },
+          onNavigationRequest: (NavigationRequest request) {
+            debugPrint("Navigation request: ${request.url}");
+            return NavigationDecision.navigate;
           },
         ),
       )

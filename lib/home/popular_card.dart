@@ -25,7 +25,7 @@ class _PopularTourismState extends State<PopularTourism> {
   Future<void> fetchPopularDestinations() async {
     try {
       final response = await http.get(
-        Uri.parse('https://localhost.scode.web.id/2025-sewo/popular.php'),
+        Uri.parse('https://sewoapp.lithiaproject.com/sewoapp_website/popular.php'),
       );
 
       if (response.statusCode == 200) {

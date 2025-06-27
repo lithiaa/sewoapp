@@ -6,10 +6,10 @@ class PromoCard extends StatelessWidget {
   final String searchText;
 
   const PromoCard({
-    Key? key,
+    super.key,
     required this.category,
     this.searchText = '',
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +31,7 @@ class PromoCard extends StatelessWidget {
         child: Row(
           children: [
             // Column 1: Moped Icon
-            Container(
+            SizedBox(
               width: 30,
               height: 60,
               child: const Icon(

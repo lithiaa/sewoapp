@@ -73,28 +73,28 @@ class _ProfilScreenState extends State<ProfilScreen> {
 
   List<String> agama = [];
 
-  fetchAgama() async {
+  Future<void> fetchAgama() async {
     var data = await enumRemote.getData('data_peserta', 'agama');
     agama = data.result;
   }
 
   List<String> jenisKelamin = [];
 
-  fetchJenisKelamin() async {
+  Future<void> fetchJenisKelamin() async {
     var data = await enumRemote.getData('data_peserta', 'jenis_kelamin');
     jenisKelamin = data.result;
   }
 
   List<String> statusPerkawinan = [];
 
-  fetchStatusPerkawinan() async {
+  Future<void> fetchStatusPerkawinan() async {
     var data = await enumRemote.getData('data_peserta', 'status_perkawinan');
     statusPerkawinan = data.result;
   }
 
   List<String> status = [];
 
-  fetchStatus() async {
+  Future<void> fetchStatus() async {
     var data = await enumRemote.getData('data_peserta', 'status');
     status = data.result;
   }

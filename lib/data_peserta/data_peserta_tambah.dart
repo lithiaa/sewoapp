@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
-import 'package:sewoapp/config/color.dart';
 import 'package:sewoapp/enum/enum_widget.dart';
 import 'package:sewoapp/enum/repo/enum_remote.dart';
 import 'package:sewoapp/data_peserta/bloc/data_peserta_bloc.dart';
@@ -54,28 +53,28 @@ var usernameController = TextEditingController();
 var passwordController = TextEditingController();
 List<String> agama = [];
  
-        fetchAgama() async {
+        Future<void> fetchAgama() async {
             var data = await enumRemote.getData('data_peserta', 'agama');
             agama = data.result;
         }
         
 List<String> jenisKelamin = [];
  
-        fetchJenisKelamin() async {
+        Future<void> fetchJenisKelamin() async {
             var data = await enumRemote.getData('data_peserta', 'jenis_kelamin');
             jenisKelamin = data.result;
         }
         
 List<String> statusPerkawinan = [];
  
-        fetchStatusPerkawinan() async {
+        Future<void> fetchStatusPerkawinan() async {
             var data = await enumRemote.getData('data_peserta', 'status_perkawinan');
             statusPerkawinan = data.result;
         }
         
 List<String> status = [];
  
-        fetchStatus() async {
+        Future<void> fetchStatus() async {
             var data = await enumRemote.getData('data_peserta', 'status');
             status = data.result;
         }

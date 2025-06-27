@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:intl/intl.dart';
 import 'package:sewoapp/config/color.dart';
-import 'package:sewoapp/enum/enum_widget.dart';
 import 'package:sewoapp/enum/repo/enum_remote.dart';
 import 'package:sewoapp/data_ongkir/bloc/data_ongkir_simpan_bloc.dart';
 import 'package:sewoapp/data_ongkir/data/data_ongkir.dart';

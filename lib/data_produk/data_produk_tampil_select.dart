@@ -14,7 +14,7 @@ class DataProdukTampilSelect extends StatefulWidget {
 class _DataProdukTampilSelectState extends State<DataProdukTampilSelect> {
   @override
   Widget build(BuildContext context) {
-    final double _width = MediaQuery.of(context).size.width;
+    final double width = MediaQuery.of(context).size.width;
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(10),
@@ -33,7 +33,7 @@ class _DataProdukTampilSelectState extends State<DataProdukTampilSelect> {
               mainAxisSize: MainAxisSize.max,
               children: [
                 SizedBox(
-                  width: _width - 120,
+                  width: width - 120,
                   child: Text(
                     widget.data.namaProduk ?? "-",
                     overflow: TextOverflow.fade,

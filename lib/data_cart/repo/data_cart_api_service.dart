@@ -206,8 +206,8 @@ class DataCartApiService {
           'tanggal_upload_bukti_pembayaran': data.tanggalUploadBuktiPembayaran,
           // 'upload_bukti_pembayaran': data.uploadBuktiPembayaran,
           'status': data.status,
-          'file': MultipartFile(
-            data.file!.openRead(),
+          'file': MultipartFile.fromStream(
+            data.file!.openRead() as Stream<List<int>> Function(),
             await data.file!.length(),
             filename:
                 "${ConfigGlobal.generateId("UPL")}${data.file!.path.split('/').last}",

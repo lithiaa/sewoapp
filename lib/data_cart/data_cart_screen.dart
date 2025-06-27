@@ -17,13 +17,9 @@ import 'package:sewoapp/data_cart/bloc/data_cart_simpan_bloc.dart';
 import 'package:sewoapp/data_cart/bloc/data_cart_ubah_bloc.dart';
 import 'package:sewoapp/data_cart/data/data_cart.dart';
 import 'package:sewoapp/data_cart/data_cart_tampil.dart';
-import 'package:sewoapp/data_detail_pemesanan/data/data_detail_pemesanan.dart';
 import 'package:sewoapp/data_detail_pemesanan/data/data_detail_pemesanan_apidata.dart';
 import 'package:sewoapp/data_ongkir/bloc/data_ongkir_bloc.dart';
-import 'package:sewoapp/data_ongkir/bloc/data_ongkir_hapus_bloc.dart';
-import 'package:sewoapp/data_ongkir/bloc/data_ongkir_simpan_bloc.dart';
 import 'package:sewoapp/data_ongkir/data/data_ongkir_apidata.dart';
-import 'package:sewoapp/data_ongkir/data_ongkir_tampil.dart';
 import 'package:sewoapp/data_ongkir/data_ongkir_tampil_select.dart';
 import 'package:sewoapp/login/data/login_apidata.dart';
 import 'package:sewoapp/widgets/loading_widget.dart';
@@ -383,7 +379,7 @@ class _DataCartScreenState extends State<DataCartScreen> {
     });
   }
 
-  dataOngkirBuilder(context) {
+  BlocBuilder<DataOngkirBloc, DataOngkirState> dataOngkirBuilder(context) {
     BlocProvider.of<DataOngkirBloc>(context).add(
       FetchDataOngkir(DataFilter()),
     );
@@ -529,7 +525,7 @@ class _DataCartScreenState extends State<DataCartScreen> {
     );
   }
 
-  uploadBuktiPembayaranWidget() {
+  Container uploadBuktiPembayaranWidget() {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 3),
       padding: const EdgeInsets.all(12),
@@ -542,8 +538,8 @@ class _DataCartScreenState extends State<DataCartScreen> {
       child: Column(children: [
         InkWell(
           onTap: () async {
-            final ImagePicker _picker = ImagePicker();
-            final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+            final ImagePicker picker = ImagePicker();
+            final XFile? image = await picker.pickImage(source: ImageSource.gallery);
             if (image == null) {
               if (mounted) {
                 ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
@@ -574,7 +570,7 @@ class _DataCartScreenState extends State<DataCartScreen> {
     );
   }
 
-  pilihBankTujuan() {
+  Container pilihBankTujuan() {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 3),
       padding: const EdgeInsets.all(12),
@@ -642,7 +638,7 @@ class _DataCartScreenState extends State<DataCartScreen> {
     });
   }
 
-  _dataBankBuilder(context) {
+  BlocBuilder<DataBankBloc, DataBankState> _dataBankBuilder(context) {
     // Pastikan event fetch dipanggil
     BlocProvider.of<DataBankBloc>(context).add(
       FetchDataBank(DataFilter()),

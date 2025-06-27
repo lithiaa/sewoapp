@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:sewoapp/data_pelanggan/data/data_pelanggan_apidata.dart';
-import 'package:sewoapp/config/config_global.dart';
 
 const bool showImageCard = true;
 

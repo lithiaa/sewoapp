@@ -30,7 +30,7 @@ class _DataCartTambahScreenState extends State<DataCartTambahScreen> {
   var statusController = TextEditingController();
   List<String> status = [];
 
-  fetchStatus() async {
+  Future<void> fetchStatus() async {
     var data = await enumRemote.getData('data_cart', 'status');
     status = data.result;
   }

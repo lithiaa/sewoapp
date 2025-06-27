@@ -32,17 +32,17 @@ class _RegisterWidgetState extends State<RegisterWidget> {
   List<String> jenisKelamin = [];
   List<String> statusPerkawinan = [];
 
-  fetchAgama() async {
+  Future<void> fetchAgama() async {
     var data = await enumRemote.getData("data_peserta", "agama");
     agama = data.result;
   }
 
-  fetchJenisKelamin() async {
+  Future<void> fetchJenisKelamin() async {
     var data = await enumRemote.getData("data_peserta", "jenis_kelamin");
     jenisKelamin = data.result;
   }
 
-  fetchStatusPerkawinan() async {
+  Future<void> fetchStatusPerkawinan() async {
     var data = await enumRemote.getData("data_peserta", "status_perkawinan");
     statusPerkawinan = data.result;
   }
@@ -214,7 +214,7 @@ class _RegisterWidgetState extends State<RegisterWidget> {
                         labelText: 'Jenis Kelamin',
                       ),
                       onChanged: (String value) {
-                        debugPrint("jenis kelamin ${value}");
+                        debugPrint("jenis kelamin $value");
                       },
                       onTap: () {
                         showDialog(

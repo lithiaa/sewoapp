@@ -2,7 +2,6 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sewoapp/data/data_hapus.dart';
-import 'package:sewoapp/data_produk/data/data_produk_api.dart';
 import 'package:sewoapp/data_produk/data/data_produk_result_api.dart';
 import 'package:sewoapp/data_produk/repo/data_produk_remote.dart';
 // import 'package:sewoapp/data_produk/repo/DataProdukHapus_local.dart';

@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:intl/intl.dart';
 import 'package:sewoapp/config/color.dart';
-import 'package:sewoapp/enum/enum_widget.dart';
 import 'package:sewoapp/enum/repo/enum_remote.dart';
 import 'package:sewoapp/data_produk/bloc/data_produk_simpan_bloc.dart';
 import 'package:sewoapp/data_produk/data/data_produk.dart';

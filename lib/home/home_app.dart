@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:sewoapp/data_cart/data/data_cart.dart';
-import 'package:sewoapp/data_cart/data_cart_screen.dart';
 import 'package:sewoapp/data_katalog/data_katalog_screen.dart';
 import 'package:sewoapp/emissions_calculator/emissions_calculator.dart';
 import 'package:sewoapp/frame/frame_screen.dart';
@@ -22,18 +20,20 @@ class _HomeAppState extends State<HomeApp> {
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
-          const SizedBox(height: 20),
+          const SizedBox(height: 30),
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10),
+            padding: const EdgeInsets.symmetric(horizontal: 15),
             child: Card(
               elevation: 4,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                padding: const EdgeInsets.symmetric(vertical: 20),
+                child: Wrap(
+                  alignment: WrapAlignment.center,
+                  spacing: 4,
+                  runSpacing: 6,
                   children: [
                     _buildCircleMenuButton(
                       "Location",  // Use newline character
@@ -78,16 +78,15 @@ class _HomeAppState extends State<HomeApp> {
   }
 
   Widget _buildCircleMenuButton(String text, IconData icon, VoidCallback onPressed) {
-    return Expanded(
-      child: Column(
+    return Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           InkWell(
             onTap: onPressed,
             borderRadius: BorderRadius.circular(30),
             child: Container(
-              width: 60,
-              height: 60,
+              width: 50,
+              height: 50,
               margin: const EdgeInsets.symmetric(horizontal: 2),
               decoration: BoxDecoration(
                 color: Colors.grey[300],
@@ -95,7 +94,7 @@ class _HomeAppState extends State<HomeApp> {
               ),
               child: Icon(
                 icon,
-                size: 30,
+                size: 25,
                 color: Colors.black,
               ),
             ),
@@ -109,7 +108,6 @@ class _HomeAppState extends State<HomeApp> {
             ),
           ),
         ],
-      ),
     );
   }
 }

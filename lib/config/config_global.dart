@@ -93,7 +93,7 @@ class ConfigGlobal {
     return "$d $month $Y";
   }
 
-  static generateId(String prepend) {
+  static String generateId(String prepend) {
     DateTime now = DateTime.now();
     return prepend + DateFormat('kk:mm:ssdd/MM/yy').format(now);
   }

@@ -1,8 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:sewoapp/data/data_filter.dart';
-import 'package:sewoapp/data_bank/data/data_bank_api.dart';
 import 'package:sewoapp/data_bank/repo/data_bank_remote.dart';
 import 'package:sewoapp/data_bank/data/data_bank.dart';
 // import 'package:sewoapp/data_bank/repo/DataBankSimpan_local.dart';

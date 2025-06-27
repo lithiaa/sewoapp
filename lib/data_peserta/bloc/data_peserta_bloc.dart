@@ -3,7 +3,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sewoapp/data/data_filter.dart';
 import 'package:sewoapp/data_peserta/data/data_peserta.dart';
-import 'package:sewoapp/data_peserta/data/data_peserta_api.dart';
 import 'package:sewoapp/data_peserta/data/data_peserta_apidata.dart';
 import 'package:sewoapp/data_peserta/data/data_peserta_result_api.dart';
 import 'package:sewoapp/data_peserta/repo/data_peserta_remote.dart';
@@ -65,10 +64,6 @@ class DataPesertaBloc extends Bloc<DataPesertaEvent, DataPesertaState> {
     return (events, mapper) => events.debounceTime(duration).flatMap(mapper);
   }
 
-  @override
-  Future<void> close() {
-    return super.close();
-  }
 }
 
 /*

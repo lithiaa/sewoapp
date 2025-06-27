@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:sewoapp/config/config_global.dart';
 import "package:sewoapp/frame/frame_screen.dart";
 import 'package:sewoapp/data_katalog/data_katalog_screen.dart';
 
 class GridDashboard extends StatelessWidget {
-  const GridDashboard({Key? key}) : super(key: key);
+  const GridDashboard({super.key});
 
   @override
   Widget build(BuildContext context) {

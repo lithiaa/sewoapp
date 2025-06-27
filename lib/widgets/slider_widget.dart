@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class SliderWidget extends StatelessWidget {
   final SliderWidgetModel card;
 
-  SliderWidget({Key? key, required this.card}) : super(key: key);
+  const SliderWidget({super.key, required this.card});
 
   @override
   Widget build(BuildContext context) {

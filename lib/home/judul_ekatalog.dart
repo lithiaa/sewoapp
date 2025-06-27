@@ -4,7 +4,7 @@ import 'package:sewoapp/data_katalog/data_katalog_screen.dart';
 
 class JudulEkatalog extends StatefulWidget {
   final String judul;
-  JudulEkatalog({super.key, required this.judul});
+  const JudulEkatalog({super.key, required this.judul});
 
   @override
   State<JudulEkatalog> createState() => _JudulEkatalogState();

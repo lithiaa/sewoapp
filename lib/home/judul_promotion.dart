@@ -4,7 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 class JudulEPromotioan extends StatefulWidget {
   final String judul;
-  JudulEPromotioan({super.key, required this.judul});
+  const JudulEPromotioan({super.key, required this.judul});
 
   @override
   State<JudulEPromotioan> createState() => _JudulEPromotioanState();

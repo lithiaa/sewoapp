@@ -58,6 +58,8 @@ dependencies:
   mockito: ^5.4.2
   pigeon: ^25.5.0
 
+  collection: any
+  http: any
 dev_dependencies:
   flutter_test:
     sdk: flutter

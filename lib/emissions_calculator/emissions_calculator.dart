@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 class EmissionsCalculatorPage extends StatefulWidget {
   static const routeName = '/emissions';
 
+  const EmissionsCalculatorPage({super.key});
+
   @override
   _EmissionsCalculatorPageState createState() => _EmissionsCalculatorPageState();
 }
@@ -155,11 +157,11 @@ class _EmissionsCalculatorPageState extends State<EmissionsCalculatorPage> {
                     SizedBox(height: 10),
                     ElevatedButton(
                       onPressed: () {},
-                      child: Text("No thanks"),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.red,
                         padding: EdgeInsets.symmetric(horizontal: 32, vertical: 12),
                       ),
+                      child: Text("No thanks"),
                     ),
                   ],
                 ),

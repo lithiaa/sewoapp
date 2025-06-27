@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'dart:convert';
 
 class LoadingWidget extends StatefulWidget {
   const LoadingWidget({super.key});
@@ -26,7 +25,7 @@ class _LoadingWidgetState extends State<LoadingWidget> {
 
 class NoInternetWidget extends StatefulWidget {
   String pesan;
-  NoInternetWidget({Key? key, this.pesan = ""}) : super(key: key);
+  NoInternetWidget({super.key, this.pesan = ""});
 
   @override
   State<NoInternetWidget> createState() => _NoInternetWidgetState();
@@ -104,7 +103,7 @@ class _NoInternetWidgetState extends State<NoInternetWidget>
 class NoDataWidget extends StatefulWidget {
   String? pesan;
 
-  NoDataWidget({Key? key, this.pesan}) : super(key: key);
+  NoDataWidget({super.key, this.pesan});
 
   @override
   State<NoDataWidget> createState() => _NoDataWidgetState();

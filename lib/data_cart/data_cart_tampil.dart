@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:sewoapp/config/color.dart';
 import 'package:sewoapp/config/config_global.dart';
@@ -325,12 +324,12 @@ class NumericStepButton extends StatefulWidget {
   final ValueChanged<int> onChanged;
 
   const NumericStepButton({
-    Key? key,
+    super.key,
     this.value = 1,
     this.minValue = 1,
     this.maxValue = 50,
     required this.onChanged,
-  }) : super(key: key);
+  });
 
   @override
   State<NumericStepButton> createState() => _NumericStepButtonState();

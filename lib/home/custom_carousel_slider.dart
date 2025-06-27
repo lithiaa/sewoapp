@@ -3,7 +3,7 @@ import 'package:flutter_carousel_slider/carousel_slider.dart';
 import 'package:sewoapp/data_katalog/data_katalog_screen.dart';
 
 class CustomCarouselSlider extends StatefulWidget {
-  const CustomCarouselSlider({Key? key}) : super(key: key);
+  const CustomCarouselSlider({super.key});
 
   @override
   State<CustomCarouselSlider> createState() => _CustomCarouselSliderState();

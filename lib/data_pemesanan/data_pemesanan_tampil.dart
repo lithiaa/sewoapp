@@ -89,7 +89,7 @@ class _DataPemesananTampilState extends State<DataPemesananTampil> {
             const Divider(thickness: 1),
             _buildDetailRow_nosymbol(
               '${vehicle['name']}',
-              '${ConfigGlobal.formatTanggal(widget.data.tanggalPemesanan ?? DateTime.now().toString())}',
+              ConfigGlobal.formatTanggal(widget.data.tanggalPemesanan ?? DateTime.now().toString()),
             ),
           ],
         ),
@@ -273,7 +273,7 @@ class _DataPemesananTampilState extends State<DataPemesananTampil> {
 class DetailImage extends StatelessWidget {
   final String imageUrl;
 
-  const DetailImage({required this.imageUrl});
+  const DetailImage({super.key, required this.imageUrl});
 
   @override
   Widget build(BuildContext context) {

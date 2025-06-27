@@ -2,9 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sewoapp/data/data_filter.dart';
 import 'package:sewoapp/data_peserta/bloc/data_peserta_bloc.dart';
-import 'package:sewoapp/data_peserta/data/data_peserta_apidata.dart';
 import 'package:sewoapp/data_peserta/data_peserta_tambah.dart';
-import 'package:sewoapp/data_peserta/data_peserta_tampil.dart';
 import 'package:sewoapp/widgets/loading_widget.dart';
 import 'package:sewoapp/widgets/tombol.dart';
 
@@ -43,12 +41,12 @@ class _DataPesertaScreenState extends State<DataPesertaScreen> {
             ],
           ),
           Positioned(
+            right: 0,
+            top: 10,
             child: Image.asset(
               "assets/avatar.png",
               height: 100,
             ),
-            right: 0,
-            top: 10,
           ),
           Padding(
             padding: const EdgeInsets.only(left: 10, right: 10, bottom: 10),

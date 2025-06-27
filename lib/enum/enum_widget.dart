@@ -12,7 +12,7 @@ class EnumWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       width: double.maxFinite,
       child: ListView.builder(
         shrinkWrap: true,

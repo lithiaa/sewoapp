@@ -54,7 +54,7 @@ abstract class DataPelangganUbahEvent extends Equatable {
 class FetchDataPelangganUbah extends DataPelangganUbahEvent {
   final DataPelanggan data;
 
-  FetchDataPelangganUbah(this.data);
+  const FetchDataPelangganUbah(this.data);
 }
 
 /*

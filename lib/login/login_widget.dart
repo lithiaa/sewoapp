@@ -1,4 +1,3 @@
-import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sewoapp/config/color.dart';
@@ -8,11 +7,8 @@ import 'package:sewoapp/data_pelanggan/data_pelanggan_tambah.dart';
 import 'package:sewoapp/home/home_screen.dart';
 import 'package:sewoapp/login/bloc/login_bloc.dart';
 import 'package:sewoapp/login/bloc/login_event.dart';
-import 'package:sewoapp/login/bloc/login_form_bloc.dart';
-import 'package:sewoapp/login/bloc/login_form_event.dart';
 import 'package:sewoapp/login/bloc/login_state.dart';
 import 'package:sewoapp/login/data/data_login.dart';
-import 'package:sewoapp/login/login_register_widget.dart';
 
 class LoginWidget extends StatefulWidget {
   const LoginWidget({super.key});

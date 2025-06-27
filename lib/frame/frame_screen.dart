@@ -5,7 +5,7 @@ import 'package:url_launcher/url_launcher.dart';
 class FrameScreen extends StatefulWidget {
   static const routeName = "frame";
 
-  const FrameScreen({Key? key}) : super(key: key);
+  const FrameScreen({super.key});
 
   @override
   State<FrameScreen> createState() => _FrameScreenState();

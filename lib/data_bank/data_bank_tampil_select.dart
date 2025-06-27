@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:sewoapp/config/config_global.dart';
 import 'package:sewoapp/data_bank/data/data_bank_apidata.dart';
 
 const bool showImageCard = false;

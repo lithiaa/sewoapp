@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:sewoapp/config/config_session_manager.dart';
 import 'package:sewoapp/login/bloc/register_event.dart';
 import 'package:sewoapp/login/bloc/register_state.dart';
 import 'package:sewoapp/login/data/data_register.dart';

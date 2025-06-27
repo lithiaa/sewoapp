@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:sewoapp/config/config_global.dart';
-import 'package:sewoapp/data_admin/data_admin_screen.dart';
 
 class MyDrawer extends StatelessWidget {
   const MyDrawer({super.key});

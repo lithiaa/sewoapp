@@ -14,7 +14,7 @@ class DataAdminTampilSelect extends StatefulWidget {
 class _DataAdminTampilSelectState extends State<DataAdminTampilSelect> {
   @override
   Widget build(BuildContext context) {
-    final double _width = MediaQuery.of(context).size.width;
+    final double width = MediaQuery.of(context).size.width;
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(10),
@@ -33,7 +33,7 @@ class _DataAdminTampilSelectState extends State<DataAdminTampilSelect> {
               mainAxisSize: MainAxisSize.max,
               children: [
                 SizedBox(
-                  width: _width - 120,
+                  width: width - 120,
                   child: Text(
                     widget.data.nama ?? "-",
                     overflow: TextOverflow.fade,

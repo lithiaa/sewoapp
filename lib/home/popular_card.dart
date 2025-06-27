@@ -5,7 +5,7 @@ import 'dart:convert';
 class PopularTourism extends StatefulWidget {
   final Function(String, String) onDestinationTap;
 
-  const PopularTourism({Key? key, required this.onDestinationTap}) : super(key: key);
+  const PopularTourism({super.key, required this.onDestinationTap});
 
   @override
   _PopularTourismState createState() => _PopularTourismState();
@@ -84,7 +84,7 @@ class _PopularTourismState extends State<PopularTourism> {
           return GestureDetector(
             onTap: () => widget.onDestinationTap(
               destinations[index]['code']!,
-              "AREA "+destinations[index]['name']!,
+              "AREA ${destinations[index]['name']!}",
             ),
             child: Container(
               width: cardWidth,
@@ -106,10 +106,10 @@ class TourismCard extends StatelessWidget {
   final String imagePath;
 
   const TourismCard({
-    Key? key,
+    super.key,
     required this.name,
     required this.imagePath,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

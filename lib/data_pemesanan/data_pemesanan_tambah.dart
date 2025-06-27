@@ -31,7 +31,7 @@ class _DataPemesananTambahScreenState extends State<DataPemesananTambahScreen> {
   var statusController = TextEditingController();
   List<String> status = [];
 
-  fetchStatus() async {
+  Future<void> fetchStatus() async {
     var data = await enumRemote.getData('data_pemesanan', 'status');
     status = data.result;
   }

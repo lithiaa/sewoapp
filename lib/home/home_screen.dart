@@ -22,7 +22,6 @@ import 'package:sewoapp/home/popular_card.dart';
 import 'package:sewoapp/home/about_card.dart';
 import 'package:sewoapp/home/custom_carousel_slider.dart';
 import 'package:sewoapp/login/login_screen.dart';
-import 'package:sewoapp/widgets/slider_widget.dart';
 import 'package:shimmer/shimmer.dart';
 
 
@@ -30,7 +29,7 @@ import 'package:shimmer/shimmer.dart';
 class HomeScreen extends StatefulWidget {
   static const routeName = '/';
 
-  const HomeScreen({Key? key}) : super(key: key);
+  const HomeScreen({super.key});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -214,7 +213,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                               );
                                             },
                                             style: ButtonStyle(
-                                                backgroundColor: MaterialStateProperty.all<Color>(
+                                                backgroundColor: WidgetStateProperty.all<Color>(
                                                     Style.buttonBackgroundColor)),
                                             child: const Text("Coba lagi !"),
                                           )

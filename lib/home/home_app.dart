@@ -54,8 +54,8 @@ class _HomeAppState extends State<HomeApp> {
                     _buildCircleMenuButton("SeMolis", Icons.moped, () {
                       _navigateToKatalog('SeMolis', 'SeMolis');
                     }),
-                    _buildCircleMenuButton("Emissions Calculator", Icons.calculate, () {
-                      Navigator.pushNamed(context, '/emissions');
+                    _buildCircleMenuButton("Emissions", Icons.eco, () {
+                      Navigator.of(context).pushNamed(EmissionsCalculatorPage.routeName);
                     }),
                   ],
                 ),
@@ -76,12 +76,6 @@ class _HomeAppState extends State<HomeApp> {
       },
     );
   }
-
-  /*void _navigateToEmissionsCalculator() {
-    Navigator.of(context).pushNamed(
-        EmissionsCalculatorPage.routeName
-    );
-  }*/
 
   Widget _buildCircleMenuButton(String text, IconData icon, VoidCallback onPressed) {
     return Expanded(

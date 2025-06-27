@@ -3,6 +3,7 @@ import 'data/cities_data.dart';
 import 'data/emission_factors_data.dart';
 import 'utils/emission_calculator.dart';
 import 'constants/app_constants.dart';
+import 'pages/payment_page.dart';
 
 class EmissionsCalculatorPage extends StatefulWidget {
   static const routeName = '/emissions';
@@ -58,7 +59,7 @@ class _EmissionsCalculatorPageState extends State<EmissionsCalculatorPage> {
         actions: [
           Padding(
             padding: const EdgeInsets.only(right: 16),
-            child: Image.asset(EmissionsConstants.logoAsset, height: EmissionsConstants.logoHeight),
+            // child: Image.asset(EmissionsConstants.logoAsset, height: EmissionsConstants.logoHeight),
           ),
         ],
       ),
@@ -184,7 +185,17 @@ class _EmissionsCalculatorPageState extends State<EmissionsCalculatorPage> {
                     SizedBox(height: 16),
                     ElevatedButton.icon(
                       onPressed: () {
-                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Thanks for donating!")));
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => PaymentPage(
+                              emissionResult: emissionResult!,
+                              fromCity: selectedFromCity,
+                              toCity: selectedToCity,
+                              vehicleType: selectedVehicle,
+                            ),
+                          ),
+                        );
                       },
                       icon: Icon(Icons.eco),
                       label: Text("Offset My Carbon Footprint"),

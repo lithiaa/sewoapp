@@ -2,16 +2,18 @@
 /// Satuan: kg CO₂ per kilometer
 class EmissionFactorsData {
   static const Map<String, double> emissionFactors = {
-    'Motorcycle': 0.092,  // Motor
-    'Car': 0.192,         // Mobil
-    'Electric': 0.04,     // Kendaraan listrik
+    'Motorcycle': 0.092,           // Motor bensin
+    'Car': 0.192,                  // Mobil bensin/diesel
+    'Electric Motorcycle': 0.025,  // Motor listrik
+    'Electric Car': 0.04,          // Mobil listrik
   };
 
   /// Mendapatkan deskripsi untuk setiap jenis kendaraan
   static const Map<String, String> vehicleDescriptions = {
     'Motorcycle': 'Sepeda Motor',
     'Car': 'Mobil Bensin/Diesel',
-    'Electric': 'Kendaraan Listrik',
+    'Electric Motorcycle': 'Sepeda Motor Listrik',
+    'Electric Car': 'Mobil Listrik',
   };
 
   /// Faktor konversi untuk menghitung jumlah pohon yang dibutuhkan

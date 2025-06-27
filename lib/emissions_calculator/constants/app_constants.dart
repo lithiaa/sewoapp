@@ -38,8 +38,8 @@ class EmissionsConstants {
   static const String donateButtonText = "Yes, I'll donate Rp5.000 to plant 2 tree";
   static const String declineButtonText = 'No thanks';
   static const String thankYouMessage = 'Thanks for donating!';
-  static const String sameCityError = 'Pilih kota yang berbeda untuk asal dan tujuan!';
-  static const String routeNotAvailableError = 'Rute tidak tersedia!';
+  static const String sameCityError = 'Please select different cities for origin and destination!';
+  static const String routeNotAvailableError = 'Route not available!';
   static const String motivationalQuote = 
       '"Every trip can be more meaningful. Calculate your carbon footprint and make a real contribution to the environment."';
   

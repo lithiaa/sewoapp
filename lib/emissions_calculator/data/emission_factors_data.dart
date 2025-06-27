@@ -10,10 +10,10 @@ class EmissionFactorsData {
 
   /// Mendapatkan deskripsi untuk setiap jenis kendaraan
   static const Map<String, String> vehicleDescriptions = {
-    'Motorcycle': 'Sepeda Motor',
-    'Car': 'Mobil Bensin/Diesel',
-    'Electric Motorcycle': 'Sepeda Motor Listrik',
-    'Electric Car': 'Mobil Listrik',
+    'Motorcycle': 'Motorcycle',
+    'Car': 'Car',
+    'Electric Motorcycle': 'Electric Motorcycle',
+    'Electric Car': 'Electric Car',
   };
 
   /// Faktor konversi untuk menghitung jumlah pohon yang dibutuhkan

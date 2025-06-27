@@ -12,6 +12,7 @@ import 'package:sewoapp/data_katalog/data/data_katalog_apidata.dart';
 import 'package:sewoapp/data_katalog/data_katalog_tampil.dart';
 import 'package:sewoapp/login/data/login_apidata.dart';
 import 'package:sewoapp/widgets/loading_widget.dart';
+import '../config/config_global.dart';
 import 'package:sewoapp/config/color.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:http/http.dart' as http;
@@ -93,7 +94,7 @@ class _DataKatalogScreenState extends State<DataKatalogScreen> {
   Future<void> fetchAreas() async {
     try {
       final response = await http.get(
-        Uri.parse('https://localhost.scode.web.id/2025-sewo/area.php'),
+        Uri.parse('${ConfigGlobal.baseUrl}area.php'),
       );
       if (response.statusCode == 200) {
         final List<dynamic> data = jsonDecode(response.body);

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import '../config/config_global.dart';
 
 class PopularTourism extends StatefulWidget {
   final Function(String, String) onDestinationTap;
@@ -25,7 +26,7 @@ class _PopularTourismState extends State<PopularTourism> {
   Future<void> fetchPopularDestinations() async {
     try {
       final response = await http.get(
-        Uri.parse('https://localhost.scode.web.id/2025-sewo/popular.php'),
+        Uri.parse('${ConfigGlobal.baseUrl}popular.php'),
       );
 
       if (response.statusCode == 200) {

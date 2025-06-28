@@ -30,6 +30,8 @@ import 'package:sewoapp/home/other_menu.dart';
 import 'package:sewoapp/home/sewo_point_screen.dart';
 import 'package:sewoapp/login/login_screen.dart';
 import 'package:sewoapp/frame/frame_screen.dart';
+import 'package:sewoapp/profil/profil_screen.dart';
+import 'package:sewoapp/profil/edit_profil_screen.dart';
 
 void main() {
   runApp(MyApp());
@@ -152,10 +154,40 @@ class MyApp extends StatelessWidget {
         EmissionsCalculatorPage.routeName: (context) => const  EmissionsCalculatorPage(),
         OtherMenuScreen.routeName: (context) => OtherMenuScreen(),
         SewoPointScreen.routeName: (context) => const SewoPointScreen(),
+        ProfilScreen.routeName: (context) => const ProfilScreen(),
+        EditProfilScreen.routeName: (context) => const EditProfilScreen(),
       },
       theme: ThemeData(
         primaryColor: Style.buttonBackgroundColor,
         appBarTheme: const AppBarTheme(color: Style.buttonBackgroundColor),
+        inputDecorationTheme: InputDecorationTheme(
+          labelStyle: TextStyle(color: Style.buttonBackgroundColor),
+          floatingLabelStyle: TextStyle(color: Style.buttonBackgroundColor),
+          prefixIconColor: Style.buttonBackgroundColor,
+          suffixIconColor: Style.buttonBackgroundColor,
+          iconColor: Style.buttonBackgroundColor,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+            borderSide: BorderSide(color: Style.buttonBackgroundColor),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+            borderSide: BorderSide(color: Style.buttonBackgroundColor.withOpacity(0.5)),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+            borderSide: BorderSide(color: Style.buttonBackgroundColor, width: 2),
+          ),
+        ),
+        textSelectionTheme: TextSelectionThemeData(
+          cursorColor: Style.buttonBackgroundColor,
+          selectionColor: Style.buttonBackgroundColor.withOpacity(0.3),
+          selectionHandleColor: Style.buttonBackgroundColor,
+        ),
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: Style.buttonBackgroundColor,
+          primary: Style.buttonBackgroundColor,
+        ),
       ),
     );
   }

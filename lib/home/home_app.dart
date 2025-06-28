@@ -22,7 +22,6 @@ class _HomeAppState extends State<HomeApp> {
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
-          const SizedBox(height: 30),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 15),
             child: Card(
@@ -36,10 +35,10 @@ class _HomeAppState extends State<HomeApp> {
                 ),
               ),
               child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 15),
+                padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 15),
                 child: Wrap(
                   alignment: WrapAlignment.center,
-                  spacing: 8,
+                  spacing: 16,
                   runSpacing: 12,
                   children: [
                     /*_buildCircleMenuButton(
@@ -64,7 +63,7 @@ class _HomeAppState extends State<HomeApp> {
                     /*_buildCircleMenuButton("Emissions", Icons.eco, () {
                       Navigator.of(context).pushNamed(EmissionsCalculatorPage.routeName);
                     }),*/
-                    _buildCircleMenuButton("Menu Lainnya", Icons.menu, (){
+                    _buildCircleMenuButton("Other", Icons.menu, (){
                       Navigator.of(context).pushNamed(OtherMenuScreen.routeName);
                     })
                   ],

@@ -12,7 +12,7 @@ class _PencarianState extends State<Pencarian> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(left: 15, right: 15, top: 20),
+      padding: const EdgeInsets.only(left: 15, right: 15, top: 10, bottom: 10),
       child: TextFormField(
         onTap: () {
           Navigator.of(context).pushNamed(DataKatalogScreen.routeName);
@@ -23,11 +23,11 @@ class _PencarianState extends State<Pencarian> {
           filled: true,
           fillColor: Colors.white,
           border: OutlineInputBorder(
-              borderRadius: BorderRadius.all(Radius.circular(10)),
+              borderRadius: BorderRadius.all(Radius.circular(15)),
               borderSide: BorderSide(color: Colors.white)),
-          hintText: 'Pencarian',
+          hintText: 'Search',
           contentPadding: EdgeInsets.symmetric(
-            vertical: 15.0,
+            vertical: 5.0,
             horizontal: 20.0,
           ),
         ),

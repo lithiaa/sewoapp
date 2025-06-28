@@ -21,6 +21,7 @@ import 'package:sewoapp/home/promo_card.dart';
 import 'package:sewoapp/home/popular_card.dart';
 import 'package:sewoapp/home/about_card.dart';
 import 'package:sewoapp/home/custom_carousel_slider.dart';
+import 'package:sewoapp/home/location_account_header.dart';
 import 'package:sewoapp/login/login_screen.dart';
 import 'package:shimmer/shimmer.dart';
 
@@ -35,14 +36,16 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   var scaffoldKey = GlobalKey<ScaffoldState>();
   List<DataKatalogApiData> dataTerlaris = [];
   List<DataKatalogApiData> dataTerbaru = [];
+  final GlobalKey<LocationAccountHeaderState> _headerKey = GlobalKey<LocationAccountHeaderState>();
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     BlocProvider.of<DataKatalogBloc>(context)
         .add(FetchDataKatalog(FilterKatalog(type: "terbaru")));
 
@@ -50,6 +53,21 @@ class _HomeScreenState extends State<HomeScreen> {
       BlocProvider.of<DataKatalogBloc>(context)
           .add(FetchDataKatalog(FilterKatalog(type: "terlaris")));
     });
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+    if (state == AppLifecycleState.resumed) {
+      // Refresh header ketika app kembali ke foreground
+      _headerKey.currentState?.refreshLoginStatus();
+    }
   }
 
 
@@ -76,18 +94,26 @@ class _HomeScreenState extends State<HomeScreen> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            const SizedBox(height: 5),
-            const Pencarian(), //box pencarian
+            SafeArea(
+              bottom: false,
+              child: Column(
+                children: [
+                  // Header dengan informasi lokasi dan akun
+                  LocationAccountHeader(key: _headerKey),
+                  const Pencarian(), //box pencarian
+                ],
+              ),
+            ),
 
             //banner iklan atas
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              padding: const EdgeInsets.symmetric(horizontal: 2, vertical: 2),
               child: Container(
-                height: 180,
+                height: 200,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(16),
                   image: DecorationImage(
-                    image: AssetImage('assets/iklan_atas_1.png'),
+                    image: AssetImage('assets/promotion_home/promotion_home_2.png'),
                     fit: BoxFit.cover,
                   ),
                 ),
@@ -97,11 +123,7 @@ class _HomeScreenState extends State<HomeScreen> {
             const SizedBox(height: 10),
             Container(
               decoration: BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage('assets/background.png'),
-                  fit: BoxFit.cover,
-                  alignment: Alignment.topCenter,
-                ),
+              color: Colors.white,
               ),
               child:  ListView(
                 physics: const NeverScrollableScrollPhysics(),

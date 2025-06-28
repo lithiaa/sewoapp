@@ -23,9 +23,8 @@ class _CustomCarouselSliderState extends State<CustomCarouselSlider> {
   }
 
   final List<_SliderItemModel> _sliderItems = const [
-    _SliderItemModel("assets/slide_1.png"),
-    _SliderItemModel("assets/slide_2.png"),
-    _SliderItemModel("assets/slide_3.png"),
+    _SliderItemModel("assets/promotion_slide/slide_1.png"),
+    _SliderItemModel("assets/promotion_slide/slide_2.png"),
   ];
 
   @override
@@ -38,14 +37,18 @@ class _CustomCarouselSliderState extends State<CustomCarouselSlider> {
           child: Stack(
             children: [
               SizedBox(
-                height: 130.0,
+                height: 200.0,
                 child: CarouselSlider(
                   viewportFraction: 1.0,
                   enableAutoSlider: true,
                   autoSliderDelay: const Duration(milliseconds: 3000),
+                  autoSliderTransitionTime: const Duration(milliseconds: 800),
+                  slideTransform: DefaultTransform(),
+                  unlimitedMode: true,
+                  scrollPhysics: const BouncingScrollPhysics(),
                   onSlideChanged: (index) {
                     setState(() {
-                      _currentIndex = index;
+                      _currentIndex = index % _sliderItems.length;
                     });
                   },
                   children: _sliderItems.asMap().entries.map((entry) {
@@ -62,6 +65,7 @@ class _CustomCarouselSliderState extends State<CustomCarouselSlider> {
                 bottom: 10,
                 right: 10,
                 child: Row(
+                  mainAxisSize: MainAxisSize.min,
                   children: _sliderItems.asMap().entries.map((entry) {
                     return Container(
                       width: 8.0,
@@ -70,7 +74,7 @@ class _CustomCarouselSliderState extends State<CustomCarouselSlider> {
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         color: Colors.white.withOpacity(
-                          _currentIndex == entry.key ? 0.9 : 0.4,
+                          (_currentIndex % _sliderItems.length) == entry.key ? 0.9 : 0.4,
                         ),
                       ),
                     );
@@ -108,6 +112,35 @@ class _SliderItem extends StatelessWidget {
             item.assetPath,
             fit: BoxFit.cover,
             width: double.infinity,
+            errorBuilder: (context, error, stackTrace) {
+              return Container(
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  color: Colors.grey[300],
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: const Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.image_not_supported,
+                        size: 30,
+                        color: Colors.grey,
+                      ),
+                      SizedBox(height: 5),
+                      Text(
+                        'Image not found',
+                        style: TextStyle(
+                          color: Colors.grey,
+                          fontSize: 12,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            },
           ),
         ),
       ),

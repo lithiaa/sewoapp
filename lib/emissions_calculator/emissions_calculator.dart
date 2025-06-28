@@ -127,7 +127,7 @@ class _EmissionsCalculatorPageState extends State<EmissionsCalculatorPage> {
                   ElevatedButton(
                     onPressed: calculateEmission,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Color(0xFF11316C),
+                      backgroundColor: Color.fromARGB(255, 28, 170, 35),
                       foregroundColor: Colors.white,
                       padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -200,7 +200,7 @@ class _EmissionsCalculatorPageState extends State<EmissionsCalculatorPage> {
                       icon: Icon(Icons.eco),
                       label: Text("Offset My Carbon Footprint"),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Color(0xFF11316C),
+                        backgroundColor: Color.fromARGB(255, 28, 170, 35),
                         foregroundColor: Colors.white,
                         padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),

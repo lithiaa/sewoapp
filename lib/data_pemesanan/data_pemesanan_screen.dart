@@ -10,6 +10,7 @@ import 'package:sewoapp/data_pemesanan/data_pemesanan_tampil.dart';
 import 'package:sewoapp/data_pemesanan/data_pemesanan_ubah.dart';
 import 'package:sewoapp/widgets/loading_widget.dart';
 import 'package:sewoapp/config/config_session_manager.dart';
+import 'package:sewoapp/home/custom_bottom_navbar.dart';
 import 'data/data_pemesanan.dart';
 
 
@@ -24,9 +25,6 @@ class DataPemesananScreen extends StatefulWidget {
 
 class _DataPemesananScreenState extends State<DataPemesananScreen> {
   DataFilter filter = const DataFilter();
-  List<String> listPencarian = ["Hello", "Ayam"];
-  String valuePencarian = "Hello";
-
   var pencarianController = TextEditingController();
 
   @override
@@ -201,91 +199,14 @@ class _DataPemesananScreenState extends State<DataPemesananScreen> {
           ],
         ),
       ),
-    );
-  }
-
-  Future<void> _showPencarianDialog() async {
-    return showDialog<void>(
-      context: context,
-      barrierDismissible: false, // user must tap button!
-      builder: (BuildContext context) {
-        return StatefulBuilder(
-          builder: (context, setState) => AlertDialog(
-            title: const Text('Pencarian'),
-            content: SingleChildScrollView(
-              child: ListBody(
-                children: [
-                  DropdownButtonFormField<String>(
-                    value: valuePencarian,
-                    decoration: const InputDecoration(
-                      isDense: true,
-                      fillColor: Colors.white,
-                      border: OutlineInputBorder(),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.all(
-                          Radius.circular(5.0),
-                        ),
-                        borderSide: BorderSide(color: Colors.blue),
-                      ),
-                      filled: true,
-                    ),
-                    onChanged: (String? value) {
-                      setState(() {
-                        valuePencarian = value!;
-                      });
-                    },
-                    items: listPencarian
-                        .map<DropdownMenuItem<String>>((String value) {
-                      return DropdownMenuItem<String>(
-                        value: value,
-                        child: Text(
-                          value,
-                          style: const TextStyle(
-                            color: Colors.black,
-                          ),
-                        ),
-                      );
-                    }).toList(),
-                  ),
-                  const SizedBox(height: 15),
-                  TextFormField(
-                    controller: pencarianController,
-                    decoration: const InputDecoration(
-                      isDense: true,
-                      hintText: 'Cari disini',
-                      border: OutlineInputBorder(),
-                    ),
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      TextButton(
-                        child: const Text('Cari'),
-                        onPressed: () {
-                          filter = DataFilter(
-                            idPeserta: filter.idPeserta,
-                            berdasarkan: filter.berdasarkan,
-                            isi: filter.isi,
-                          );
-                          fetchData();
-
-                          Navigator.of(context).pop();
-                        },
-                      ),
-                      TextButton(
-                        child: const Text('Batal'),
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                        },
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ),
-        );
-      },
+      bottomNavigationBar: CustomBottomNavbar(
+        currentIndex: 3, // History tab index
+        onTap: (index) {
+          if (index != 3) { // Jika bukan tab History yang sedang aktif
+            BottomNavHandler.handleNavigation(context, index);
+          }
+        },
+      ),
     );
   }
 

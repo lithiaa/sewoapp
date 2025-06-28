@@ -1,4 +1,9 @@
 import 'package:flutter/material.dart';
+import 'data/cities_data.dart';
+import 'data/emission_factors_data.dart';
+import 'utils/emission_calculator.dart';
+import 'constants/app_constants.dart';
+import 'pages/payment_page.dart';
 
 class EmissionsCalculatorPage extends StatefulWidget {
   static const routeName = '/emissions';
@@ -10,49 +15,56 @@ class EmissionsCalculatorPage extends StatefulWidget {
 }
 
 class _EmissionsCalculatorPageState extends State<EmissionsCalculatorPage> {
-  String selectedRoute = 'Yogyakarta - Borobudur';
+  String selectedFromCity = 'Jakarta';
+  String selectedToCity = 'Bandung';
   String selectedVehicle = 'Motorcycle';
 
   double? emissionResult;
 
-  final Map<String, int> distances = {
-    'Yogyakarta - Borobudur': 40,
-    'Jakarta - Bandung': 150,
-    'Denpasar - Ubud': 25,
-  };
-
-  final Map<String, double> emissionFactors = {
-    'Motorcycle': 0.092,
-    'Car': 0.192,
-    'Electric': 0.04,
-  };
-
   void calculateEmission() {
-    int distance = distances[selectedRoute]!;
-    double factor = emissionFactors[selectedVehicle]!;
+    if (selectedFromCity == selectedToCity) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(EmissionsConstants.sameCityError)),
+      );
+      return;
+    }
+    
+    double? emission = EmissionCalculator.calculateEmission(
+      fromCity: selectedFromCity,
+      toCity: selectedToCity,
+      vehicleType: selectedVehicle,
+    );
+    
+    if (emission == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(EmissionsConstants.routeNotAvailableError)),
+      );
+      return;
+    }
+    
     setState(() {
-      emissionResult = (distance * factor);
+      emissionResult = emission;
     });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFFEAF1FB),
+      backgroundColor: EmissionsConstants.backgroundColor,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        foregroundColor: Colors.black,
-        title: Text('Emissions Calculator', style: TextStyle(fontWeight: FontWeight.bold)),
+        foregroundColor: EmissionsConstants.textPrimary,
+        title: Text(EmissionsConstants.appTitle, style: EmissionsConstants.boldText),
         actions: [
           Padding(
             padding: const EdgeInsets.only(right: 16),
-            child: Image.asset('assets/logo.png', height: 30),
+            // child: Image.asset(EmissionsConstants.logoAsset, height: EmissionsConstants.logoHeight),
           ),
         ],
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.all(EmissionsConstants.defaultPadding),
         child: Column(
           children: [
             // Input Card
@@ -64,27 +76,49 @@ class _EmissionsCalculatorPageState extends State<EmissionsCalculatorPage> {
               ),
               child: Column(
                 children: [
-                  Text("Distance", style: TextStyle(fontWeight: FontWeight.bold)),
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text("From City", style: TextStyle(fontWeight: FontWeight.bold)),
+                  ),
                   DropdownButton<String>(
-                    value: selectedRoute,
+                    value: selectedFromCity,
                     isExpanded: true,
-                    items: distances.keys.map((String value) {
+                    items: CitiesData.cities.map((String city) {
                       return DropdownMenuItem<String>(
-                        value: value,
-                        child: Text("$value = ${distances[value]} KM"),
+                        value: city,
+                        child: Text(city),
                       );
                     }).toList(),
-                    onChanged: (val) => setState(() => selectedRoute = val!),
+                    onChanged: (val) => setState(() => selectedFromCity = val!),
                   ),
                   SizedBox(height: 12),
-                  Text("Vehicle Type", style: TextStyle(fontWeight: FontWeight.bold)),
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text("To City", style: TextStyle(fontWeight: FontWeight.bold)),
+                  ),
+                  DropdownButton<String>(
+                    value: selectedToCity,
+                    isExpanded: true,
+                    items: CitiesData.cities.map((String city) {
+                      return DropdownMenuItem<String>(
+                        value: city,
+                        child: Text(city),
+                      );
+                    }).toList(),
+                    onChanged: (val) => setState(() => selectedToCity = val!),
+                  ),
+                  SizedBox(height: 12),
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text("Vehicle Type", style: TextStyle(fontWeight: FontWeight.bold)),
+                  ),
                   DropdownButton<String>(
                     value: selectedVehicle,
                     isExpanded: true,
-                    items: emissionFactors.keys.map((String value) {
+                    items: EmissionFactorsData.emissionFactors.keys.map((String value) {
                       return DropdownMenuItem<String>(
                         value: value,
-                        child: Text(value),
+                        child: Text(EmissionCalculator.getVehicleDescription(value)),
                       );
                     }).toList(),
                     onChanged: (val) => setState(() => selectedVehicle = val!),
@@ -93,7 +127,8 @@ class _EmissionsCalculatorPageState extends State<EmissionsCalculatorPage> {
                   ElevatedButton(
                     onPressed: calculateEmission,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.green,
+                      backgroundColor: Color(0xFF11316C),
+                      foregroundColor: Colors.white,
                       padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                     ),
@@ -115,6 +150,11 @@ class _EmissionsCalculatorPageState extends State<EmissionsCalculatorPage> {
                 child: Column(
                   children: [
                     Text("My Carbon Footprint Result", style: TextStyle(fontWeight: FontWeight.bold)),
+                    SizedBox(height: 8),
+                    Text("Route: $selectedFromCity → $selectedToCity", 
+                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
+                    Text("Distance: ${EmissionCalculator.getDistance(selectedFromCity, selectedToCity)} km", 
+                        style: TextStyle(fontSize: 14, color: Colors.grey[600])),
                     SizedBox(height: 16),
                     Icon(Icons.cloud, size: 50, color: Colors.grey),
                     SizedBox(height: 10),
@@ -123,7 +163,7 @@ class _EmissionsCalculatorPageState extends State<EmissionsCalculatorPage> {
                     SizedBox(height: 8),
                     Text("emissions created by my trip"),
                     SizedBox(height: 8),
-                    Text("Offsetting this equals to planting ${(emissionResult! / 1.8).ceil()} tree(s)."),
+                    Text("Offsetting this equals to planting ${EmissionCalculator.calculateTreesNeeded(emissionResult!)} tree(s)."),
                   ],
                 ),
               ),
@@ -145,23 +185,26 @@ class _EmissionsCalculatorPageState extends State<EmissionsCalculatorPage> {
                     SizedBox(height: 16),
                     ElevatedButton.icon(
                       onPressed: () {
-                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Thanks for donating!")));
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => PaymentPage(
+                              emissionResult: emissionResult!,
+                              fromCity: selectedFromCity,
+                              toCity: selectedToCity,
+                              vehicleType: selectedVehicle,
+                            ),
+                          ),
+                        );
                       },
                       icon: Icon(Icons.eco),
-                      label: Text("Yes, I’ll donate Rp5.000 to plant 2 tree"),
+                      label: Text("Offset My Carbon Footprint"),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.green,
-                        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                        backgroundColor: Color(0xFF11316C),
+                        foregroundColor: Colors.white,
+                        padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                       ),
-                    ),
-                    SizedBox(height: 10),
-                    ElevatedButton(
-                      onPressed: () {},
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.red,
-                        padding: EdgeInsets.symmetric(horizontal: 32, vertical: 12),
-                      ),
-                      child: Text("No thanks"),
                     ),
                   ],
                 ),

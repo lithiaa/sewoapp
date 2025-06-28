@@ -9,9 +9,6 @@ import 'package:sewoapp/data_katalog/bloc/data_katalog_event.dart';
 import 'package:sewoapp/data_katalog/bloc/data_katalog_state.dart';
 import 'package:sewoapp/data_katalog/data/data_katalog_apidata.dart';
 import 'package:sewoapp/data_katalog/data_katalog_screen.dart';
-import 'package:sewoapp/data_pelanggan/data/data_pelanggan.dart';
-import 'package:sewoapp/data_pelanggan/data_pelanggan_ubah.dart';
-import 'package:sewoapp/data_pemesanan/data_pemesanan_screen.dart';
 import 'package:sewoapp/home/ekatalog.dart';
 import 'package:sewoapp/home/home_app.dart';
 import 'package:sewoapp/home/judul_ekatalog.dart';
@@ -22,6 +19,7 @@ import 'package:sewoapp/home/popular_card.dart';
 import 'package:sewoapp/home/about_card.dart';
 import 'package:sewoapp/home/custom_carousel_slider.dart';
 import 'package:sewoapp/home/location_account_header.dart';
+import 'package:sewoapp/home/custom_bottom_navbar.dart';
 import 'package:sewoapp/login/login_screen.dart';
 import 'package:shimmer/shimmer.dart';
 
@@ -107,7 +105,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
 
             //banner iklan atas
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 2, vertical: 2),
+              padding: const EdgeInsets.symmetric(vertical: 2),
               child: Container(
                 height: 200,
                 decoration: BoxDecoration(
@@ -119,8 +117,27 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                 ),
               ),
             ),
-            HomeApp(scaffoldKey: scaffoldKey),
-            const SizedBox(height: 10),
+
+            // Area overlap antara biru dan putih
+            Stack(
+              children: [
+                // Background putih bagian bawah
+                Container(
+                  margin: const EdgeInsets.only(top: 60),
+                  height: 50,
+                  width: double.infinity,
+                  color: Colors.white,
+                ),
+                // HomeApp di tengah-tengah (irisan) - benar-benar overlap
+                Positioned(
+                  top: 0, // Tepat di tengah: 50% di biru, 50% di putih
+                  left: 0,
+                  right: 0,
+                  child: HomeApp(scaffoldKey: scaffoldKey),
+                ),
+              ],
+            ),
+
             Container(
               decoration: BoxDecoration(
               color: Colors.white,
@@ -299,53 +316,9 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
           ],
         ),
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.list_outlined),
-            label: 'Products',
-          ),
-          /* BottomNavigationBarItem(
-            icon: Icon(Icons.date_range),
-            label: 'Jadwal',
-          ), */
-          BottomNavigationBarItem(
-            icon: Icon(Icons.receipt_long),
-            label: 'History',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.account_circle),
-            label: 'Profile',
-          ),
-        ],
+      bottomNavigationBar: CustomBottomNavbar(
         currentIndex: 0,
-        selectedItemColor: Style.buttonBackgroundColor,
-        onTap: ((value) {
-          if (value == 1) {
-            Navigator.of(context).pushNamed(DataKatalogScreen.routeName);
-            return;
-          }
-          if (value == 2) {
-            Navigator.of(context).pushNamed(DataPemesananScreen.routeName);
-            return;
-          }
-          if (value == 3) {
-            Navigator.of(context).pushNamed(
-              DataPelangganUbahScreen.routeName,
-              arguments: DataPelangganUbahArguments(
-                data: DataPelanggan(),
-                judul: "Profile",
-              ),
-            );
-            return;
-          }
-        }),
-        unselectedItemColor: Colors.grey,
-        showUnselectedLabels: true,
+        onTap: (index) => BottomNavHandler.handleNavigation(context, index),
       ),
     );
   }

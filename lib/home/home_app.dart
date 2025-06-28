@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sewoapp/data_katalog/data_katalog_screen.dart';
-import 'package:sewoapp/emissions_calculator/emissions_calculator.dart';
-import 'package:sewoapp/frame/frame_screen.dart';
 import 'package:sewoapp/home/other_menu.dart';
-import '../config/config_global.dart';
 
 class HomeApp extends StatefulWidget {
   final GlobalKey<ScaffoldState> scaffoldKey;
@@ -25,13 +22,14 @@ class _HomeAppState extends State<HomeApp> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 15),
             child: Card(
-              color: Color(0xFF0A1D56),
-              elevation: 8,
+              color: Color.fromARGB(255, 9, 30, 94),
+              elevation: 12,
+              shadowColor: Colors.black.withOpacity(0.3),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(15),
                 side: BorderSide(
                   color: Colors.white,
-                  width: 1.2,
+                  width: 2,
                 ),
               ),
               child: Padding(

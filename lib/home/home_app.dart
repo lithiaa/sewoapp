@@ -30,6 +30,10 @@ class _HomeAppState extends State<HomeApp> {
               elevation: 8,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(15),
+                side: BorderSide(
+                  color: Colors.white,
+                  width: 1.2,
+                ),
               ),
               child: Padding(
                 padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 15),

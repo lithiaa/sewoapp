@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:sewoapp/data_katalog/data_katalog_screen.dart';
 import 'package:sewoapp/emissions_calculator/emissions_calculator.dart';
 import 'package:sewoapp/frame/frame_screen.dart';
+import 'package:sewoapp/home/other_menu.dart';
 import '../config/config_global.dart';
 
 class HomeApp extends StatefulWidget {
@@ -25,18 +26,19 @@ class _HomeAppState extends State<HomeApp> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 15),
             child: Card(
-              elevation: 4,
+              color: Color(0xFF0A1D56),
+              elevation: 8,
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(15),
               ),
               child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 20),
+                padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 15),
                 child: Wrap(
                   alignment: WrapAlignment.center,
-                  spacing: 4,
-                  runSpacing: 6,
+                  spacing: 8,
+                  runSpacing: 12,
                   children: [
-                    _buildCircleMenuButton(
+                    /*_buildCircleMenuButton(
                       "Location",  // Use newline character
                       Icons.location_on,
                           () {
@@ -45,7 +47,7 @@ class _HomeAppState extends State<HomeApp> {
                               arguments: '${ConfigGlobal.baseUrl}map.php', // URL tujuan
                             );
                       },
-                    ),
+                    ),*/
                     _buildCircleMenuButton("SeMotor", Icons.two_wheeler, () {
                       _navigateToKatalog('SeMotor', 'SeMotor');
                     }),
@@ -55,9 +57,12 @@ class _HomeAppState extends State<HomeApp> {
                     _buildCircleMenuButton("SeMolis", Icons.moped, () {
                       _navigateToKatalog('SeMolis', 'SeMolis');
                     }),
-                    _buildCircleMenuButton("Emissions", Icons.eco, () {
+                    /*_buildCircleMenuButton("Emissions", Icons.eco, () {
                       Navigator.of(context).pushNamed(EmissionsCalculatorPage.routeName);
-                    }),
+                    }),*/
+                    _buildCircleMenuButton("Menu Lainnya", Icons.menu, (){
+                      Navigator.of(context).pushNamed(OtherMenuScreen.routeName);
+                    })
                   ],
                 ),
               ),
@@ -106,6 +111,7 @@ class _HomeAppState extends State<HomeApp> {
             style: const TextStyle(
               fontSize: 12,
               fontWeight: FontWeight.w500,
+              color: Colors.white,
             ),
           ),
         ],

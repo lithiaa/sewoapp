@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:sewoapp/config/color.dart';
 import 'package:sewoapp/config/config_global.dart';
 import 'package:sewoapp/config/config_session_manager.dart';
 import 'package:sewoapp/data/data_filter.dart';
@@ -161,17 +160,11 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                   ),
                   const SizedBox(height: 15),
                   Container(
-                    decoration: BoxDecoration(
-                      image: DecorationImage(
-                        image: AssetImage('assets/linear.png'),
-                        fit: BoxFit.cover,
-                        opacity: 0.9,
-                      ),
-                    ),
                     child: Column(
                       children: [
+                        // Nearby Car Section
                         const SizedBox(height: 10),
-                        JudulEkatalog(judul: "Special recommendation"),
+                        JudulEkatalog(judul: "Nearby Car"),
                         const SizedBox(height: 0),
                         BlocListener(
                           bloc: BlocProvider.of<DataKatalogBloc>(context),
@@ -179,124 +172,59 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                           child: BlocBuilder<DataKatalogBloc, DataKatalogState>(
                             builder: ((context, state) {
                               if (state is! DataKatalogLoadSuccess) {
-                                return Stack(
-                                  children: [
-                                    SizedBox(
-                                      height: 250,
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(10),
-                                        child: ListView.builder(
-                                          scrollDirection: Axis.horizontal,
-                                          shrinkWrap: true,
-                                          itemCount: 3,
-                                          itemBuilder: (context, index) {
-                                            return Card(
-                                              elevation: 1.0,
-                                              shape: RoundedRectangleBorder(
-                                                borderRadius: BorderRadius.circular(16),
-                                              ),
-                                              child: Column(
-                                                children: [
-                                                  Shimmer.fromColors(
-                                                    enabled: state is DataKatalogLoading,
-                                                    baseColor: Colors.white,
-                                                    highlightColor: Colors.grey,
-                                                    child: Container(
-                                                      decoration: const BoxDecoration(
-                                                        borderRadius: BorderRadius.only(
-                                                          topLeft: Radius.circular(16),
-                                                          topRight: Radius.circular(16),
-                                                        ),
-                                                        color: Colors.white,
-                                                      ),
-                                                      height: 170,
-                                                      width: 180,
-                                                    ),
-                                                  ),
-                                                  const SizedBox(height: 6),
-                                                  Shimmer.fromColors(
-                                                    enabled: state is DataKatalogLoading,
-                                                    baseColor: Colors.white,
-                                                    highlightColor: Colors.grey,
-                                                    child: Container(
-                                                      decoration: const BoxDecoration(
-                                                        color: Colors.white,
-                                                      ),
-                                                      height: 20,
-                                                      width: 180,
-                                                    ),
-                                                  ),
-                                                  const SizedBox(height: 6),
-                                                  Shimmer.fromColors(
-                                                    enabled: state is DataKatalogLoading,
-                                                    baseColor: Colors.white,
-                                                    highlightColor: Colors.grey,
-                                                    child: Container(
-                                                      decoration: const BoxDecoration(
-                                                        borderRadius: BorderRadius.only(
-                                                          bottomLeft: Radius.circular(16),
-                                                          bottomRight: Radius.circular(16),
-                                                        ),
-                                                        color: Colors.white,
-                                                      ),
-                                                      height: 20,
-                                                      width: 180,
-                                                    ),
-                                                  )
-                                                ],
-                                              ),
-                                            );
-                                          },
-                                        ),
-                                      ),
-                                    ),
-                                    if (state is DataKatalogLoadFailure)
-                                      Positioned(
-                                        bottom: 100,
-                                        left: 50,
-                                        child: Row(
-                                          mainAxisSize: MainAxisSize.max,
-                                          mainAxisAlignment: MainAxisAlignment.center,
-                                          children: [
-                                            ElevatedButton(
-                                              onPressed: () {
-                                                BlocProvider.of<DataKatalogBloc>(context).add(
-                                                  FetchDataKatalog(FilterKatalog(type: "terbaru")),
-                                                );
-                                              },
-                                              style: ButtonStyle(
-                                                  backgroundColor: WidgetStateProperty.all<Color>(
-                                                      Style.buttonBackgroundColor)),
-                                              child: const Text("Coba lagi !"),
-                                            )
-                                          ],
-                                        ),
-                                      ),
-                                  ],
-                                );
+                                return _buildShimmerList();
                               }
 
                               if (state.type.toLowerCase().trim().contains("terbaru")) {
-                                dataTerbaru = state.data.result;
+                                dataTerbaru = state.data.result; // Ambil semua data dulu
                               }
 
-                              return SizedBox(
-                                height: 250,
-                                child: Padding(
-                                  padding: const EdgeInsets.all(10),
-                                  child: ListView.builder(
-                                    scrollDirection: Axis.horizontal,
-                                    shrinkWrap: true,
-                                    itemCount: dataTerbaru.length,
-                                    itemBuilder: (context, index) {
-                                      return Ekatalog(data: dataTerbaru[index]);
-                                    },
-                                  ),
-                                ),
-                              );
+                              // Filter hanya untuk mobil
+                              List<DataKatalogApiData> carData = dataTerbaru
+                                  .where((item) => item.kategori?.toLowerCase().contains('mobil') == true)
+                                  .toList();
+
+                              return _buildProductList(carData.take(5).toList());
                             }),
                           ),
                         ),
+                        
+                        // Nearby Motorcycle Section
+                        const SizedBox(height: 20),
+                        JudulEkatalog(judul: "Motorcycle"),
+                        const SizedBox(height: 0),
+                        BlocBuilder<DataKatalogBloc, DataKatalogState>(
+                          builder: ((context, state) {
+                            if (state is! DataKatalogLoadSuccess) {
+                              return _buildShimmerList();
+                            }
+
+                            List<DataKatalogApiData> motorcycleData = dataTerbaru
+                                .where((item) => item.kategori?.toLowerCase().contains('motor') == true)
+                                .toList();
+
+                            return _buildProductList(motorcycleData.take(5).toList());
+                          }),
+                        ),
+
+                        // Nearby Electric Vehicle Section
+                        const SizedBox(height: 20),
+                        JudulEkatalog(judul: "Electric vehicle"),
+                        const SizedBox(height: 0),
+                        BlocBuilder<DataKatalogBloc, DataKatalogState>(
+                          builder: ((context, state) {
+                            if (state is! DataKatalogLoadSuccess) {
+                              return _buildShimmerList();
+                            }
+
+                            List<DataKatalogApiData> electricData = dataTerbaru
+                                .where((item) => item.kategori?.toLowerCase().contains('molis') == true)
+                                .toList();
+
+                            return _buildProductList(electricData.take(5).toList());
+                          }),
+                        ),
+                        const SizedBox(height: 10),
                       ],
                     ),
                   ),
@@ -330,6 +258,125 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     if (sudahLogin) return;
     if (!mounted) return;
     Navigator.pushReplacementNamed(context, LoginScreen.routeName);
+  }
+
+  Widget _buildShimmerList() {
+    return Stack(
+      children: [
+        SizedBox(
+          height: 250,
+          child: Padding(
+            padding: const EdgeInsets.all(10),
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              shrinkWrap: true,
+              itemCount: 3,
+              itemBuilder: (context, index) {
+                return Card(
+                  elevation: 1.0,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: Column(
+                    children: [
+                      Shimmer.fromColors(
+                        enabled: true,
+                        baseColor: Colors.white,
+                        highlightColor: Colors.grey,
+                        child: Container(
+                          decoration: const BoxDecoration(
+                            borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(16),
+                              topRight: Radius.circular(16),
+                            ),
+                            color: Colors.white,
+                          ),
+                          height: 170,
+                          width: 180,
+                        ),
+                      ),
+                      const SizedBox(height: 6),
+                      Shimmer.fromColors(
+                        enabled: true,
+                        baseColor: Colors.white,
+                        highlightColor: Colors.grey,
+                        child: Container(
+                          decoration: const BoxDecoration(
+                            color: Colors.white,
+                          ),
+                          height: 20,
+                          width: 180,
+                        ),
+                      ),
+                      const SizedBox(height: 6),
+                      Shimmer.fromColors(
+                        enabled: true,
+                        baseColor: Colors.white,
+                        highlightColor: Colors.grey,
+                        child: Container(
+                          decoration: const BoxDecoration(
+                            borderRadius: BorderRadius.only(
+                              bottomLeft: Radius.circular(16),
+                              bottomRight: Radius.circular(16),
+                            ),
+                            color: Colors.white,
+                          ),
+                          height: 20,
+                          width: 180,
+                        ),
+                      )
+                    ],
+                  ),
+                );
+              },
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildProductList(List<DataKatalogApiData> products) {
+    if (products.isEmpty) {
+      return Container(
+        height: 250,
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.inventory_2_outlined,
+                size: 64,
+                color: Colors.grey[400],
+              ),
+              const SizedBox(height: 16),
+              Text(
+                'Tidak ada produk tersedia',
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Colors.grey[600],
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    return SizedBox(
+      height: 250,
+      child: Padding(
+        padding: const EdgeInsets.all(10),
+        child: ListView.builder(
+          scrollDirection: Axis.horizontal,
+          shrinkWrap: true,
+          itemCount: products.length,
+          itemBuilder: (context, index) {
+            return Ekatalog(data: products[index]);
+          },
+        ),
+      ),
+    );
   }
 }
 

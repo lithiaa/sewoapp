@@ -23,8 +23,7 @@ class _HomeAppState extends State<HomeApp> {
             padding: const EdgeInsets.symmetric(horizontal: 15),
             child: Card(
               color: Color.fromARGB(255, 9, 30, 94),
-              elevation: 12,
-              shadowColor: Colors.black.withOpacity(0.3),
+              elevation: 0,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(15),
                 side: BorderSide(

@@ -37,7 +37,7 @@ class _CustomCarouselSliderState extends State<CustomCarouselSlider> {
           child: Stack(
             children: [
               SizedBox(
-                height: 200.0,
+                height: 180.0,
                 child: CarouselSlider(
                   viewportFraction: 1.0,
                   enableAutoSlider: true,

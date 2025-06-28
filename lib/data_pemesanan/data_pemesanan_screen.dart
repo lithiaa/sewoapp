@@ -41,6 +41,7 @@ class _DataPemesananScreenState extends State<DataPemesananScreen> {
         title: const Text(
           'History',
         ),
+        foregroundColor: Colors.white,
       ),
       body: MultiBlocListener(
         listeners: [

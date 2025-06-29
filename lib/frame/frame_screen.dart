@@ -198,7 +198,21 @@ class _FrameScreenState extends State<FrameScreen> {
     return Scaffold(
       backgroundColor: const Color(0xFF11316C),
       appBar: AppBar(
-        title: const Text("Maps"),
+        title: const Text(
+          'Maps',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 20,
+          ),
+        ),
+        backgroundColor: const Color(0xFF11316C),
+        foregroundColor: Colors.white,
+        elevation: 0,
+        centerTitle: true,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
       ),
       body: WebViewWidget(controller: _controller),
     );

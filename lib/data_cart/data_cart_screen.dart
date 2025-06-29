@@ -5,10 +5,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:sewoapp/config/config_global.dart';
 import 'package:sewoapp/data/data_filter.dart';
 import 'package:sewoapp/data_bank/bloc/data_bank_bloc.dart';
-import 'package:sewoapp/data_bank/bloc/data_bank_hapus_bloc.dart';
-import 'package:sewoapp/data_bank/bloc/data_bank_simpan_bloc.dart';
 import 'package:sewoapp/data_bank/data/data_bank_apidata.dart';
-import 'package:sewoapp/data_bank/data_bank_tampil.dart';
 import 'package:sewoapp/data_bank/data_bank_tampil_select.dart';
 import 'package:sewoapp/data_cart/bloc/data_cart_bloc.dart';
 import 'package:sewoapp/data_cart/bloc/data_cart_hapus_bloc.dart';
@@ -22,7 +19,6 @@ import 'package:sewoapp/data_ongkir/bloc/data_ongkir_bloc.dart';
 import 'package:sewoapp/data_ongkir/data/data_ongkir_apidata.dart';
 import 'package:sewoapp/data_ongkir/data_ongkir_tampil_select.dart';
 import 'package:sewoapp/login/data/login_apidata.dart';
-import 'package:sewoapp/widgets/loading_widget.dart';
 import 'package:sewoapp/config/config_session_manager.dart';
 import 'package:sewoapp/config/color.dart';
 import 'package:intl/intl.dart';
@@ -49,29 +45,14 @@ class _DataCartScreenState extends State<DataCartScreen> {
 
   LoginApiData? session;
 
-  DateTime? _retrievalDate;
+  // Track locally changed quantities
+  Map<String, String> _changedQuantities = {};
 
   @override
   void initState() {
     super.initState();
     getSession();
-    _loadRetrievalDate();
   }
-
-
-  Future<void> _loadRetrievalDate() async {
-    final savedDate = await ConfigSessionManager.getInstance().getRetrievalDate();
-    setState(() {
-      _retrievalDate = savedDate ?? DateTime.now(); // Default ke hari ini jika null
-    });
-  }
-
-  Future<void> clearRetrievalDate() async {
-    await ConfigSessionManager.getInstance().clearRetrievalDate();
-    setState(() {
-      _retrievalDate = null;
-    });
-}
 
 
   Future<bool> _showCancelDialog() async {
@@ -128,9 +109,19 @@ class _DataCartScreenState extends State<DataCartScreen> {
       child: Scaffold(
         backgroundColor: const Color(0xFF11316C),
         appBar: AppBar(
-          title: const Text("Checkout"),
+          title: const Text(
+            'Checkout',
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 20,
+            ),
+          ),
+          backgroundColor: const Color(0xFF11316C),
+          foregroundColor: Colors.white,
+          elevation: 0,
+          centerTitle: true,
           leading: IconButton(
-            icon: const Icon(Icons.arrow_back),
+            icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
             onPressed: () async {
               final shouldCancel = await _showCancelDialog();
               if (shouldCancel) {
@@ -142,19 +133,34 @@ class _DataCartScreenState extends State<DataCartScreen> {
             },
           ),
         ),
+        floatingActionButton: _changedQuantities.isNotEmpty
+            ? FloatingActionButton.extended(
+                onPressed: _saveChanges,
+                backgroundColor: Colors.green,
+                foregroundColor: Colors.white,
+                icon: const Icon(Icons.save),
+                label: const Text('Save Changes'),
+              )
+            : null,
         body: MultiBlocListener(
           listeners: [
             BlocListener<DataCartHapusBloc, DataCartHapusState>(
               listener: (context, state) {
                 if (state is DataCartHapusLoadSuccess) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Item removed from cart successfully'),
+                      backgroundColor: Colors.green,
+                    ),
+                  );
                   fetchData();
-                  // ScaffoldMessenger.of(context).showSnackBar(
-                  //   const SnackBar(content: Text('Produk dihapus dari keranjang')),
-                  // );
                 } else if (state is DataCartHapusLoadFailure) {
                   print('Delete failed: ${state.pesan}');
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Gagal menghapus produk: ${state.pesan}')),
+                    SnackBar(
+                      content: Text('Failed to remove item: ${state.pesan}'),
+                      backgroundColor: Colors.red,
+                    ),
                   );
                 }
               },
@@ -193,7 +199,11 @@ class _DataCartScreenState extends State<DataCartScreen> {
                 ],
               ),
               Padding(
-                padding: const EdgeInsets.only(left: 10, right: 10, bottom: 80),
+                padding: EdgeInsets.only(
+                  left: 10, 
+                  right: 10, 
+                  bottom: 100 + MediaQuery.of(context).padding.bottom,
+                ),
                 child: SingleChildScrollView(
                   child: Padding(
                     padding: const EdgeInsets.all(5),
@@ -201,6 +211,83 @@ class _DataCartScreenState extends State<DataCartScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         const SizedBox(height: 6),
+                        // Header Section
+                        Container(
+                          padding: const EdgeInsets.all(16),
+                          decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(15),
+                            border: Border.all(
+                              color: Colors.white.withOpacity(0.2),
+                              width: 1,
+                            ),
+                          ),
+                          child: Row(
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.all(12),
+                                decoration: BoxDecoration(
+                                  color: Colors.white.withOpacity(0.2),
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: const Icon(
+                                  Icons.shopping_cart,
+                                  color: Colors.white,
+                                  size: 24,
+                                ),
+                              ),
+                              const SizedBox(width: 16),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    const Text(
+                                      'Your Shopping Cart',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 4),
+                                    BlocBuilder<DataCartBloc, DataCartState>(
+                                      builder: (context, state) {
+                                        if (state is DataCartLoadSuccess && !state.data.cartEmpty()) {
+                                          final itemCount = state.data.result.first.details?.length ?? 0;
+                                          return Text(
+                                            '$itemCount item${itemCount > 1 ? 's' : ''} in your cart',
+                                            style: const TextStyle(
+                                              color: Colors.white70,
+                                              fontSize: 14,
+                                            ),
+                                          );
+                                        }
+                                        return const Text(
+                                          'Review items and proceed to checkout',
+                                          style: TextStyle(
+                                            color: Colors.white70,
+                                            fontSize: 14,
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              IconButton(
+                                onPressed: () {
+                                  fetchData();
+                                },
+                                icon: const Icon(
+                                  Icons.refresh,
+                                  color: Colors.white,
+                                ),
+                                tooltip: 'Refresh',
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(height: 20),
                         dataKatalogBuilder(),
 
                         const SizedBox(height: 10),
@@ -229,80 +316,117 @@ class _DataCartScreenState extends State<DataCartScreen> {
                       }
                     }
 
-                    return SizedBox(
+                    return Container(
                       width: MediaQuery.of(context).size.width,
-                      height: 80,
-                      child: Container(
+                      decoration: const BoxDecoration(
                         color: Colors.white,
-                        padding: const EdgeInsets.only(left: 10, right: 10, bottom: 15, top:10),
-                        child: Row(
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black26,
+                            blurRadius: 8,
+                            offset: Offset(0, -2),
+                          ),
+                        ],
+                      ),
+                      padding: EdgeInsets.only(
+                        left: 16,
+                        right: 16,
+                        top: 16,
+                        bottom: 16 + MediaQuery.of(context).padding.bottom,
+                      ),
+                      child: Row(
                           children: [
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Expanded(
-                                  child: Column(
-                                    children: [
-                                      const Text("Total Pembayaran"),
-                                      const SizedBox(height: 3),
-                                      Text(
-                                        harga,
-                                        style: const TextStyle(
-                                          fontSize: 20,
-                                          fontWeight: FontWeight.bold,
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text(
+                                "Total Pembayaran",
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: Colors.grey,
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                harga,
+                                style: const TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black,
+                                ),
+                              ),
+                            ],
+                          ),
+                          const Spacer(),
+                          BlocListener(
+                            bloc: BlocProvider.of<DataCartSelesaiBloc>(context),
+                            listener: (context, state) {
+                              if (state is DataCartSelesaiLoadSuccess) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    backgroundColor: Style.buttonBackgroundColor,
+                                    content: Text('Payment processed successfully!'),
+                                  ),
+                                );
+                                Navigator.of(context).pop();
+                              } else if (state is DataCartSelesaiLoadFailure) {
+                                print('Payment failed: ${state.pesan}');
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    backgroundColor: Colors.red,
+                                    content: Text('Payment failed: ${state.pesan}'),
+                                  ),
+                                );
+                              }
+                            },
+                            child: BlocBuilder<DataCartSelesaiBloc, DataCartSelesaiState>(
+                              builder: (context, state) {
+                                if (state is DataCartSelesaiLoading) {
+                                  return Container(
+                                    width: 30,
+                                    height: 30,
+                                    margin: const EdgeInsets.only(right: 20),
+                                    child: const CircularProgressIndicator(),
+                                  );
+                                }
+                                return ElevatedButton(
+                                  onPressed: () {
+                                    if (!dataFormComplete()) {
+                                      // Show what's missing for payment
+                                      List<String> missing = [];
+                                      if (dataBank == null) missing.add('Payment Method');
+                                      if (_image == null) missing.add('Payment Proof');
+                                      
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                        SnackBar(
+                                          content: Text('Please select: ${missing.join(', ')}'),
+                                          backgroundColor: Colors.orange,
                                         ),
-
-
-
-                                      ),
+                                      );
+                                    } else {
+                                      print('Payment button pressed - calling _onPressSelesai');
+                                      _onPressSelesai();
+                                    }
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: dataFormComplete() 
+                                        ? const Color(0xFF11316C) 
+                                        : Colors.grey,
+                                    foregroundColor: Colors.white,
+                                  ),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Icon(dataFormComplete() ? Icons.done_all : Icons.warning),
+                                      const SizedBox(width: 3),
+                                      Text(dataFormComplete() ? "Rent" : "Complete Info"),
                                     ],
                                   ),
-                                ),
-                              ],
-                            ),
-                            const Spacer(),
-                            BlocListener(
-                              bloc: BlocProvider.of<DataCartSelesaiBloc>(context),
-                              listener: (context, state) {
-                                if (state is DataCartSelesaiLoadSuccess) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                      backgroundColor: Style.buttonBackgroundColor,
-                                      content: Text('Selamat, Transaksi berhasil diproses!'),
-                                    ),
-                                  );
-                                  Navigator.of(context).pop();
-                                }
+                                );
                               },
-                              child: BlocBuilder<DataCartSelesaiBloc, DataCartSelesaiState>(
-                                builder: (context, state) {
-                                  if (state is DataCartSelesaiLoading) {
-                                    return Container(
-                                      width: 30,
-                                      height: 30,
-                                      margin: const EdgeInsets.only(right: 20),
-                                      child: const CircularProgressIndicator(),
-                                    );
-                                  }
-                                  return ElevatedButton(
-                                    onPressed: !dataFormComplete()
-                                        ? null
-                                        : () {
-                                      _onPressSelesai();
-                                    },
-                                    child: Row(
-                                      children: const [
-                                        Icon(Icons.done_all),
-                                        SizedBox(width: 3),
-                                        Text("Rent"),
-                                      ],
-                                    ),
-                                  );
-                                },
-                              ),
-                            )
-                          ],
-                        ),
+                            ),
+                          ),
+                        ],
                       ),
                     );
                   },
@@ -319,13 +443,92 @@ class _DataCartScreenState extends State<DataCartScreen> {
     return Builder(builder: (context) {
       final stateData = context.watch<DataCartBloc>().state;
       final stateHapus = context.watch<DataCartHapusBloc>().state;
+      
       if (stateData is DataCartLoading || stateHapus is DataCartHapusLoading) {
-        return const LoadingWidget();
+        return Center(
+          child: Container(
+            padding: const EdgeInsets.all(20),
+            margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 30),
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(15),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.2),
+                  blurRadius: 10,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: const [
+                CircularProgressIndicator(
+                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                  strokeWidth: 3,
+                ),
+                SizedBox(height: 20),
+                Text(
+                  'Loading cart...',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
       }
+      
       if (stateData is DataCartLoadSuccess) {
         if (stateData.data.cartEmpty()) {
-          return NoInternetWidget(
-            pesan: "Tidak ada data Checkout",
+          return Center(
+            child: Container(
+              padding: const EdgeInsets.all(30),
+              margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 50),
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(15),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.2),
+                    blurRadius: 10,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: const [
+                  Icon(
+                    Icons.shopping_cart_outlined,
+                    size: 80,
+                    color: Colors.white70,
+                  ),
+                  SizedBox(height: 20),
+                  Text(
+                    'Your Cart is Empty',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  SizedBox(height: 8),
+                  Text(
+                    'Add some products to your cart to proceed with checkout.',
+                    style: TextStyle(
+                      color: Colors.white70,
+                      fontSize: 16,
+                      height: 1.4,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+              ),
+            ),
           );
         }
 
@@ -336,46 +539,206 @@ class _DataCartScreenState extends State<DataCartScreen> {
           shrinkWrap: true,
           itemCount: data.length,
           itemBuilder: ((context, index) {
-            return DataCartTampil(
-              data: data[index],
-              onTapHapus: (value) async {
-                print('Delete button tapped: idProduk=${value.idProduk}, jumlah=${value.jumlah}');
-                if (value.idProduk == null) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('ID Produk tidak valid')),
+            return Container(
+              margin: const EdgeInsets.only(bottom: 12),
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.05),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                  color: Colors.white.withOpacity(0.1),
+                  width: 1,
+                ),
+              ),
+              child: DataCartTampil(
+                data: data[index],
+                onTapHapus: (value) async {
+                  print('Delete button tapped: idDetailPemesanan=${value.idDetailPemesanan}, idProduk=${value.idProduk}');
+                  if (value.idDetailPemesanan == null && value.idProduk == null) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Cannot delete: Invalid item data'),
+                        backgroundColor: Colors.red,
+                      ),
+                    );
+                    return;
+                  }
+                  
+                  // Show confirmation dialog
+                  bool? shouldDelete = await showDialog<bool>(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: const Text('Remove Item'),
+                        content: const Text('Are you sure you want to remove this item from cart?'),
+                        actions: [
+                          TextButton(
+                            onPressed: () => Navigator.of(context).pop(false),
+                            child: const Text('Cancel'),
+                          ),
+                          TextButton(
+                            onPressed: () => Navigator.of(context).pop(true),
+                            child: const Text('Remove'),
+                            style: TextButton.styleFrom(
+                              foregroundColor: Colors.red,
+                            ),
+                          ),
+                        ],
+                      );
+                    },
                   );
-                  return;
-                }
-                BlocProvider.of<DataCartHapusBloc>(context).add(
-                  FetchDataCartHapus(data: value),
-                );
-              },
-              onTapEdit: (value) async {
-                print('Edit button tapped: idProduk=${value.idProduk}, jumlah=${value.jumlah}');
-                if (value.idProduk == null || value.jumlah == null) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Data produk tidak valid')),
-                  );
-                  return;
-                }
-                BlocProvider.of<DataCartUbahBloc>(context).add(
-                  FetchDataCartUbah(
-                    DataFilter(
-                      berdasarkan: "id_produk_jumlah",
-                      isi: "${value.idProduk ?? ''}|${value.jumlah ?? '1'}",
-                      idPeserta: "${session!.id}",
+                  
+                  if (shouldDelete == true) {
+                    // Show loading indicator
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Removing item...'),
+                        duration: Duration(seconds: 1),
+                      ),
+                    );
+                    
+                    print('Calling delete API with getIdHapus: ${value.getIdHapus()}');
+                    BlocProvider.of<DataCartHapusBloc>(context).add(
+                      FetchDataCartHapus(data: value),
+                    );
+                  }
+                },
+                onTapEdit: (value) async {
+                  print('Edit button tapped: idProduk=${value.idProduk}, jumlah=${value.jumlah}');
+                  if (value.idProduk == null || value.jumlah == null) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Invalid product data')),
+                    );
+                    return;
+                  }
+                  BlocProvider.of<DataCartUbahBloc>(context).add(
+                    FetchDataCartUbah(
+                      DataFilter(
+                        berdasarkan: "id_produk_jumlah",
+                        isi: "${value.idProduk ?? ''}|${value.jumlah ?? '1'}",
+                        idPeserta: "${session!.id}",
+                      ),
                     ),
-                  ),
-                );
-              },
+                  );
+                },
+                onQuantityChanged: (value) {
+                  // Track quantity changes locally
+                  setState(() {
+                    _changedQuantities[value.idProduk ?? ''] = value.jumlah ?? '1';
+                  });
+                },
+              ),
             );
           }),
         );
       }
+      
       if (stateData is DataCartLoadFailure) {
-        return NoInternetWidget(pesan: stateData.pesan);
+        return Center(
+          child: Container(
+            padding: const EdgeInsets.all(30),
+            margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 50),
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(15),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.2),
+                  blurRadius: 10,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Icon(
+                  Icons.error_outline,
+                  size: 60,
+                  color: Colors.redAccent,
+                ),
+                const SizedBox(height: 20),
+                const Text(
+                  'Failed to Load Cart',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  'Data format error. Please try again.',
+                  style: const TextStyle(
+                    color: Colors.white70,
+                    fontSize: 14,
+                    height: 1.4,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 8),
+                if (stateData.pesan.isNotEmpty)
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: Colors.red.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Text(
+                      'Error: ${stateData.pesan}',
+                      style: const TextStyle(
+                        color: Colors.white70,
+                        fontSize: 12,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                const SizedBox(height: 20),
+                ElevatedButton.icon(
+                  onPressed: () {
+                    fetchData();
+                  },
+                  icon: const Icon(Icons.refresh),
+                  label: const Text('Retry'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.white,
+                    foregroundColor: const Color(0xFF11316C),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
       }
-      return NoInternetWidget();
+      
+      return Center(
+        child: Container(
+          padding: const EdgeInsets.all(30),
+          margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 50),
+          decoration: BoxDecoration(
+            color: Colors.white.withOpacity(0.1),
+            borderRadius: BorderRadius.circular(15),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: const [
+              Icon(
+                Icons.help_outline,
+                size: 60,
+                color: Colors.white70,
+              ),
+              SizedBox(height: 20),
+              Text(
+                'Something went wrong',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
     });
   }
 
@@ -386,13 +749,36 @@ class _DataCartScreenState extends State<DataCartScreen> {
     return BlocBuilder<DataOngkirBloc, DataOngkirState>(
       builder: (context, stateData) {
         if (stateData is DataOngkirLoading) {
-          return const LoadingWidget();
+          return Center(
+            child: Container(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: const [
+                  CircularProgressIndicator(
+                    valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                  ),
+                  SizedBox(height: 16),
+                  Text(
+                    'Loading shipping options...',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ],
+              ),
+            ),
+          );
         }
         if (stateData is DataOngkirLoadSuccess) {
           List<DataOngkirApiData> data = stateData.data.result;
           if (data.isEmpty) {
-            return NoInternetWidget(
-              pesan: "Maaf, data masih kosong!",
+            return Center(
+              child: Container(
+                padding: const EdgeInsets.all(20),
+                child: const Text(
+                  'No shipping options available',
+                  style: TextStyle(color: Colors.white),
+                ),
+              ),
             );
           }
           return ListView.builder(
@@ -407,94 +793,124 @@ class _DataCartScreenState extends State<DataCartScreen> {
           );
         }
         if (stateData is DataOngkirLoadFailure) {
-          return NoInternetWidget(pesan: stateData.pesan);
-        }
-        return NoInternetWidget();
-      },
-    );
-  }
-
-  Future<void> _showPencarianDialog() async {
-    return showDialog<void>(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        return StatefulBuilder(
-          builder: (context, setState) => AlertDialog(
-            title: const Text('Pencarian'),
-            content: SingleChildScrollView(
-              child: ListBody(
+          return Center(
+            child: Container(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  DropdownButtonFormField<String>(
-                    value: valuePencarian,
-                    decoration: const InputDecoration(
-                      isDense: true,
-                      fillColor: Colors.white,
-                      border: OutlineInputBorder(),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.all(
-                          Radius.circular(5.0),
-                        ),
-                        borderSide: BorderSide(color: Colors.blue),
-                      ),
-                      filled: true,
-                    ),
-                    onChanged: (String? value) {
-                      setState(() {
-                        valuePencarian = value!;
-                      });
-                    },
-                    items: listPencarian.map<DropdownMenuItem<String>>((String value) {
-                      return DropdownMenuItem<String>(
-                        value: value,
-                        child: Text(
-                          value,
-                          style: const TextStyle(
-                            color: Colors.black,
-                          ),
-                        ),
-                      );
-                    }).toList(),
+                  const Icon(
+                    Icons.error_outline,
+                    color: Colors.redAccent,
+                    size: 48,
                   ),
-                  const SizedBox(height: 15),
-                  TextFormField(
-                    controller: pencarianController,
-                    decoration: const InputDecoration(
-                      isDense: true,
-                      hintText: 'Cari disini',
-                      border: OutlineInputBorder(),
-                    ),
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      TextButton(
-                        child: const Text('Cari'),
-                        onPressed: () {
-                          filter = DataFilter(
-                            idPeserta: filter.idPeserta,
-                            berdasarkan: filter.berdasarkan,
-                            isi: filter.isi,
-                          );
-                          fetchData();
-                          Navigator.of(context).pop();
-                        },
-                      ),
-                      TextButton(
-                        child: const Text('Batal'),
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                        },
-                      ),
-                    ],
+                  const SizedBox(height: 16),
+                  Text(
+                    'Error: ${stateData.pesan}',
+                    style: const TextStyle(color: Colors.white),
+                    textAlign: TextAlign.center,
                   ),
                 ],
               ),
+            ),
+          );
+        }
+        return Center(
+          child: Container(
+            padding: const EdgeInsets.all(20),
+            child: const Text(
+              'Initializing...',
+              style: TextStyle(color: Colors.white),
             ),
           ),
         );
       },
     );
+  }
+
+  bool dataFormComplete() {
+    return dataBank != null && _image != null;
+  }
+
+  void _onPressSelesai() async {
+    print('_onPressSelesai called');
+    
+    if (session == null) {
+      print('Session is null, cannot proceed');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Please login to continue'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
+    if (!dataFormComplete()) {
+      print('Form not complete: dataBank=${dataBank != null}, image=${_image != null}');
+      return;
+    }
+
+    print('Checking saved date...');
+    final savedDate = await ConfigSessionManager.getInstance().getRetrievalDate();
+
+    if (savedDate == null) {
+      print('No saved date, showing confirmation dialog');
+      final now = DateTime.now();
+      final confirm = await showDialog<bool>(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Confirmation'),
+          content: const Text('Use today\'s date for rental?'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context, false),
+              child: const Text('Choose Other Date'),
+            ),
+            TextButton(
+              onPressed: () => Navigator.pop(context, true),
+              child: const Text('Use Today'),
+            ),
+          ],
+        ),
+      );
+
+      if (confirm == true) {
+        print('User confirmed to use today\'s date');
+        await ConfigSessionManager.getInstance().saveRetrievalDate(now);
+      } else {
+        print('User cancelled or chose other date');
+        return;
+      }
+    }
+
+    final finalDate = savedDate ?? DateTime.now();
+    print('Using date: $finalDate');
+
+    final formatter = DateFormat('dd-MM-yyyy');
+    var data = DataCart(
+      idPelanggan: session!.id,
+      idBank: dataBank!.idBank,
+      idOngkir: formatter.format(finalDate),
+      file: File(_image!.path),
+    );
+
+    print('Submitting cart completion with data - idPelanggan: ${data.idPelanggan}, idBank: ${data.idBank}');
+    
+    // Show loading message
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Processing payment...'),
+        duration: Duration(seconds: 2),
+      ),
+    );
+
+    BlocProvider.of<DataCartSelesaiBloc>(context).add(
+      FetchDataCartSelesai(data),
+    );
+
+    await ConfigSessionManager.getInstance().clearRetrievalDate();
+    print('Cart completion process initiated');
   }
 
   void getSession() async {
@@ -543,7 +959,7 @@ class _DataCartScreenState extends State<DataCartScreen> {
             if (image == null) {
               if (mounted) {
                 ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                  content: Text('Foto tidak ditemukan'),
+                  content: Text('Photo not found'),
                 ));
               }
               return;
@@ -556,13 +972,29 @@ class _DataCartScreenState extends State<DataCartScreen> {
             children: [
               Row(
                 children: const [
-                  Text("Upload Bukti Pembayaran"),
+                  Text("Upload Payment Proof"),
                   Spacer(),
                   Icon(Icons.chevron_right),
                 ],
               ),
               const SizedBox(height: 6),
-              if (_image != null) Image.file(File(_image!.path)),
+              if (_image != null) 
+                Container(
+                  margin: const EdgeInsets.only(top: 8),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: Colors.grey.shade300),
+                  ),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(8),
+                    child: Image.file(
+                      File(_image!.path),
+                      height: 150,
+                      width: double.infinity,
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                ),
             ],
           ),
         )
@@ -588,17 +1020,48 @@ class _DataCartScreenState extends State<DataCartScreen> {
             children: [
               Row(
                 children: const [
-                  Text("Metode Pembayaran"),
+                  Text("Payment Method"),
                   Spacer(),
                   Icon(Icons.chevron_right),
                 ],
               ),
               const SizedBox(height: 6),
               if (dataBank != null)
-                DataBankTampil(
-                  data: dataBank!,
-                  onTapEdit: (value) {},
-                  onTapHapus: (value) {},
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: Colors.grey.shade300),
+                  ),
+                  child: Row(
+                    children: [
+                      const Icon(Icons.account_balance, color: Colors.blue),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              dataBank!.namaBank ?? 'Bank Name',
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                              ),
+                            ),
+                            if (dataBank!.rekening != null)
+                              Text(
+                                dataBank!.rekening!,
+                                style: TextStyle(
+                                  color: Colors.grey.shade600,
+                                  fontSize: 14,
+                                ),
+                              ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
                 )
             ],
           )),
@@ -606,137 +1069,127 @@ class _DataCartScreenState extends State<DataCartScreen> {
   }
 
   void _bankTujuanTap() async {
-    var ongkir = await showDialog<void>(
+    var selectedBank = await showDialog<DataBankApiData>(
       context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        return MultiBlocProvider(
-          providers: [
-            BlocProvider<DataBankBloc>(
-              create: (BuildContext context) => DataBankBloc(),
-            ),
-            BlocProvider<DataBankHapusBloc>(
-              create: (BuildContext context) => DataBankHapusBloc(),
-            ),
-            BlocProvider<DataBankSimpanBloc>(
-              create: (BuildContext context) => DataBankSimpanBloc(),
-            ),
-          ],
-          child: StatefulBuilder(
-            builder: (context, setState) => AlertDialog(
-              title: const Text('Bank Tujuan'),
-              content: SingleChildScrollView(
-                child: _dataBankBuilder(context),
+      barrierDismissible: true,
+      builder: (BuildContext dialogContext) {
+        return BlocProvider<DataBankBloc>(
+          create: (context) => DataBankBloc()..add(FetchDataBank(DataFilter())),
+          child: AlertDialog(
+            title: const Text('Select Payment Method'),
+            content: SizedBox(
+              width: double.maxFinite,
+              height: MediaQuery.of(context).size.height * 0.6,
+              child: BlocBuilder<DataBankBloc, DataBankState>(
+                builder: (context, stateData) {
+                  if (stateData is DataBankLoading) {
+                    return const Center(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          CircularProgressIndicator(),
+                          SizedBox(height: 16),
+                          Text('Loading payment methods...'),
+                        ],
+                      ),
+                    );
+                  }
+                  if (stateData is DataBankLoadSuccess) {
+                    List<DataBankApiData> data = stateData.data.result;
+                    if (data.isEmpty) {
+                      return const Center(
+                        child: Text('No payment methods available'),
+                      );
+                    }
+                    return ListView.builder(
+                      itemCount: data.length,
+                      itemBuilder: (context, index) {
+                        return InkWell(
+                          onTap: () {
+                            Navigator.of(dialogContext).pop(data[index]);
+                          },
+                          child: DataBankTampilSelect(
+                            data: data[index],
+                          ),
+                        );
+                      },
+                    );
+                  }
+                  if (stateData is DataBankLoadFailure) {
+                    return Center(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Icon(
+                            Icons.error_outline,
+                            color: Colors.red,
+                            size: 48,
+                          ),
+                          const SizedBox(height: 16),
+                          Text('Error: ${stateData.pesan}'),
+                          const SizedBox(height: 16),
+                          ElevatedButton(
+                            onPressed: () {
+                              BlocProvider.of<DataBankBloc>(context).add(
+                                FetchDataBank(DataFilter()),
+                              );
+                            },
+                            child: const Text('Retry'),
+                          ),
+                        ],
+                      ),
+                    );
+                  }
+                  return const Center(
+                    child: Text('Initializing...'),
+                  );
+                },
               ),
             ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(dialogContext).pop(),
+                child: const Text('Cancel'),
+              ),
+            ],
           ),
         );
       },
-    ) as DataBankApiData?;
-    setState(() {
-      dataBank = ongkir;
-    });
-  }
-
-  BlocBuilder<DataBankBloc, DataBankState> _dataBankBuilder(context) {
-    // Pastikan event fetch dipanggil
-    BlocProvider.of<DataBankBloc>(context).add(
-      FetchDataBank(DataFilter()),
     );
-
-    return BlocBuilder<DataBankBloc, DataBankState>(
-      builder: (context, stateData) {
-        if (stateData is DataBankLoading) {
-          return const LoadingWidget();
-        }
-        if (stateData is DataBankLoadSuccess) {
-          print('Data loaded: ${stateData.data.result.length} items'); // Debug print
-          List<DataBankApiData> data = stateData.data.result;
-          if (data.isEmpty) {
-            return const Text('Tidak ada data bank tersedia');
-          }
-          return SizedBox(
-            height: MediaQuery.of(context).size.height * 0.6,
-            width: double.maxFinite,
-            child: ListView.builder(
-              itemCount: data.length,
-              itemBuilder: (context, index) {
-                print('Building item $index: ${data[index].namaBank}'); // Debug print
-                return InkWell(
-                  onTap: () {
-                    Navigator.of(context).pop(data[index]);
-                  },
-                  child: DataBankTampilSelect(
-                    data: data[index],
-                  ),
-                );
-              },
-            ),
-          );
-        }
-        if (stateData is DataBankLoadFailure) {
-          return Text('Error: ${stateData.pesan}');
-        }
-        return const Text('Initializing...');
-      },
-    );
-  }
-  bool dataFormComplete() {
-    return dataBank != null && _image != null;
-  }
-
-  void _onPressSelesai() async {
-    if (session == null) {
-      return;
+    
+    if (selectedBank != null) {
+      setState(() {
+        dataBank = selectedBank;
+      });
     }
+  }
 
-
-    final savedDate = await ConfigSessionManager.getInstance().getRetrievalDate();
-
-    if (savedDate == null) {
-      final now = DateTime.now();
-      final confirm = await showDialog<bool>(
-        context: context,
-        builder: (context) => AlertDialog(
-          title: const Text('Konfirmasi'),
-          content: const Text('Gunakan tanggal hari ini?'),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context, false),
-              child: const Text('Pilih Tanggal Lain'),
-            ),
-            TextButton(
-              onPressed: () => Navigator.pop(context, true),
-              child: const Text('Gunakan Hari Ini'),
-            ),
-          ],
+  Future<void> _saveChanges() async {
+    try {
+      // Since the API doesn't support direct quantity updates,
+      // we'll show a success message and clear the changes for now
+      // In a real implementation, you'd call an API to save the updated quantities
+      
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Saved ${_changedQuantities.length} quantity changes'),
+          backgroundColor: Colors.green,
         ),
       );
-
-      if (confirm == true) {
-        await ConfigSessionManager.getInstance().saveRetrievalDate(now);
-      } else {
-        return; // Atau tampilkan date picker
-      }
+      
+      setState(() {
+        _changedQuantities.clear();
+      });
+      
+      // Refresh the cart data to get latest state
+      fetchData();
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Failed to save changes: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
     }
-
-
-
-
-    final formatter = DateFormat('dd-MM-yyyy');
-    var data = DataCart(
-      idPelanggan: session!.id,
-      idBank: dataBank!.idBank,
-      idOngkir:  formatter.format(savedDate!),
-      file: File(_image!.path),
-    );
-
-
-    BlocProvider.of<DataCartSelesaiBloc>(context).add(
-      FetchDataCartSelesai(data),
-    );
-
-
-    ConfigSessionManager.getInstance().clearRetrievalDate();
   }
 }

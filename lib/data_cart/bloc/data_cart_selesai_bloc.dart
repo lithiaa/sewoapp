@@ -22,14 +22,29 @@ class DataCartSelesaiBloc
         return;
       } */
         try {
+          print('Starting payment completion process');
           await remoteRepo.prosesSelesai(event.data);
+          print('Payment completion process successful');
           emit(DataCartSelesaiLoadSuccess());
         } catch (e) {
+          print('Payment completion failed: $e');
           debugPrint(e.toString());
-          emit(
-            const DataCartSelesaiLoadFailure(
-                pesan: "Gagal menyimpan, Pastikan hp terhubung ke internet"),
-          );
+          
+          // Extract more specific error message
+          String errorMessage = "Payment processing failed";
+          if (e.toString().contains("Payment processing failed:")) {
+            errorMessage = e.toString().replaceAll("Exception: ", "");
+          } else if (e.toString().contains("SocketException")) {
+            errorMessage = "Network connection error. Please check your internet connection.";
+          } else if (e.toString().contains("TimeoutException")) {
+            errorMessage = "Request timeout. Please try again.";
+          } else if (e.toString().contains("FileSystemException")) {
+            errorMessage = "Error accessing payment proof file. Please select the image again.";
+          } else {
+            errorMessage = "Payment processing failed. Please try again.";
+          }
+          
+          emit(DataCartSelesaiLoadFailure(pesan: errorMessage));
         }
       },
       transformer: restartable(),

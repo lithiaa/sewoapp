@@ -11,12 +11,14 @@ class DataCartTampil extends StatefulWidget {
   final DataDetailPemesananApiData data;
   final Function(DataDetailPemesananApiData value) onTapEdit;
   final Function(DataDetailPemesananApiData value) onTapHapus;
+  final Function(DataDetailPemesananApiData value)? onQuantityChanged;
 
   const DataCartTampil({
     super.key,
     required this.data,
     required this.onTapEdit,
     required this.onTapHapus,
+    this.onQuantityChanged,
   });
 
   @override
@@ -63,8 +65,12 @@ class _DataCartTampilState extends State<DataCartTampil> {
     return Column(
       children: [
         Card(
+          elevation: 4,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
           child: Padding(
-            padding: const EdgeInsets.all(10),
+            padding: const EdgeInsets.all(12),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -90,21 +96,26 @@ class _DataCartTampilState extends State<DataCartTampil> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     if (showImageCard)
-                      Image.network(
-                        "${ConfigGlobal.baseUrl}/admin/upload/${widget.data.gambar}",
-                        height: 100,
-                        width: 150,
-                        fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) {
-                          return Image.asset(
-                            "assets/image-not-available.jpg",
-                            height: 100,
-                            width: 100,
-                            fit: BoxFit.cover,
-                          );
-                        },
+                      Container(
+                        width: 120,
+                        height: 90,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(8),
+                          color: Colors.grey[200],
+                        ),
+                        clipBehavior: Clip.hardEdge,
+                        child: Image.network(
+                          "${ConfigGlobal.baseUrl}/admin/upload/${widget.data.gambar}",
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) {
+                            return Image.asset(
+                              "assets/image-not-available.jpg",
+                              fit: BoxFit.cover,
+                            );
+                          },
+                        ),
                       ),
-                    const SizedBox(width: 9),
+                    const SizedBox(width: 12),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -115,26 +126,28 @@ class _DataCartTampilState extends State<DataCartTampil> {
                             maxLines: 2,
                             style: const TextStyle(
                               fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.black87,
                             ),
                           ),
-                          const SizedBox(height: 6),
+                          const SizedBox(height: 8),
                           Text.rich(
                             TextSpan(
                               children: [
                                 TextSpan(
                                   text: ConfigGlobal.formatRupiah(widget.data.harga),
                                   style: const TextStyle(
-                                    color: Colors.black,
+                                    color: Color(0xFF11316C),
                                     fontWeight: FontWeight.bold,
-                                    fontSize: 20,
+                                    fontSize: 18,
                                   ),
                                 ),
-                                TextSpan(
+                                const TextSpan(
                                   text: "/day",
                                   style: TextStyle(
                                     color: Colors.grey,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 15,
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 14,
                                   ),
                                 ),
                               ],
@@ -207,15 +220,20 @@ class _DataCartTampilState extends State<DataCartTampil> {
                           setState(() {
                             _jumlah = value.toString();
                           });
-                          widget.onTapEdit(
-                            DataDetailPemesananApiData(
-                              idProduk: widget.data.idProduk,
-                              namaProduk: widget.data.namaProduk,
-                              jumlah: value.toString(),
-                              harga: widget.data.harga,
-                              gambar: widget.data.gambar,
-                            ),
-                          );
+                          // Notify parent about quantity change for local tracking
+                          if (widget.onQuantityChanged != null) {
+                            widget.onQuantityChanged!(
+                              DataDetailPemesananApiData(
+                                idDetailPemesanan: widget.data.idDetailPemesanan,
+                                idPemesanan: widget.data.idPemesanan,
+                                idProduk: widget.data.idProduk,
+                                namaProduk: widget.data.namaProduk,
+                                jumlah: value.toString(),
+                                harga: widget.data.harga,
+                                gambar: widget.data.gambar,
+                              ),
+                            );
+                          }
                         }
                       },
                     ),

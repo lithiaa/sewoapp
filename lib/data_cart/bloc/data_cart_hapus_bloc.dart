@@ -2,7 +2,6 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sewoapp/data/data_hapus.dart';
-import 'package:sewoapp/data_cart/data/data_cart_result_api.dart';
 import 'package:sewoapp/data_cart/repo/data_cart_remote.dart';
 // import 'package:sewoapp/data_cart/repo/DataCartHapus_local.dart';
 import 'package:sewoapp/utils/network_info.dart';
@@ -15,7 +14,6 @@ class DataCartHapusBloc extends Bloc<DataCartHapusEvent, DataCartHapusState> {
   DataCartHapusBloc() : super(DataCartHapusInitial()) {
     on<FetchDataCartHapus>(((event, emit) async {
       emit(DataCartHapusLoading());
-      emit(DataCartHapusLoading());
 /*
       if (!await networkInfo.isConnected) {
         emit(DataCartHapusNoInternet());
@@ -23,12 +21,27 @@ class DataCartHapusBloc extends Bloc<DataCartHapusEvent, DataCartHapusState> {
       }
 */
       try {
-        final DataCartResultApi response =
-            await remoteRepo.hapus(event.data);
+        print('Starting delete process for item ID: ${event.data.getIdHapus()}');
+        await remoteRepo.hapus(event.data);
+        print('Delete process completed successfully');
         emit(DataCartHapusLoadSuccess());
       } catch (e) {
+        print('Delete process failed: $e');
         debugPrint(e.toString());
-        emit(const DataCartHapusLoadFailure(pesan: "Gagal dihapus, Pastikan hp terhubung ke internet"));
+        
+        // Extract more specific error message
+        String errorMessage = "Failed to delete item";
+        if (e.toString().contains("Failed to delete item:")) {
+          errorMessage = e.toString().replaceAll("Exception: ", "");
+        } else if (e.toString().contains("SocketException")) {
+          errorMessage = "Network connection error. Please check your internet connection.";
+        } else if (e.toString().contains("TimeoutException")) {
+          errorMessage = "Request timeout. Please try again.";
+        } else {
+          errorMessage = "Failed to delete item. Please try again.";
+        }
+        
+        emit(DataCartHapusLoadFailure(pesan: errorMessage));
       }
     }));
   }

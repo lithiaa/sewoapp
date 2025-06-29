@@ -15,7 +15,4 @@ DataSatuanApi _$DataSatuanApiFromJson(Map<String, dynamic> json) =>
     );
 
 Map<String, dynamic> _$DataSatuanApiToJson(DataSatuanApi instance) =>
-    <String, dynamic>{
-      'status': instance.status,
-      'result': instance.result,
-    };
+    <String, dynamic>{'status': instance.status, 'result': instance.result};

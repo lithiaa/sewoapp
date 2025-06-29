@@ -7,11 +7,11 @@ part of 'enum_api.dart';
 // **************************************************************************
 
 EnumApi _$EnumApiFromJson(Map<String, dynamic> json) => EnumApi(
-      json['status'] as String,
-      (json['result'] as List<dynamic>).map((e) => e as String).toList(),
-    );
+  json['status'] as String,
+  (json['result'] as List<dynamic>).map((e) => e as String).toList(),
+);
 
 Map<String, dynamic> _$EnumApiToJson(EnumApi instance) => <String, dynamic>{
-      'status': instance.status,
-      'result': instance.result,
-    };
+  'status': instance.status,
+  'result': instance.result,
+};

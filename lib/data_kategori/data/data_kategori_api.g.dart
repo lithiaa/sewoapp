@@ -15,7 +15,4 @@ DataKategoriApi _$DataKategoriApiFromJson(Map<String, dynamic> json) =>
     );
 
 Map<String, dynamic> _$DataKategoriApiToJson(DataKategoriApi instance) =>
-    <String, dynamic>{
-      'status': instance.status,
-      'result': instance.result,
-    };
+    <String, dynamic>{'status': instance.status, 'result': instance.result};

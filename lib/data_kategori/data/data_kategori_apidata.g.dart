@@ -13,8 +13,8 @@ DataKategoriApiData _$DataKategoriApiDataFromJson(Map<String, dynamic> json) =>
     );
 
 Map<String, dynamic> _$DataKategoriApiDataToJson(
-        DataKategoriApiData instance) =>
-    <String, dynamic>{
-      'id_kategori': instance.idKategori,
-      'kategori': instance.kategori,
-    };
+  DataKategoriApiData instance,
+) => <String, dynamic>{
+  'id_kategori': instance.idKategori,
+  'kategori': instance.kategori,
+};

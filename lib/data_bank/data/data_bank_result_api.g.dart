@@ -13,7 +13,4 @@ DataBankResultApi _$DataBankResultApiFromJson(Map<String, dynamic> json) =>
     );
 
 Map<String, dynamic> _$DataBankResultApiToJson(DataBankResultApi instance) =>
-    <String, dynamic>{
-      'status': instance.status,
-      'result': instance.result,
-    };
+    <String, dynamic>{'status': instance.status, 'result': instance.result};

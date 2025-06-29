@@ -15,7 +15,4 @@ DataPesertaApi _$DataPesertaApiFromJson(Map<String, dynamic> json) =>
     );
 
 Map<String, dynamic> _$DataPesertaApiToJson(DataPesertaApi instance) =>
-    <String, dynamic>{
-      'status': instance.status,
-      'result': instance.result,
-    };
+    <String, dynamic>{'status': instance.status, 'result': instance.result};

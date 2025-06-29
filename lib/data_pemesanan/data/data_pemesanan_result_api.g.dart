@@ -7,15 +7,12 @@ part of 'data_pemesanan_result_api.dart';
 // **************************************************************************
 
 DataPemesananResultApi _$DataPemesananResultApiFromJson(
-        Map<String, dynamic> json) =>
-    DataPemesananResultApi(
-      json['status'] as String,
-      DataPemesananApiData.fromJson(json['result'] as Map<String, dynamic>),
-    );
+  Map<String, dynamic> json,
+) => DataPemesananResultApi(
+  json['status'] as String,
+  DataPemesananApiData.fromJson(json['result'] as Map<String, dynamic>),
+);
 
 Map<String, dynamic> _$DataPemesananResultApiToJson(
-        DataPemesananResultApi instance) =>
-    <String, dynamic>{
-      'status': instance.status,
-      'result': instance.result,
-    };
+  DataPemesananResultApi instance,
+) => <String, dynamic>{'status': instance.status, 'result': instance.result};

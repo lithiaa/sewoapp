@@ -13,7 +13,4 @@ DataAdminResultApi _$DataAdminResultApiFromJson(Map<String, dynamic> json) =>
     );
 
 Map<String, dynamic> _$DataAdminResultApiToJson(DataAdminResultApi instance) =>
-    <String, dynamic>{
-      'status': instance.status,
-      'result': instance.result,
-    };
+    <String, dynamic>{'status': instance.status, 'result': instance.result};

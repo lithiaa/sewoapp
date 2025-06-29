@@ -15,7 +15,4 @@ DataKatalogApi _$DataKatalogApiFromJson(Map<String, dynamic> json) =>
     );
 
 Map<String, dynamic> _$DataKatalogApiToJson(DataKatalogApi instance) =>
-    <String, dynamic>{
-      'status': instance.status,
-      'result': instance.result,
-    };
+    <String, dynamic>{'status': instance.status, 'result': instance.result};

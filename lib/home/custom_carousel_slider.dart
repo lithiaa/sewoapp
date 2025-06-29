@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_carousel_slider/carousel_slider.dart';
 import 'package:sewoapp/data_katalog/data_katalog_screen.dart';
+import 'package:sewoapp/emissions_calculator/emissions_calculator.dart';
 
 class CustomCarouselSlider extends StatefulWidget {
   const CustomCarouselSlider({super.key});
@@ -22,9 +23,13 @@ class _CustomCarouselSliderState extends State<CustomCarouselSlider> {
     );
   }
 
+  void _navigateToEmissionCalculator() {
+    Navigator.of(context).pushNamed(EmissionsCalculatorPage.routeName);
+  }
+
   final List<_SliderItemModel> _sliderItems = const [
-    _SliderItemModel("assets/promotion_slide/slide_1.png"),
-    _SliderItemModel("assets/promotion_slide/slide_2.png"),
+    _SliderItemModel("assets/promotion_slide/slide_1.png", 'products'),
+    _SliderItemModel("assets/promotion_slide/slide_2.png", 'emission_calculator'),
   ];
 
   @override
@@ -52,11 +57,16 @@ class _CustomCarouselSliderState extends State<CustomCarouselSlider> {
                     });
                   },
                   children: _sliderItems.asMap().entries.map((entry) {
-                    final idx = entry.key;
                     final item = entry.value;
                     return _SliderItem(
                       item: item,
-                      onTap: () => _navigateToKatalog('Promo', 'Promo ${idx + 1}'),
+                      onTap: () {
+                        if (item.navigationType == 'products') {
+                          _navigateToKatalog('All', '');
+                        } else if (item.navigationType == 'emission_calculator') {
+                          _navigateToEmissionCalculator();
+                        }
+                      },
                     );
                   }).toList(),
                 ),
@@ -150,5 +160,6 @@ class _SliderItem extends StatelessWidget {
 
 class _SliderItemModel {
   final String assetPath;
-  const _SliderItemModel(this.assetPath);
+  final String navigationType;
+  const _SliderItemModel(this.assetPath, this.navigationType);
 }

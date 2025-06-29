@@ -122,7 +122,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
               children: [
                 // Background putih bagian bawah
                 Container(
-                  margin: const EdgeInsets.only(top: 60),
+                  margin: const EdgeInsets.only(top: 45),
                   height: 50,
                   width: double.infinity,
                   color: Colors.white,

@@ -185,120 +185,162 @@ class _ProfilScreenState extends State<ProfilScreen> {
         },
       ),
       body: data == null
-          ? const Center(child: CircularProgressIndicator())
+          ? const Center(
+              child: CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+              ),
+            )
           : SafeArea(
-              child: RefreshIndicator(
-                onRefresh: () async {
-                  getData();
-                },
-                child: SingleChildScrollView(
-                  physics: const AlwaysScrollableScrollPhysics(),
-                  child: Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // Profile Content
-                        Card(
-                          elevation: 8,
-                          color: Colors.white.withOpacity(0.95),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20),
+        child: RefreshIndicator(
+          onRefresh: () async {
+            getData();
+          },
+          child: SingleChildScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Profile Content
+                  StreamBuilder(
+                    stream: bloc.stream,
+                    builder: (context, snapshot) {
+                      if (snapshot.data is DataPelangganLoading || profileData == null) {
+                        return Container(
+                          height: 300,
+                          child: Card(
+                            elevation: 8,
+                            color: Colors.white.withOpacity(0.95),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: Center(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: const [
+                                  CircularProgressIndicator(
+                                    valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF11316C)),
+                                    strokeWidth: 3,
+                                  ),
+                                  SizedBox(height: 20),
+                                  Text(
+                                    'Loading profile...',
+                                    style: TextStyle(
+                                      color: Color(0xFF11316C),
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
                           ),
-                          child: Padding(
-                            padding: const EdgeInsets.all(24),
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                // Profile Picture
-                                Container(
-                                  width: 80,
-                                  height: 80,
-                                  decoration: BoxDecoration(
-                                    color: const Color(0xFF11316C).withOpacity(0.1),
-                                    shape: BoxShape.circle,
-                                  ),
-                                  child: Icon(
-                                    Icons.person,
-                                    size: 40,
-                                    color: const Color(0xFF11316C),
-                                  ),
+                        );
+                      }
+                      
+                      return Card(
+                        elevation: 8,
+                        color: Colors.white.withOpacity(0.95),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(24),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              // Profile Picture
+                              Container(
+                                width: 80,
+                                height: 80,
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFF11316C).withOpacity(0.1),
+                                  shape: BoxShape.circle,
                                 ),
-                                const SizedBox(width: 20),
-                                // Profile Information
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      // Name
-                                      Text(
-                                        profileData?.nama ?? '-',
-                                        style: const TextStyle(
-                                          fontSize: 20,
-                                          fontWeight: FontWeight.bold,
-                                        ),
+                                child: Icon(
+                                  Icons.person,
+                                  size: 40,
+                                  color: const Color(0xFF11316C),
+                                ),
+                              ),
+                              const SizedBox(width: 20),
+                              // Profile Information
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    // Name
+                                    Text(
+                                      profileData?.nama ?? '-',
+                                      style: const TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold,
                                       ),
-                                      const SizedBox(height: 8),
-                                      // Email
-                                      Text(
-                                        profileData?.email ?? '-',
-                                        style: TextStyle(
-                                          fontSize: 14,
+                                    ),
+                                    const SizedBox(height: 8),
+                                    // Email
+                                    Text(
+                                      profileData?.email ?? '-',
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        color: Colors.grey[600],
+                                      ),
+                                    ),
+                                    const SizedBox(height: 16),
+                                    // Phone
+                                    Row(
+                                      children: [
+                                        Icon(
+                                          Icons.phone,
+                                          size: 16,
                                           color: Colors.grey[600],
                                         ),
-                                      ),
-                                      const SizedBox(height: 16),
-                                      // Phone
+                                        const SizedBox(width: 8),
+                                        Text(
+                                          profileData?.noTelepon ?? '-',
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            color: Colors.grey[600],
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    if (profileData?.alamat != null && profileData!.alamat!.isNotEmpty) ...[
+                                      const SizedBox(height: 8),
+                                      // Address
                                       Row(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
                                         children: [
                                           Icon(
-                                            Icons.phone,
+                                            Icons.location_on,
                                             size: 16,
                                             color: Colors.grey[600],
                                           ),
                                           const SizedBox(width: 8),
-                                          Text(
-                                            profileData?.noTelepon ?? '-',
-                                            style: TextStyle(
-                                              fontSize: 14,
-                                              color: Colors.grey[600],
+                                          Expanded(
+                                            child: Text(
+                                              profileData?.alamat ?? '-',
+                                              style: TextStyle(
+                                                fontSize: 14,
+                                                color: Colors.grey[600],
+                                              ),
+                                              maxLines: 3,
+                                              overflow: TextOverflow.ellipsis,
                                             ),
                                           ),
                                         ],
                                       ),
-                                      if (profileData?.alamat != null && profileData!.alamat!.isNotEmpty) ...[
-                                        const SizedBox(height: 8),
-                                        // Address
-                                        Row(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: [
-                                            Icon(
-                                              Icons.location_on,
-                                              size: 16,
-                                              color: Colors.grey[600],
-                                            ),
-                                            const SizedBox(width: 8),
-                                            Expanded(
-                                              child: Text(
-                                                profileData?.alamat ?? '-',
-                                                style: TextStyle(
-                                                  fontSize: 14,
-                                                  color: Colors.grey[600],
-                                                ),
-                                                maxLines: 3,
-                                                overflow: TextOverflow.ellipsis,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ],
                                     ],
-                                  ),
+                                  ],
                                 ),
-                              ],
-                            ),
+                              ),
+                            ],
                           ),
                         ),
+                      );
+                    },
+                  ),
                         const SizedBox(height: 20),
                         // Action Buttons
                         Card(
@@ -380,48 +422,6 @@ class _ProfilScreenState extends State<ProfilScreen> {
                           ),
                         ),
                         const SizedBox(height: 20),
-                        // Loading Overlay
-                        StreamBuilder(
-                          stream: bloc.stream,
-                          builder: (context, snapshot) {
-                            if (snapshot.data is DataPelangganLoading) {
-                              return Container(
-                                padding: const EdgeInsets.all(40),
-                                margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 50),
-                                decoration: BoxDecoration(
-                                  color: Colors.white.withOpacity(0.1),
-                                  borderRadius: BorderRadius.circular(15),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.black.withOpacity(0.2),
-                                      blurRadius: 10,
-                                      offset: const Offset(0, 4),
-                                    ),
-                                  ],
-                                ),
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: const [
-                                    CircularProgressIndicator(
-                                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                                      strokeWidth: 3,
-                                    ),
-                                    SizedBox(height: 20),
-                                    Text(
-                                      'Loading profile...',
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              );
-                            }
-                            return const SizedBox.shrink();
-                          },
-                        ),
                       ],
                     ),
                   ),

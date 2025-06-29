@@ -43,6 +43,150 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
+  PageRoute<T> _generateRouteWithoutAnimation<T extends Object?>(RouteSettings settings) {
+    final routes = _getAppRoutes();
+    
+    if (routes.containsKey(settings.name)) {
+      return PageRouteBuilder<T>(
+        settings: settings,
+        pageBuilder: (context, animation, secondaryAnimation) {
+          return routes[settings.name]!(context);
+        },
+        transitionDuration: Duration.zero,
+        reverseTransitionDuration: Duration.zero,
+      );
+    }
+    
+    // Fallback to default route
+    return PageRouteBuilder<T>(
+      settings: settings,
+      pageBuilder: (context, animation, secondaryAnimation) {
+        return MultiBlocProvider(
+          providers: [
+            BlocProvider<DataKatalogBloc>(
+              create: (BuildContext context) => DataKatalogBloc(),
+            ),
+          ],
+          child: const HomeScreen(),
+        );
+      },
+      transitionDuration: Duration.zero,
+      reverseTransitionDuration: Duration.zero,
+    );
+  }
+
+  Map<String, Widget Function(BuildContext)> _getAppRoutes() {
+    return {
+      HomeScreen.routeName: (context) => MultiBlocProvider(
+            providers: [
+              BlocProvider<DataKatalogBloc>(
+                create: (BuildContext context) => DataKatalogBloc(),
+              ),
+            ],
+            child: const HomeScreen(),
+          ),
+      LoginScreen.routeName: (context) => const LoginScreen(),
+      FrameScreen.routeName: (context) => const FrameScreen(),
+      DataPelangganTambahScreen.routeName: (context) => MultiBlocProvider(
+            providers: [
+              BlocProvider<DataPelangganSimpanBloc>(
+                create: (BuildContext context) => DataPelangganSimpanBloc(),
+              ),
+            ],
+            child: const DataPelangganTambahScreen(),
+          ),
+      DataPelangganUbahScreen.routeName: (context) => MultiBlocProvider(
+            providers: [
+              BlocProvider<DataPelangganBloc>(
+                create: (BuildContext context) => DataPelangganBloc(),
+              ),
+              BlocProvider<DataPelangganUbahBloc>(
+                create: (BuildContext context) => DataPelangganUbahBloc(),
+              ),
+            ],
+            child: const DataPelangganUbahScreen(),
+          ),
+      DataKatalogScreen.routeName: (context) => MultiBlocProvider(
+            providers: [
+              BlocProvider<DataKatalogBloc>(
+                create: (BuildContext context) => DataKatalogBloc(),
+              ),
+              BlocProvider<DataCartBloc>(
+                create: (BuildContext context) => DataCartBloc(),
+              ),
+            ],
+            child: const DataKatalogScreen(),
+          ),
+      DataKatalogDetail.routeName: (context) => MultiBlocProvider(
+            providers: [
+              BlocProvider<DataCartBloc>(
+                create: (BuildContext context) => DataCartBloc(),
+              ),
+              BlocProvider<DataCartSimpanBloc>(
+                create: (BuildContext context) => DataCartSimpanBloc(),
+              ),
+            ],
+            child: const DataKatalogDetail(),
+          ),
+      DataCartScreen.routeName: (context) => MultiBlocProvider(
+            providers: [
+              BlocProvider<DataCartBloc>(
+                create: (BuildContext context) => DataCartBloc(),
+              ),
+              BlocProvider<DataCartHapusBloc>(
+                create: (BuildContext context) => DataCartHapusBloc(),
+              ),
+              BlocProvider<DataCartUbahBloc>(
+                create: (BuildContext context) => DataCartUbahBloc(),
+              ),
+              BlocProvider<DataCartSimpanBloc>(
+                create: (BuildContext context) => DataCartSimpanBloc(),
+              ),
+              BlocProvider<DataOngkirBloc>(
+                create: (BuildContext context) => DataOngkirBloc(),
+              ),
+              BlocProvider<DataOngkirHapusBloc>(
+                create: (BuildContext context) => DataOngkirHapusBloc(),
+              ),
+              BlocProvider<DataOngkirUbahBloc>(
+                create: (BuildContext context) => DataOngkirUbahBloc(),
+              ),
+              BlocProvider<DataOngkirSimpanBloc>(
+                create: (BuildContext context) => DataOngkirSimpanBloc(),
+              ),
+              BlocProvider<DataCartSelesaiBloc>(
+                create: (BuildContext context) => DataCartSelesaiBloc(),
+              ),
+            ],
+            child: const DataCartScreen(),
+          ),
+      DataPemesananScreen.routeName: (context) => MultiBlocProvider(
+            providers: [
+              BlocProvider<DataPemesananBloc>(
+                create: (BuildContext context) => DataPemesananBloc(),
+              ),
+              BlocProvider<DataPemesananHapusBloc>(
+                create: (BuildContext context) => DataPemesananHapusBloc(),
+              ),
+              BlocProvider<DataPemesananUbahBloc>(
+                create: (BuildContext context) => DataPemesananUbahBloc(),
+              ),
+              BlocProvider<DataPemesananSimpanBloc>(
+                create: (BuildContext context) => DataPemesananSimpanBloc(),
+              ),
+            ],
+            child: const DataPemesananScreen(),
+          ),
+      EmissionsCalculatorPage.routeName: (context) => const EmissionsCalculatorPage(),
+      OtherMenuScreen.routeName: (context) => OtherMenuScreen(),
+      SewoPointScreen.routeName: (context) => const SewoPointScreen(),
+      ProfilScreen.routeName: (context) => const ProfilScreen(),
+      EditProfilScreen.routeName: (context) => const EditProfilScreen(),
+      RegisterSuccessWidget.routeName: (context) => const RegisterSuccessWidget(),
+      '/upload-document': (context) => const DocumentUploadPage(),
+    };
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -53,116 +197,15 @@ class MyApp extends StatelessWidget {
           child: child!,
         );
       },
-      routes: {
-        HomeScreen.routeName: (context) => MultiBlocProvider(
-              providers: [
-                BlocProvider<DataKatalogBloc>(
-                  create: (BuildContext context) => DataKatalogBloc(),
-                ),
-              ],
-              child: const HomeScreen(),
-            ),
-        LoginScreen.routeName: (context) => const LoginScreen(),
-        FrameScreen.routeName: (context) => const FrameScreen(),
-        DataPelangganTambahScreen.routeName: (context) => MultiBlocProvider(
-              providers: [
-                BlocProvider<DataPelangganSimpanBloc>(
-                  create: (BuildContext context) => DataPelangganSimpanBloc(),
-                ),
-              ],
-              child: const DataPelangganTambahScreen(),
-            ),
-        DataPelangganUbahScreen.routeName: (context) => MultiBlocProvider(
-              providers: [
-                BlocProvider<DataPelangganBloc>(
-                  create: (BuildContext context) => DataPelangganBloc(),
-                ),
-                BlocProvider<DataPelangganUbahBloc>(
-                  create: (BuildContext context) => DataPelangganUbahBloc(),
-                ),
-              ],
-              child: const DataPelangganUbahScreen(),
-            ),
-        DataKatalogScreen.routeName: (context) => MultiBlocProvider(
-              providers: [
-                BlocProvider<DataKatalogBloc>(
-                  create: (BuildContext context) => DataKatalogBloc(),
-                ),
-                BlocProvider<DataCartBloc>(
-                  create: (BuildContext context) => DataCartBloc(),
-                ),
-              ],
-              child: const DataKatalogScreen(),
-            ),
-        DataKatalogDetail.routeName: (context) => MultiBlocProvider(
-              providers: [
-                BlocProvider<DataCartBloc>(
-                  create: (BuildContext context) => DataCartBloc(),
-                ),
-                BlocProvider<DataCartSimpanBloc>(
-                  create: (BuildContext context) => DataCartSimpanBloc(),
-                ),
-              ],
-              child: const DataKatalogDetail(),
-            ),
-        DataCartScreen.routeName: (context) => MultiBlocProvider(
-              providers: [
-                BlocProvider<DataCartBloc>(
-                  create: (BuildContext context) => DataCartBloc(),
-                ),
-                BlocProvider<DataCartHapusBloc>(
-                  create: (BuildContext context) => DataCartHapusBloc(),
-                ),
-                BlocProvider<DataCartUbahBloc>(
-                  create: (BuildContext context) => DataCartUbahBloc(),
-                ),
-                BlocProvider<DataCartSimpanBloc>(
-                  create: (BuildContext context) => DataCartSimpanBloc(),
-                ),
-                BlocProvider<DataOngkirBloc>(
-                  create: (BuildContext context) => DataOngkirBloc(),
-                ),
-                BlocProvider<DataOngkirHapusBloc>(
-                  create: (BuildContext context) => DataOngkirHapusBloc(),
-                ),
-                BlocProvider<DataOngkirUbahBloc>(
-                  create: (BuildContext context) => DataOngkirUbahBloc(),
-                ),
-                BlocProvider<DataOngkirSimpanBloc>(
-                  create: (BuildContext context) => DataOngkirSimpanBloc(),
-                ),
-                BlocProvider<DataCartSelesaiBloc>(
-                  create: (BuildContext context) => DataCartSelesaiBloc(),
-                ),
-              ],
-              child: const DataCartScreen(),
-            ),
-        DataPemesananScreen.routeName: (context) => MultiBlocProvider(
-              providers: [
-                BlocProvider<DataPemesananBloc>(
-                  create: (BuildContext context) => DataPemesananBloc(),
-                ),
-                BlocProvider<DataPemesananHapusBloc>(
-                  create: (BuildContext context) => DataPemesananHapusBloc(),
-                ),
-                BlocProvider<DataPemesananUbahBloc>(
-                  create: (BuildContext context) => DataPemesananUbahBloc(),
-                ),
-                BlocProvider<DataPemesananSimpanBloc>(
-                  create: (BuildContext context) => DataPemesananSimpanBloc(),
-                ),
-              ],
-              child: const DataPemesananScreen(),
-            ),
-        EmissionsCalculatorPage.routeName: (context) => const  EmissionsCalculatorPage(),
-        OtherMenuScreen.routeName: (context) => OtherMenuScreen(),
-        SewoPointScreen.routeName: (context) => const SewoPointScreen(),
-        RegisterSuccessWidget.routeName: (context) => const RegisterSuccessWidget(),
-        '/upload-document': (context) => const DocumentUploadPage(),
-        ProfilScreen.routeName: (context) => const ProfilScreen(),
-        EditProfilScreen.routeName: (context) => const EditProfilScreen(),
-
-      },
+      onGenerateRoute: (settings) => _generateRouteWithoutAnimation(settings),
+      home: MultiBlocProvider(
+        providers: [
+          BlocProvider<DataKatalogBloc>(
+            create: (BuildContext context) => DataKatalogBloc(),
+          ),
+        ],
+        child: const HomeScreen(),
+      ),
       theme: ThemeData(
         primaryColor: Style.buttonBackgroundColor,
         appBarTheme: const AppBarTheme(color: Style.buttonBackgroundColor),

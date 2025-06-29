@@ -8,7 +8,6 @@ import 'package:sewoapp/data_pemesanan/bloc/data_pemesanan_ubah_bloc.dart';
 import 'package:sewoapp/data_pemesanan/data/data_pemesanan_apidata.dart';
 import 'package:sewoapp/data_pemesanan/data_pemesanan_tampil.dart';
 import 'package:sewoapp/data_pemesanan/data_pemesanan_ubah.dart';
-import 'package:sewoapp/widgets/loading_widget.dart';
 import 'package:sewoapp/config/config_session_manager.dart';
 import 'package:sewoapp/home/custom_bottom_navbar.dart';
 import 'data/data_pemesanan.dart';
@@ -39,9 +38,20 @@ class _DataPemesananScreenState extends State<DataPemesananScreen> {
       backgroundColor: const Color(0xFF11316C),
       appBar: AppBar(
         title: const Text(
-          'History',
+          'Order History',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 20,
+          ),
         ),
+        backgroundColor: const Color(0xFF11316C),
         foregroundColor: Colors.white,
+        elevation: 0,
+        centerTitle: true,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
       ),
       body: MultiBlocListener(
         listeners: [
@@ -67,137 +77,363 @@ class _DataPemesananScreenState extends State<DataPemesananScreen> {
             },
           ),
         ],
-        child: Stack(
-          children: [
-            ListView(
-              // children: [
-              //   Image.asset(
-              //     "assets/background_data.png",
-              //     fit: BoxFit.fitWidth,
-              //   ),
-              // ],
-            ),
-            // Positioned(
-            //   right: 0,
-            //   top: 10,
-            //   child: Image.asset(
-            //     "assets/avatar.png",
-            //     height: 100,
-            //   ),
-            // ),
-            Padding(
-              padding: const EdgeInsets.only(left: 10, right: 10, bottom: 10),
-              child: SingleChildScrollView(
-                child: Padding(
-                  padding: const EdgeInsets.all(5),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      /* Container(
-                      padding: const EdgeInsets.only(top: 15, bottom: 15),
-                      child: const Text(
-                        "Silahkan Input Data Pemesanan",
-                        style: TextStyle(fontSize: 18),
+        child: SafeArea(
+          child: RefreshIndicator(
+            onRefresh: () async {
+              fetchData();
+            },
+            child: SingleChildScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Header Section
+                    Container(
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(15),
+                        border: Border.all(
+                          color: Colors.white.withOpacity(0.2),
+                          width: 1,
+                        ),
                       ),
-                    ), */
-                      /* Row(
+                      child: Row(
                         children: [
-                          TombolTambahWidget(
-                            onPress: () {
-                              Navigator.pushNamed(
-                                context,
-                                DataPemesananTambahScreen.routeName,
-                                arguments: DataPemesananTambahArguments(
-                                  data: DataPemesanan(),
-                                  judul: "Tambah Data Pemesanan",
-                                ),
-                              );
-                            },
+                          Container(
+                            padding: const EdgeInsets.all(12),
+                            decoration: BoxDecoration(
+                              color: Colors.white.withOpacity(0.2),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: const Icon(
+                              Icons.history,
+                              color: Colors.white,
+                              size: 24,
+                            ),
                           ),
-                          const SizedBox(width: 10),
-                          TombolRefreshWidget(
-                            onPress: () {
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: const [
+                                Text(
+                                  'Your Order History',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                SizedBox(height: 4),
+                                Text(
+                                  'Track and manage your orders',
+                                  style: TextStyle(
+                                    color: Colors.white70,
+                                    fontSize: 14,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          IconButton(
+                            onPressed: () {
                               fetchData();
                             },
-                          ),
-                          const SizedBox(width: 10),
-                          TombolCariWidget(
-                            onPress: () {
-                              _showPencarianDialog();
-                            },
+                            icon: const Icon(
+                              Icons.refresh,
+                              color: Colors.white,
+                            ),
+                            tooltip: 'Refresh',
                           ),
                         ],
-                      ), */
-                      const SizedBox(height: 10),
-                      Builder(builder: (context) {
-                        final stateData =
-                            context.watch<DataPemesananBloc>().state;
-                        final stateHapus =
-                            context.watch<DataPemesananHapusBloc>().state;
-                        if (stateData is DataPemesananLoading ||
-                            stateHapus is DataPemesananHapusLoading) {
-                          return const LoadingWidget();
-                        }
-                        if (stateData is DataPemesananLoadSuccess) {
-                          List<DataPemesananApiData> data =
-                              stateData.data.result;
-                          if (data.isEmpty) {
-                            return NoInternetWidget(
-                              pesan: "Maaf, data masih kosong!",
-                            );
-                          }
-                          return ListView.builder(
-                            physics: const NeverScrollableScrollPhysics(),
-                            shrinkWrap: true,
-                            itemCount: data.length,
-                            itemBuilder: ((context, index) {
-                              return DataPemesananTampil(
-                                data: data[index],
-                                onTapHapus: (value) async {
-                                  BlocProvider.of<DataPemesananHapusBloc>(
-                                    context,
-                                  ).add(
-                                    FetchDataPemesananHapus(
-                                      data: value,
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    // Orders Content
+                    Builder(builder: (context) {
+                      final stateData =
+                          context.watch<DataPemesananBloc>().state;
+                      final stateHapus =
+                          context.watch<DataPemesananHapusBloc>().state;
+                      if (stateData is DataPemesananLoading ||
+                          stateHapus is DataPemesananHapusLoading) {
+                        return Center(
+                          child: Container(
+                            padding: const EdgeInsets.all(40),
+                            margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 50),
+                            decoration: BoxDecoration(
+                              color: Colors.white.withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(15),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.2),
+                                  blurRadius: 10,
+                                  offset: const Offset(0, 4),
+                                ),
+                              ],
+                            ),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: const [
+                                CircularProgressIndicator(
+                                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                                  strokeWidth: 3,
+                                ),
+                                SizedBox(height: 20),
+                                Text(
+                                  'Loading orders...',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      }
+                      if (stateData is DataPemesananLoadSuccess) {
+                        List<DataPemesananApiData> data =
+                            stateData.data.result;
+                        if (data.isEmpty) {
+                          return Center(
+                            child: Container(
+                              padding: const EdgeInsets.all(30),
+                              margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 50),
+                              decoration: BoxDecoration(
+                                color: Colors.white.withOpacity(0.1),
+                                borderRadius: BorderRadius.circular(15),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.2),
+                                    blurRadius: 10,
+                                    offset: const Offset(0, 4),
+                                  ),
+                                ],
+                              ),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: const [
+                                  Icon(
+                                    Icons.shopping_bag_outlined,
+                                    size: 80,
+                                    color: Colors.white70,
+                                  ),
+                                  SizedBox(height: 20),
+                                  Text(
+                                    'No Orders Yet',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 22,
+                                      fontWeight: FontWeight.bold,
                                     ),
-                                  );
-                                },
-                                onTapEdit: (value) async {
-                                  var data = DataPemesanan(
-                                    idPemesanan: value.idPemesanan,
-                                    tanggalPemesanan: value.tanggalPemesanan,
-                                    idPelanggan: value.idPelanggan,
-                                    idOngkir: value.idOngkir,
-                                    idBank: value.idBank,
-                                    tanggalUploadBuktiPembayaran:
-                                        value.tanggalUploadBuktiPembayaran,
-                                    uploadBuktiPembayaran:
-                                        value.uploadBuktiPembayaran,
-                                    status: value.status,
-                                  );
-                                  await Navigator.of(context).pushNamed(
-                                    DataPemesananUbahScreen.routeName,
-                                    arguments: DataPemesananUbahArguments(
-                                      data: data,
-                                      judul: "Edit Data Pemesanan",
+                                  ),
+                                  SizedBox(height: 8),
+                                  Text(
+                                    'Your order history will appear here once you place your first order.',
+                                    style: TextStyle(
+                                      color: Colors.white70,
+                                      fontSize: 16,
+                                      height: 1.4,
                                     ),
-                                  );
-                                },
-                              );
-                            }),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ],
+                              ),
+                            ),
                           );
                         }
-                        if (stateData is DataPemesananLoadFailure) {
-                          return NoInternetWidget(pesan: stateData.pesan);
-                        }
-                        return NoInternetWidget();
-                      }),
-                    ],
-                  ),
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              '${data.length} Order${data.length > 1 ? 's' : ''} Found',
+                              style: const TextStyle(
+                                color: Colors.white70,
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                            const SizedBox(height: 12),
+                            ListView.builder(
+                              physics: const NeverScrollableScrollPhysics(),
+                              shrinkWrap: true,
+                              itemCount: data.length,
+                              itemBuilder: ((context, index) {
+                                return Container(
+                                  margin: const EdgeInsets.only(bottom: 12),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white.withOpacity(0.05),
+                                    borderRadius: BorderRadius.circular(12),
+                                    border: Border.all(
+                                      color: Colors.white.withOpacity(0.1),
+                                      width: 1,
+                                    ),
+                                  ),
+                                  child: DataPemesananTampil(
+                                    data: data[index],
+                                    onTapHapus: (value) async {
+                                      // Show confirmation dialog
+                                      bool? shouldDelete = await showDialog<bool>(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return AlertDialog(
+                                            title: const Text('Delete Order'),
+                                            content: const Text('Are you sure you want to delete this order?'),
+                                            actions: [
+                                              TextButton(
+                                                onPressed: () => Navigator.of(context).pop(false),
+                                                child: const Text('Cancel'),
+                                              ),
+                                              TextButton(
+                                                onPressed: () => Navigator.of(context).pop(true),
+                                                child: const Text('Delete'),
+                                                style: TextButton.styleFrom(
+                                                  foregroundColor: Colors.red,
+                                                ),
+                                              ),
+                                            ],
+                                          );
+                                        },
+                                      );
+                                      
+                                      if (shouldDelete == true) {
+                                        BlocProvider.of<DataPemesananHapusBloc>(
+                                          context,
+                                        ).add(
+                                          FetchDataPemesananHapus(
+                                            data: value,
+                                          ),
+                                        );
+                                      }
+                                    },
+                                    onTapEdit: (value) async {
+                                      var data = DataPemesanan(
+                                        idPemesanan: value.idPemesanan,
+                                        tanggalPemesanan: value.tanggalPemesanan,
+                                        idPelanggan: value.idPelanggan,
+                                        idOngkir: value.idOngkir,
+                                        idBank: value.idBank,
+                                        tanggalUploadBuktiPembayaran:
+                                            value.tanggalUploadBuktiPembayaran,
+                                        uploadBuktiPembayaran:
+                                            value.uploadBuktiPembayaran,
+                                        status: value.status,
+                                      );
+                                      await Navigator.of(context).pushNamed(
+                                        DataPemesananUbahScreen.routeName,
+                                        arguments: DataPemesananUbahArguments(
+                                          data: data,
+                                          judul: "Edit Order",
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                );
+                              }),
+                            ),
+                          ],
+                        );
+                      }
+                      if (stateData is DataPemesananLoadFailure) {
+                        return Center(
+                          child: Container(
+                            padding: const EdgeInsets.all(30),
+                            margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 50),
+                            decoration: BoxDecoration(
+                              color: Colors.white.withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(15),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.2),
+                                  blurRadius: 10,
+                                  offset: const Offset(0, 4),
+                                ),
+                              ],
+                            ),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                const Icon(
+                                  Icons.error_outline,
+                                  size: 60,
+                                  color: Colors.redAccent,
+                                ),
+                                const SizedBox(height: 20),
+                                const Text(
+                                  'Failed to Load Orders',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                const SizedBox(height: 8),
+                                Text(
+                                  stateData.pesan,
+                                  style: const TextStyle(
+                                    color: Colors.white70,
+                                    fontSize: 14,
+                                    height: 1.4,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                ),
+                                const SizedBox(height: 20),
+                                ElevatedButton.icon(
+                                  onPressed: () {
+                                    fetchData();
+                                  },
+                                  icon: const Icon(Icons.refresh),
+                                  label: const Text('Retry'),
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.white,
+                                    foregroundColor: const Color(0xFF11316C),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      }
+                      return Center(
+                        child: Container(
+                          padding: const EdgeInsets.all(30),
+                          margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 50),
+                          decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(15),
+                          ),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: const [
+                              Icon(
+                                Icons.help_outline,
+                                size: 60,
+                                color: Colors.white70,
+                              ),
+                              SizedBox(height: 20),
+                              Text(
+                                'Something went wrong',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    }),
+                  ],
                 ),
               ),
             ),
-          ],
+          ),
         ),
       ),
       bottomNavigationBar: CustomBottomNavbar(

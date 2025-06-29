@@ -135,10 +135,21 @@ class _PaymentPageState extends State<PaymentPage> {
     return Scaffold(
       backgroundColor: EmissionsConstants.backgroundColor,
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
+        title: const Text(
+          'Carbon Offset Payment',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 20,
+          ),
+        ),
+        backgroundColor: EmissionsConstants.backgroundColor,
         foregroundColor: EmissionsConstants.textPrimary,
-        title: Text('Carbon Offset Payment', style: EmissionsConstants.boldText),
+        elevation: 0,
+        centerTitle: true,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(EmissionsConstants.defaultPadding),

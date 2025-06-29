@@ -15,12 +15,12 @@ import 'package:sewoapp/home/judul_promotion.dart';
 import 'package:sewoapp/home/pencarian.dart';
 import 'package:sewoapp/home/promo_card.dart';
 import 'package:sewoapp/home/popular_card.dart';
-import 'package:sewoapp/home/about_card.dart';
 import 'package:sewoapp/home/custom_carousel_slider.dart';
 import 'package:sewoapp/home/location_account_header.dart';
 import 'package:sewoapp/home/custom_bottom_navbar.dart';
 import 'package:sewoapp/login/login_screen.dart';
 import 'package:shimmer/shimmer.dart';
+import 'dart:math';
 
 
 
@@ -78,6 +78,38 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     );
   }
 
+  String _getRandomPromotionImage() {
+    final random = Random();
+    final promotionImages = [
+      'assets/promotion_home/promotion_home_1.png',
+      'assets/promotion_home/promotion_home_2.png',
+    ];
+    return promotionImages[random.nextInt(promotionImages.length)];
+  }
+
+  Future<void> _refreshData() async {
+    // Refresh header login status
+    _headerKey.currentState?.refreshLoginStatus();
+    
+    // Clear existing data
+    setState(() {
+      dataTerlaris.clear();
+      dataTerbaru.clear();
+    });
+    
+    // Reload catalog data
+    BlocProvider.of<DataKatalogBloc>(context)
+        .add(FetchDataKatalog(FilterKatalog(type: "terbaru")));
+    
+    // Delay untuk terlaris seperti di initState
+    await Future.delayed(const Duration(seconds: 1));
+    BlocProvider.of<DataKatalogBloc>(context)
+        .add(FetchDataKatalog(FilterKatalog(type: "terlaris")));
+    
+    // Tunggu sebentar untuk loading selesai
+    await Future.delayed(const Duration(milliseconds: 500));
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -88,9 +120,12 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
       /* appBar: MyAppBar(), */
       drawerEnableOpenDragGesture: false,
       // drawer: const MyDrawer(),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
+      body: RefreshIndicator(
+        onRefresh: _refreshData,
+        child: SingleChildScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          child: Column(
+            children: [
             SafeArea(
               bottom: false,
               child: Column(
@@ -110,7 +145,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(16),
                   image: DecorationImage(
-                    image: AssetImage('assets/promotion_home/promotion_home_2.png'),
+                    image: AssetImage(_getRandomPromotionImage()),
                     fit: BoxFit.cover,
                   ),
                 ),
@@ -164,7 +199,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                       children: [
                         // Nearby Car Section
                         const SizedBox(height: 10),
-                        JudulEkatalog(judul: "Nearby Car"),
+                        JudulEkatalog(judul: "Car"),
                         const SizedBox(height: 0),
                         BlocListener(
                           bloc: BlocProvider.of<DataKatalogBloc>(context),
@@ -229,9 +264,6 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                     ),
                   ),
                   const SizedBox(height: 20),
-
-                  AboutCard(),
-                  const SizedBox(height: 20),
                 ],
               ),
             ),
@@ -243,6 +275,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
             // }),
           ],
         ),
+      ),
       ),
       bottomNavigationBar: CustomBottomNavbar(
         currentIndex: 0,

@@ -58,7 +58,7 @@ class _HomeAppState extends State<HomeApp> {
                       }),
                     ),
                     Flexible(
-                      child: _buildCircleMenuButton("SewoPoint", Icons.star, () {
+                      child: _buildCircleMenuButton("SewoPoint", Icons.emoji_events, () {
                         Navigator.of(context).pushNamed(SewoPointScreen.routeName);
                       }),
                     ),

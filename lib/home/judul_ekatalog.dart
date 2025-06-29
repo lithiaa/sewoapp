@@ -48,7 +48,7 @@ class _JudulEkatalogState extends State<JudulEkatalog> {
           },
           child: Row(children: [
             Text(
-              "All Product",
+              "See More",
               style: GoogleFonts.openSans(
                 textStyle: TextStyle(
                   color: Colors.blue[600],

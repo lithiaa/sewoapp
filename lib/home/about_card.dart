@@ -44,7 +44,7 @@ class AboutCard extends StatelessWidget {
                     "SEWO",
                     textAlign: TextAlign.center,
                     style: TextStyle(
-                      fontSize: 20,
+                      fontSize: 24,
                       fontWeight: FontWeight.bold,
                       color: Colors.black,
                     ),
@@ -55,17 +55,28 @@ class AboutCard extends StatelessWidget {
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.black87,
                     ),
                   ),
                   const SizedBox(height: 16),
-                  Text(
-                    "SEWO adalah salah satu platform penyedia jasa sewa mobil dan motor untuk sewa harian, mingguan, hingga bulanan. Berbasis aplikasi dan website, pengguna dapat mengakses dimana pun dan kapan pun sesuai dengan kebutuhan pengguna.",
+                  const Text(
+                    "SEWO is a leading vehicle rental platform providing cars and motorcycles for daily, weekly, and monthly rentals. Available on mobile app and website, users can access our services anywhere, anytime according to their needs.",
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize: 15,
-                      color: Colors.black,
+                      color: Colors.black87,
+                      height: 1.5,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  const Text(
+                    "Version 1.0.0",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Colors.black87,
+                      fontWeight: FontWeight.w500,
                     ),
                   ),
                 ],

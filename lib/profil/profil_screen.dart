@@ -5,6 +5,7 @@ import 'package:sewoapp/data_pelanggan/bloc/data_pelanggan_bloc.dart';
 import 'package:sewoapp/data_pelanggan/data/data_pelanggan.dart';
 import 'package:sewoapp/data_pelanggan/data/data_pelanggan_apidata.dart';
 import 'package:sewoapp/home/custom_bottom_navbar.dart';
+import 'package:sewoapp/home/about_card.dart';
 import 'package:sewoapp/login/data/login_apidata.dart';
 import 'package:sewoapp/login/login_screen.dart';
 import 'package:sewoapp/profil/edit_profil_screen.dart';
@@ -100,35 +101,55 @@ class _ProfilScreenState extends State<ProfilScreen> {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('About Us'),
-          content: const SingleChildScrollView(
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: Container(
+            constraints: const BoxConstraints(
+              maxWidth: 400,
+              maxHeight: 500,
+            ),
             child: Column(
               mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  'SewoApp',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                ),
-                SizedBox(height: 10),
-                Text(
-                  'A trusted vehicle rental application that provides various vehicle options for your transportation needs.',
-                ),
-                SizedBox(height: 10),
-                Text(
-                  'Version: 1.0.0',
-                  style: TextStyle(color: Colors.grey),
+                Flexible(
+                  child: SingleChildScrollView(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const AboutCard(),
+                        Padding(
+                          padding: const EdgeInsets.all(16),
+                          child: SizedBox(
+                            width: double.infinity,
+                            child: ElevatedButton(
+                              onPressed: () => Navigator.of(context).pop(),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: const Color(0xFF11316C),
+                                foregroundColor: Colors.white,
+                                padding: const EdgeInsets.symmetric(vertical: 12),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                              ),
+                              child: const Text(
+                                'Close',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
               ],
             ),
           ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text('Close'),
-            ),
-          ],
         );
       },
     );

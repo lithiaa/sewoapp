@@ -52,16 +52,21 @@ class _EmissionsCalculatorPageState extends State<EmissionsCalculatorPage> {
     return Scaffold(
       backgroundColor: EmissionsConstants.backgroundColor,
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        foregroundColor: EmissionsConstants.textPrimary,
-        title: Text(EmissionsConstants.appTitle, style: EmissionsConstants.boldText),
-        actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 16),
-            // child: Image.asset(EmissionsConstants.logoAsset, height: EmissionsConstants.logoHeight),
+        title: Text(
+          EmissionsConstants.appTitle,
+          style: const TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 20,
           ),
-        ],
+        ),
+        backgroundColor: EmissionsConstants.backgroundColor,
+        foregroundColor: EmissionsConstants.textPrimary,
+        elevation: 0,
+        centerTitle: true,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(EmissionsConstants.defaultPadding),

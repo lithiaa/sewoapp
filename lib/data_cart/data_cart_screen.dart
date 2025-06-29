@@ -47,6 +47,12 @@ class _DataCartScreenState extends State<DataCartScreen> {
 
   // Track locally changed quantities
   Map<String, String> _changedQuantities = {};
+  
+  // Promo code variables
+  var promoCodeController = TextEditingController();
+  bool isPromoApplied = false;
+  double discountPercentage = 0.0;
+  String appliedPromoCode = '';
 
   @override
   void initState() {
@@ -202,7 +208,7 @@ class _DataCartScreenState extends State<DataCartScreen> {
                 padding: EdgeInsets.only(
                   left: 10, 
                   right: 10, 
-                  bottom: 100 + MediaQuery.of(context).padding.bottom,
+                  bottom: isPromoApplied ? 180 + MediaQuery.of(context).padding.bottom : 100 + MediaQuery.of(context).padding.bottom,
                 ),
                 child: SingleChildScrollView(
                   child: Padding(
@@ -291,9 +297,10 @@ class _DataCartScreenState extends State<DataCartScreen> {
                         dataKatalogBuilder(),
 
                         const SizedBox(height: 10),
+                        promoCodeWidget(),
+                        const SizedBox(height: 10),
                         pilihBankTujuan(),
                         const SizedBox(height: 10),
-
 
                         uploadBuktiPembayaranWidget(),
                         const SizedBox(height: 10),
@@ -311,7 +318,10 @@ class _DataCartScreenState extends State<DataCartScreen> {
                     if (stateData is DataCartLoadSuccess) {
                       if (!stateData.data.cartEmpty()) {
                         var total = stateData.data.result.first.totalHargaProduk();
-                        harga = total.toString();
+                        double originalTotal = double.tryParse(total.toString()) ?? 0.0;
+                        double discountAmount = originalTotal * discountPercentage;
+                        double finalTotal = originalTotal - discountAmount;
+                        harga = finalTotal.toString();
                         harga = ConfigGlobal.formatRupiah(harga);
                       }
                     }
@@ -331,16 +341,52 @@ class _DataCartScreenState extends State<DataCartScreen> {
                       padding: EdgeInsets.only(
                         left: 16,
                         right: 16,
-                        top: 16,
-                        bottom: 16 + MediaQuery.of(context).padding.bottom,
+                        top: 12,
+                        bottom: 12 + MediaQuery.of(context).padding.bottom,
                       ),
                       child: Row(
                           children: [
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
+                              if (isPromoApplied && stateData is DataCartLoadSuccess && !stateData.data.cartEmpty()) ...[
+                                // Show original price
+                                Text(
+                                  "Original Price",
+                                  style: TextStyle(
+                                    fontSize: 11,
+                                    color: Colors.grey[600],
+                                  ),
+                                ),
+                                Text(
+                                  ConfigGlobal.formatRupiah(stateData.data.result.first.totalHargaProduk().toString()),
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    color: Colors.grey[600],
+                                    decoration: TextDecoration.lineThrough,
+                                  ),
+                                ),
+                                const SizedBox(height: 2),
+                                // Show discount
+                                Text(
+                                  "Discount (${(discountPercentage * 100).toInt()}%)",
+                                  style: const TextStyle(
+                                    fontSize: 11,
+                                    color: Colors.green,
+                                  ),
+                                ),
+                                Text(
+                                  "- ${ConfigGlobal.formatRupiah((double.tryParse(stateData.data.result.first.totalHargaProduk().toString()) ?? 0.0 * discountPercentage).toString())}",
+                                  style: const TextStyle(
+                                    fontSize: 12,
+                                    color: Colors.green,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                                const SizedBox(height: 6),
+                              ],
                               const Text(
-                                "Total Pembayaran",
+                                "Payment Total",
                                 style: TextStyle(
                                   fontSize: 14,
                                   color: Colors.grey,
@@ -349,8 +395,8 @@ class _DataCartScreenState extends State<DataCartScreen> {
                               const SizedBox(height: 4),
                               Text(
                                 harga,
-                                style: const TextStyle(
-                                  fontSize: 20,
+                                style: TextStyle(
+                                  fontSize: isPromoApplied ? 18 : 20,
                                   fontWeight: FontWeight.bold,
                                   color: Colors.black,
                                 ),
@@ -913,6 +959,55 @@ class _DataCartScreenState extends State<DataCartScreen> {
     print('Cart completion process initiated');
   }
 
+  void _applyPromoCode() {
+    String code = promoCodeController.text.trim().toUpperCase();
+    
+    if (code == 'SEWOSEWOSEWO') {
+      setState(() {
+        isPromoApplied = true;
+        discountPercentage = 0.20; // 20% discount
+        appliedPromoCode = code;
+      });
+      
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Promo code applied! 20% discount'),
+          backgroundColor: Colors.green,
+        ),
+      );
+    } else if (code.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Please enter a promo code'),
+          backgroundColor: Colors.orange,
+        ),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Invalid promo code'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
+  void _removePromoCode() {
+    setState(() {
+      isPromoApplied = false;
+      discountPercentage = 0.0;
+      appliedPromoCode = '';
+      promoCodeController.clear();
+    });
+    
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Promo code removed'),
+        backgroundColor: Colors.grey,
+      ),
+    );
+  }
+
   void getSession() async {
     session = await ConfigSessionManager.getInstance().getData();
     print('Session ID: ${session?.id}');
@@ -928,6 +1023,7 @@ class _DataCartScreenState extends State<DataCartScreen> {
   @override
   void dispose() {
     pencarianController.dispose();
+    promoCodeController.dispose();
     super.dispose();
   }
 
@@ -1065,6 +1161,122 @@ class _DataCartScreenState extends State<DataCartScreen> {
                 )
             ],
           )),
+    );
+  }
+
+  Container promoCodeWidget() {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 3),
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        borderRadius: const BorderRadius.all(
+          Radius.circular(10),
+        ),
+        color: Colors.grey[200],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: const [
+              Icon(Icons.local_offer, size: 20, color: Colors.green),
+              SizedBox(width: 8),
+              Text(
+                "Promo Code",
+                style: TextStyle(
+                  fontWeight: FontWeight.w600,
+                  fontSize: 16,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          if (!isPromoApplied) ...[
+            Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: promoCodeController,
+                    decoration: InputDecoration(
+                      hintText: 'Enter promo code',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        borderSide: BorderSide(color: Colors.grey.shade400),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        borderSide: const BorderSide(color: Colors.blue),
+                      ),
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 10,
+                      ),
+                    ),
+                    textCapitalization: TextCapitalization.characters,
+                  ),
+                ),
+                const SizedBox(width: 8),
+                ElevatedButton(
+                  onPressed: _applyPromoCode,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.green,
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 12,
+                    ),
+                  ),
+                  child: const Text('Apply'),
+                ),
+              ],
+            ),
+          ] else ...[
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Colors.green.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: Colors.green.withOpacity(0.3)),
+              ),
+              child: Row(
+                children: [
+                  const Icon(Icons.check_circle, color: Colors.green, size: 20),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Promo Applied: $appliedPromoCode',
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.green,
+                          ),
+                        ),
+                        Text(
+                          '${(discountPercentage * 100).toInt()}% discount',
+                          style: TextStyle(
+                            color: Colors.green.shade700,
+                            fontSize: 12,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  IconButton(
+                    onPressed: _removePromoCode,
+                    icon: const Icon(Icons.close, color: Colors.red, size: 20),
+                    tooltip: 'Remove promo code',
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ],
+      ),
     );
   }
 

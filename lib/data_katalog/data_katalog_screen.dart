@@ -12,6 +12,7 @@ import 'package:sewoapp/data_katalog/data/data_katalog_apidata.dart';
 import 'package:sewoapp/data_katalog/data_katalog_tampil.dart';
 import 'package:sewoapp/login/data/login_apidata.dart';
 import 'package:sewoapp/widgets/loading_widget.dart';
+import 'package:sewoapp/home/custom_bottom_navbar.dart';
 import '../config/config_global.dart';
 import 'package:sewoapp/config/color.dart';
 import 'package:rxdart/rxdart.dart';
@@ -391,6 +392,14 @@ class _DataKatalogScreenState extends State<DataKatalogScreen> {
             ),
           ),
         ),
+      ),
+      bottomNavigationBar: CustomBottomNavbar(
+        currentIndex: 1, // Products tab index
+        onTap: (index) {
+          if (index != 1) { // Jika bukan tab Products yang sedang aktif
+            BottomNavHandler.handleNavigation(context, index);
+          }
+        },
       ),
     );
   }

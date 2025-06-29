@@ -57,6 +57,8 @@ dependencies:
   bloc_concurrency: ^0.3.0
   mockito: ^5.4.2
   pigeon: ^25.5.0
+  image_picker_android: ^0.8.12+23
+  file_picker: ^10.2.0
 
   collection: any
   http: any

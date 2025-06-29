@@ -4,6 +4,7 @@ import 'package:sewoapp/config/color.dart';
 import 'package:sewoapp/enum/repo/enum_remote.dart';
 import 'package:sewoapp/data_pelanggan/bloc/data_pelanggan_simpan_bloc.dart';
 import 'package:sewoapp/data_pelanggan/data/data_pelanggan.dart';
+import 'package:sewoapp/login/document_upload_page.dart';
 
 class DataPelangganTambahScreen extends StatefulWidget {
   static const routeName = "data_pelanggan/tambah";
@@ -74,12 +75,7 @@ class _DataPelangganTambahScreenState extends State<DataPelangganTambahScreen> {
       bloc: BlocProvider.of<DataPelangganSimpanBloc>(context),
       listener: ((context, state) {
         if (state is DataPelangganSimpanLoadSuccess) {
-          const snackBar = SnackBar(
-            backgroundColor: Style.buttonBackgroundColor,
-            content: Text('Pendaftaran berhasil, silahkan login!'),
-          );
-          ScaffoldMessenger.of(context).showSnackBar(snackBar);
-          Navigator.of(context).pop();
+          Navigator.of(context).pushReplacementNamed('/upload-document');
         }
       }),
       child: BlocBuilder<DataPelangganSimpanBloc, DataPelangganSimpanState>(
@@ -203,8 +199,17 @@ class _DataPelangganTambahScreenState extends State<DataPelangganTambahScreen> {
                             shape: const StadiumBorder(), backgroundColor: Style.buttonBackgroundColor,
                           ),
                                 onPressed: () {
-                                  BlocProvider.of<DataPelangganSimpanBloc>(
-                                          context)
+                                  if (!isFormValid()) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        backgroundColor: Colors.red,
+                                        content: Text("Harap lengkapi semua data terlebih dahuolu"),
+                                      ),
+                                    );
+                                    return;
+                                  }
+
+                                  BlocProvider.of<DataPelangganSimpanBloc>(context)
                                       .add(FetchDataPelangganSimpan(form));
                                 },
                                 child: SizedBox(
@@ -274,6 +279,15 @@ class _DataPelangganTambahScreenState extends State<DataPelangganTambahScreen> {
     passwordController.dispose();
 
     super.dispose();
+  }
+
+  bool isFormValid() {
+    return namaController.text.isNotEmpty &&
+        alamatController.text.isNotEmpty &&
+        noTeleponController.text.isNotEmpty &&
+        emailController.text.isNotEmpty &&
+        usernameController.text.isNotEmpty &&
+        passwordController.text.isNotEmpty;
   }
 }
 

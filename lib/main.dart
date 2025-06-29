@@ -28,8 +28,10 @@ import 'package:sewoapp/emissions_calculator/emissions_calculator.dart';
 import 'package:sewoapp/home/home_screen.dart';
 import 'package:sewoapp/home/other_menu.dart';
 import 'package:sewoapp/home/sewo_point_screen.dart';
+import 'package:sewoapp/login/document_upload_page.dart';
 import 'package:sewoapp/login/login_screen.dart';
 import 'package:sewoapp/frame/frame_screen.dart';
+import 'package:sewoapp/login/register_success_widget.dart';
 
 void main() {
   runApp(MyApp());
@@ -152,6 +154,8 @@ class MyApp extends StatelessWidget {
         EmissionsCalculatorPage.routeName: (context) => const  EmissionsCalculatorPage(),
         OtherMenuScreen.routeName: (context) => OtherMenuScreen(),
         SewoPointScreen.routeName: (context) => const SewoPointScreen(),
+        RegisterSuccessWidget.routeName: (context) => const RegisterSuccessWidget(),
+        '/upload-document': (context) => const DocumentUploadPage(),
       },
       theme: ThemeData(
         primaryColor: Style.buttonBackgroundColor,

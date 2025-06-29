@@ -11,6 +11,8 @@ import 'package:sewoapp/login/bloc/register_event.dart';
 import 'package:sewoapp/login/bloc/register_state.dart';
 import 'package:sewoapp/login/data/data_register.dart';
 
+import 'document_upload_page.dart';
+
 class RegisterWidget extends StatefulWidget {
   const RegisterWidget({super.key});
 
@@ -286,18 +288,22 @@ class _RegisterWidgetState extends State<RegisterWidget> {
                       width: double.infinity,
                       height: 50,
                       child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          shape: const StadiumBorder(), backgroundColor: Style.buttonBackgroundColor,
-                        ),
                         onPressed: () {
-                          BlocProvider.of<RegisterBloc>(context)
-                              .add(RegisterPost(form));
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const DocumentUploadPage(),
+                            ),
+                          );
                         },
-                        child: state is RegisterLoading
-                            ? const CircularProgressIndicator(
-                                color: Colors.white,
-                              )
-                            : const Text("Daftar"),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.indigo,
+                          padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 14),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                        child: const Text("NEXT STEP", style: TextStyle(fontSize: 16)),
                       ),
                     ),
                     const Padding(

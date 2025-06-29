@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:sewoapp/config/color.dart';
 import 'package:sewoapp/config/config_session_manager.dart';
 import 'package:sewoapp/data/data_filter.dart';
 import 'package:sewoapp/data_pelanggan/bloc/data_pelanggan_bloc.dart';
@@ -73,7 +72,7 @@ class _EditProfilScreenState extends State<EditProfilScreen> {
       if (event is DataPelangganUbahLoadSuccess) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('Profil berhasil disimpan'),
+            content: Text('Profile saved successfully'),
             backgroundColor: Colors.green,
           ),
         );
@@ -122,7 +121,7 @@ class _EditProfilScreenState extends State<EditProfilScreen> {
     if (namaController.text.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Nama tidak boleh kosong'),
+          content: Text('Name cannot be empty'),
           backgroundColor: Colors.red,
         ),
       );
@@ -132,7 +131,7 @@ class _EditProfilScreenState extends State<EditProfilScreen> {
     if (emailController.text.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Email tidak boleh kosong'),
+          content: Text('Email cannot be empty'),
           backgroundColor: Colors.red,
         ),
       );
@@ -144,7 +143,7 @@ class _EditProfilScreenState extends State<EditProfilScreen> {
     if (sessionData == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Session tidak valid, silakan login ulang'),
+          content: Text('Invalid session, please login again'),
           backgroundColor: Colors.red,
         ),
       );
@@ -166,15 +165,102 @@ class _EditProfilScreenState extends State<EditProfilScreen> {
     ubahBloc.add(FetchDataPelangganUbah(updatedData));
   }
 
+  void _showPhotoOptionsDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Change Profile Photo'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                leading: const Icon(Icons.camera_alt, color: Color(0xFF11316C)),
+                title: const Text('Take Photo'),
+                onTap: () {
+                  Navigator.of(context).pop();
+                  _takePhoto();
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.photo_library, color: Color(0xFF11316C)),
+                title: const Text('Choose from Gallery'),
+                onTap: () {
+                  Navigator.of(context).pop();
+                  _pickFromGallery();
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.delete, color: Colors.red),
+                title: const Text('Remove Photo'),
+                onTap: () {
+                  Navigator.of(context).pop();
+                  _removePhoto();
+                },
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('Cancel'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _takePhoto() {
+    // TODO: Implement camera functionality
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Camera functionality will be implemented soon'),
+        backgroundColor: Colors.blue,
+      ),
+    );
+  }
+
+  void _pickFromGallery() {
+    // TODO: Implement gallery picker functionality
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Gallery picker functionality will be implemented soon'),
+        backgroundColor: Colors.blue,
+      ),
+    );
+  }
+
+  void _removePhoto() {
+    // TODO: Implement remove photo functionality
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Remove photo functionality will be implemented soon'),
+        backgroundColor: Colors.orange,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[100],
+      backgroundColor: const Color(0xFF11316C),
       appBar: AppBar(
-        title: const Text("Edit Profil"),
-        backgroundColor: Style.buttonBackgroundColor,
+        title: const Text(
+          'Edit Profile',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 20,
+          ),
+        ),
+        backgroundColor: const Color(0xFF11316C),
         foregroundColor: Colors.white,
         elevation: 0,
+        centerTitle: true,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
         actions: [
           TextButton(
             onPressed: isSaving ? null : saveProfile,
@@ -188,7 +274,7 @@ class _EditProfilScreenState extends State<EditProfilScreen> {
                   ),
                 )
               : const Text(
-                  'SIMPAN',
+                  'SAVE',
                   style: TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
@@ -199,233 +285,287 @@ class _EditProfilScreenState extends State<EditProfilScreen> {
       ),
       body: Stack(
         children: [
-          SingleChildScrollView(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              children: [
-                const SizedBox(height: 20),
-                // Profile Picture Section
-                Center(
-                  child: Stack(
-                    children: [
-                      Container(
-                        width: 120,
-                        height: 120,
-                        decoration: BoxDecoration(
-                          color: Style.buttonBackgroundColor.withOpacity(0.1),
-                          shape: BoxShape.circle,
-                        ),
-                        child: Icon(
-                          Icons.person,
-                          size: 60,
-                          color: Style.buttonBackgroundColor,
+          SafeArea(
+            child: SingleChildScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Profile Photo Edit Section
+                    Card(
+                      elevation: 4,
+                      color: Colors.white.withOpacity(0.95),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(20),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Profile Photo',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: const Color(0xFF11316C),
+                              ),
+                            ),
+                            const SizedBox(height: 20),
+                            Center(
+                              child: Stack(
+                                children: [
+                                  Container(
+                                    width: 120,
+                                    height: 120,
+                                    decoration: BoxDecoration(
+                                      color: const Color(0xFF11316C).withOpacity(0.1),
+                                      shape: BoxShape.circle,
+                                      border: Border.all(
+                                        color: const Color(0xFF11316C).withOpacity(0.2),
+                                        width: 2,
+                                      ),
+                                    ),
+                                    child: Icon(
+                                      Icons.person,
+                                      size: 60,
+                                      color: const Color(0xFF11316C),
+                                    ),
+                                  ),
+                                  Positioned(
+                                    bottom: 0,
+                                    right: 0,
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        color: const Color(0xFF11316C),
+                                        shape: BoxShape.circle,
+                                        border: Border.all(
+                                          color: Colors.white,
+                                          width: 2,
+                                        ),
+                                      ),
+                                      child: IconButton(
+                                        onPressed: () {
+                                          _showPhotoOptionsDialog();
+                                        },
+                                        icon: const Icon(
+                                          Icons.camera_alt,
+                                          color: Colors.white,
+                                          size: 20,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const SizedBox(height: 16),
+                            Center(
+                              child: Text(
+                                'Tap the camera icon to change your profile photo',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: Colors.grey[600],
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                      Positioned(
-                        bottom: 0,
-                        right: 0,
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: Style.buttonBackgroundColor,
-                            shape: BoxShape.circle,
-                          ),
-                          child: IconButton(
-                            onPressed: () {
-                              // TODO: Implement change photo functionality
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text('Change photo functionality coming soon'),
-                                ),
-                              );
-                            },
-                            icon: const Icon(
-                              Icons.camera_alt,
-                              color: Colors.white,
-                              size: 20,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 30),
-                // Form Fields
-                Card(
-                  elevation: 4,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(20),
-                    child: Column(
-                      children: [
-                        TextFormField(
-                          controller: namaController,
-                          decoration: InputDecoration(
-                            labelText: 'Nama Lengkap',
-                            labelStyle: TextStyle(
-                              color: Style.buttonBackgroundColor,
-                            ),
-                            prefixIcon: Icon(
-                              Icons.person,
-                              color: Style.buttonBackgroundColor,
-                            ),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10),
-                              borderSide: BorderSide(
-                                color: Style.buttonBackgroundColor,
-                              ),
-                            ),
-                            enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10),
-                              borderSide: BorderSide(
-                                color: Style.buttonBackgroundColor.withOpacity(0.5),
-                              ),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10),
-                              borderSide: BorderSide(
-                                color: Style.buttonBackgroundColor,
-                                width: 2,
-                              ),
-                            ),
-                          ),
-                          cursorColor: Style.buttonBackgroundColor,
-                        ),
-                        const SizedBox(height: 20),
-                        TextFormField(
-                          controller: emailController,
-                          decoration: InputDecoration(
-                            labelText: 'Email',
-                            labelStyle: TextStyle(
-                              color: Style.buttonBackgroundColor,
-                            ),
-                            prefixIcon: Icon(
-                              Icons.email,
-                              color: Style.buttonBackgroundColor,
-                            ),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10),
-                              borderSide: BorderSide(
-                                color: Style.buttonBackgroundColor,
-                              ),
-                            ),
-                            enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10),
-                              borderSide: BorderSide(
-                                color: Style.buttonBackgroundColor.withOpacity(0.5),
-                              ),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10),
-                              borderSide: BorderSide(
-                                color: Style.buttonBackgroundColor,
-                                width: 2,
-                              ),
-                            ),
-                          ),
-                          cursorColor: Style.buttonBackgroundColor,
-                        ),
-                        const SizedBox(height: 20),
-                        TextFormField(
-                          controller: noTeleponController,
-                          decoration: InputDecoration(
-                            labelText: 'No. Telepon',
-                            labelStyle: TextStyle(
-                              color: Style.buttonBackgroundColor,
-                            ),
-                            prefixIcon: Icon(
-                              Icons.phone,
-                              color: Style.buttonBackgroundColor,
-                            ),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10),
-                              borderSide: BorderSide(
-                                color: Style.buttonBackgroundColor,
-                              ),
-                            ),
-                            enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10),
-                              borderSide: BorderSide(
-                                color: Style.buttonBackgroundColor.withOpacity(0.5),
-                              ),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10),
-                              borderSide: BorderSide(
-                                color: Style.buttonBackgroundColor,
-                                width: 2,
-                              ),
-                            ),
-                          ),
-                          cursorColor: Style.buttonBackgroundColor,
-                        ),
-                        const SizedBox(height: 20),
-                        TextFormField(
-                          controller: alamatController,
-                          maxLines: 3,
-                          decoration: InputDecoration(
-                            labelText: 'Alamat',
-                            labelStyle: TextStyle(
-                              color: Style.buttonBackgroundColor,
-                            ),
-                            prefixIcon: Icon(
-                              Icons.location_on,
-                              color: Style.buttonBackgroundColor,
-                            ),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10),
-                              borderSide: BorderSide(
-                                color: Style.buttonBackgroundColor,
-                              ),
-                            ),
-                            enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10),
-                              borderSide: BorderSide(
-                                color: Style.buttonBackgroundColor.withOpacity(0.5),
-                              ),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10),
-                              borderSide: BorderSide(
-                                color: Style.buttonBackgroundColor,
-                                width: 2,
-                              ),
-                            ),
-                          ),
-                          cursorColor: Style.buttonBackgroundColor,
-                        ),
-                        const SizedBox(height: 30),
-                        // Additional Info Button
-                        SizedBox(
-                          width: double.infinity,
-                          child: OutlinedButton.icon(
-                            onPressed: () {
-                              // TODO: Navigate to detailed edit screen
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text('Detailed edit functionality coming soon'),
-                                ),
-                              );
-                            },
-                            icon: const Icon(Icons.edit),
-                            label: const Text('Edit Informasi Lengkap'),
-                            style: OutlinedButton.styleFrom(
-                              foregroundColor: Style.buttonBackgroundColor,
-                              side: BorderSide(color: Style.buttonBackgroundColor),
-                              padding: const EdgeInsets.symmetric(vertical: 12),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
                     ),
-                  ),
+                    const SizedBox(height: 20),
+                    // Edit Form Section
+                    Card(
+                      elevation: 4,
+                      color: Colors.white.withOpacity(0.95),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(20),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Edit Information',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: const Color(0xFF11316C),
+                              ),
+                            ),
+                            const SizedBox(height: 20),
+                            TextFormField(
+                              controller: namaController,
+                              decoration: InputDecoration(
+                                labelText: 'Full Name',
+                                labelStyle: TextStyle(
+                                  color: const Color(0xFF11316C),
+                                ),
+                                prefixIcon: Icon(
+                                  Icons.person,
+                                  color: const Color(0xFF11316C),
+                                ),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                  borderSide: BorderSide(
+                                    color: const Color(0xFF11316C),
+                                  ),
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                  borderSide: BorderSide(
+                                    color: const Color(0xFF11316C).withOpacity(0.5),
+                                  ),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                  borderSide: BorderSide(
+                                    color: const Color(0xFF11316C),
+                                    width: 2,
+                                  ),
+                                ),
+                              ),
+                              cursorColor: const Color(0xFF11316C),
+                            ),
+                            const SizedBox(height: 20),
+                            TextFormField(
+                              controller: emailController,
+                              decoration: InputDecoration(
+                                labelText: 'Email',
+                                labelStyle: TextStyle(
+                                  color: const Color(0xFF11316C),
+                                ),
+                                prefixIcon: Icon(
+                                  Icons.email,
+                                  color: const Color(0xFF11316C),
+                                ),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                  borderSide: BorderSide(
+                                    color: const Color(0xFF11316C),
+                                  ),
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                  borderSide: BorderSide(
+                                    color: const Color(0xFF11316C).withOpacity(0.5),
+                                  ),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                  borderSide: BorderSide(
+                                    color: const Color(0xFF11316C),
+                                    width: 2,
+                                  ),
+                                ),
+                              ),
+                              cursorColor: const Color(0xFF11316C),
+                            ),
+                            const SizedBox(height: 20),
+                            TextFormField(
+                              controller: noTeleponController,
+                              decoration: InputDecoration(
+                                labelText: 'Phone Number',
+                                labelStyle: TextStyle(
+                                  color: const Color(0xFF11316C),
+                                ),
+                                prefixIcon: Icon(
+                                  Icons.phone,
+                                  color: const Color(0xFF11316C),
+                                ),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                  borderSide: BorderSide(
+                                    color: const Color(0xFF11316C),
+                                  ),
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                  borderSide: BorderSide(
+                                    color: const Color(0xFF11316C).withOpacity(0.5),
+                                  ),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                  borderSide: BorderSide(
+                                    color: const Color(0xFF11316C),
+                                    width: 2,
+                                  ),
+                                ),
+                              ),
+                              cursorColor: const Color(0xFF11316C),
+                            ),
+                            const SizedBox(height: 20),
+                            TextFormField(
+                              controller: alamatController,
+                              maxLines: 3,
+                              decoration: InputDecoration(
+                                labelText: 'Address',
+                                labelStyle: TextStyle(
+                                  color: const Color(0xFF11316C),
+                                ),
+                                prefixIcon: Icon(
+                                  Icons.location_on,
+                                  color: const Color(0xFF11316C),
+                                ),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                  borderSide: BorderSide(
+                                    color: const Color(0xFF11316C),
+                                  ),
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                  borderSide: BorderSide(
+                                    color: const Color(0xFF11316C).withOpacity(0.5),
+                                  ),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                  borderSide: BorderSide(
+                                    color: const Color(0xFF11316C),
+                                    width: 2,
+                                  ),
+                                ),
+                              ),
+                              cursorColor: const Color(0xFF11316C),
+                            ),
+                            const SizedBox(height: 30),
+                            // Additional Info Button
+                            SizedBox(
+                              width: double.infinity,
+                              child: OutlinedButton.icon(
+                                onPressed: () {
+                                  // TODO: Navigate to detailed edit screen
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text('Detailed edit functionality coming soon'),
+                                    ),
+                                  );
+                                },
+                                icon: const Icon(Icons.edit),
+                                label: const Text('Edit Complete Information'),
+                                style: OutlinedButton.styleFrom(
+                                  foregroundColor: const Color(0xFF11316C),
+                                  side: BorderSide(color: const Color(0xFF11316C)),
+                                  padding: const EdgeInsets.symmetric(vertical: 12),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-              ],
+              ),
             ),
           ),
           // Loading Overlay
@@ -437,10 +577,12 @@ class _EditProfilScreenState extends State<EditProfilScreen> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const CircularProgressIndicator(),
+                      const CircularProgressIndicator(
+                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                      ),
                       const SizedBox(height: 16),
                       Text(
-                        isSaving ? 'Menyimpan...' : 'Memuat...',
+                        isSaving ? 'Saving...' : 'Loading...',
                         style: const TextStyle(
                           color: Colors.white,
                           fontSize: 16,

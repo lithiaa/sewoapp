@@ -3,6 +3,8 @@ import 'package:sewoapp/config/config_session_manager.dart';
 import 'package:sewoapp/login/data/login_apidata.dart';
 import 'package:sewoapp/login/login_screen.dart';
 import 'package:sewoapp/config/color.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:geocoding/geocoding.dart';
 
 class LocationAccountHeader extends StatefulWidget {
   const LocationAccountHeader({super.key});
@@ -14,12 +16,14 @@ class LocationAccountHeader extends StatefulWidget {
 class LocationAccountHeaderState extends State<LocationAccountHeader> {
   LoginApiData? userData;
   bool isLoggedIn = false;
-  String currentLocation = 'Jakarta, DKI Jakarta'; // Default location
+  String currentLocation = 'Getting location...'; // Default while loading
+  bool isLoadingLocation = true;
 
   @override
   void initState() {
     super.initState();
     _checkLoginStatus();
+    _getCurrentLocation();
   }
 
   // Method public untuk memperbarui status login dari luar
@@ -57,6 +61,100 @@ class LocationAccountHeaderState extends State<LocationAccountHeader> {
     }
   }
 
+  Future<void> _getCurrentLocation() async {
+    try {
+      // Check if location services are enabled
+      bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+      if (!serviceEnabled) {
+        if (mounted) {
+          setState(() {
+            currentLocation = 'Jakarta, DKI Jakarta'; // Fallback
+            isLoadingLocation = false;
+          });
+        }
+        return;
+      }
+
+      // Check location permissions
+      LocationPermission permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied) {
+        permission = await Geolocator.requestPermission();
+        if (permission == LocationPermission.denied) {
+          if (mounted) {
+            setState(() {
+              currentLocation = 'Jakarta, DKI Jakarta'; // Fallback
+              isLoadingLocation = false;
+            });
+          }
+          return;
+        }
+      }
+
+      if (permission == LocationPermission.deniedForever) {
+        if (mounted) {
+          setState(() {
+            currentLocation = 'Jakarta, DKI Jakarta'; // Fallback
+            isLoadingLocation = false;
+          });
+        }
+        return;
+      }
+
+      // Get current position
+      Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.medium,
+        timeLimit: const Duration(seconds: 10),
+      );
+
+      // Get location name from coordinates
+      List<Placemark> placemarks = await placemarkFromCoordinates(
+        position.latitude,
+        position.longitude,
+      );
+
+      if (placemarks.isNotEmpty) {
+        Placemark place = placemarks[0];
+        String locationName = '';
+        
+        if (place.subLocality != null && place.subLocality!.isNotEmpty) {
+          locationName = place.subLocality!;
+        } else if (place.locality != null && place.locality!.isNotEmpty) {
+          locationName = place.locality!;
+        } else if (place.subAdministrativeArea != null && place.subAdministrativeArea!.isNotEmpty) {
+          locationName = place.subAdministrativeArea!;
+        }
+
+        if (place.administrativeArea != null && place.administrativeArea!.isNotEmpty) {
+          locationName += locationName.isNotEmpty 
+              ? ', ${place.administrativeArea}' 
+              : place.administrativeArea!;
+        }
+
+        if (mounted) {
+          setState(() {
+            currentLocation = locationName.isNotEmpty ? locationName : 'Unknown Location';
+            isLoadingLocation = false;
+          });
+        }
+      } else {
+        if (mounted) {
+          setState(() {
+            currentLocation = 'Location detected';
+            isLoadingLocation = false;
+          });
+        }
+      }
+    } catch (e) {
+      print('Error getting location: $e');
+      if (mounted) {
+        setState(() {
+          currentLocation = 'Jakarta, DKI Jakarta'; // Fallback to default
+          isLoadingLocation = false;
+        });
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -83,11 +181,35 @@ class LocationAccountHeaderState extends State<LocationAccountHeader> {
                 const SizedBox(height: 4),
                 Row(
                   children: [
-                    Icon(
-                      Icons.location_on_outlined,
-                      color: Colors.white,
-                      size: 16,
-                    ),
+                    if (isLoadingLocation)
+                      Container(
+                        width: 12,
+                        height: 12,
+                        margin: const EdgeInsets.only(right: 6),
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                        ),
+                      )
+                    else
+                      InkWell(
+                        onTap: () {
+                          setState(() {
+                            isLoadingLocation = true;
+                            currentLocation = 'Getting location...';
+                          });
+                          _getCurrentLocation();
+                        },
+                        borderRadius: BorderRadius.circular(8),
+                        child: Container(
+                          padding: const EdgeInsets.all(2),
+                          child: Icon(
+                            Icons.location_on_outlined,
+                            color: Colors.white,
+                            size: 16,
+                          ),
+                        ),
+                      ),
                     const SizedBox(width: 6),
                     Expanded(
                       child: Text(

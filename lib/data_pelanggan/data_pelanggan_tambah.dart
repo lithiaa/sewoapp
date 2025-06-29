@@ -4,7 +4,6 @@ import 'package:sewoapp/config/color.dart';
 import 'package:sewoapp/enum/repo/enum_remote.dart';
 import 'package:sewoapp/data_pelanggan/bloc/data_pelanggan_simpan_bloc.dart';
 import 'package:sewoapp/data_pelanggan/data/data_pelanggan.dart';
-import 'package:sewoapp/login/document_upload_page.dart';
 
 class DataPelangganTambahScreen extends StatefulWidget {
   static const routeName = "data_pelanggan/tambah";
@@ -64,8 +63,8 @@ class _DataPelangganTambahScreenState extends State<DataPelangganTambahScreen> {
 
   @override
   Widget build(BuildContext context) {
-    var args = ModalRoute.of(context)!.settings.arguments
-        as DataPelangganTambahArguments;
+    // var args = ModalRoute.of(context)!.settings.arguments
+    //     as DataPelangganTambahArguments;
 
     /* tanggalController.text = args.data.tanggal ?? "";
     hapalanController.text = args.data.hapalan ?? "";
@@ -81,7 +80,24 @@ class _DataPelangganTambahScreenState extends State<DataPelangganTambahScreen> {
       child: BlocBuilder<DataPelangganSimpanBloc, DataPelangganSimpanState>(
         builder: (context, state) {
           return Scaffold(
-            appBar: AppBar(title: Text(args.judul)),
+            backgroundColor: const Color(0xFF11316C),
+            appBar: AppBar(
+              title: const Text(
+                'Sign Up',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 20,
+                ),
+              ),
+              backgroundColor: const Color(0xFF11316C),
+              foregroundColor: Colors.white,
+              elevation: 0,
+              centerTitle: true,
+              leading: IconButton(
+                icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
+                onPressed: () => Navigator.of(context).pop(),
+              ),
+            ),
             body: SingleChildScrollView(
               child: Form(
                 child: Card(
@@ -91,7 +107,7 @@ class _DataPelangganTambahScreenState extends State<DataPelangganTambahScreen> {
                   ),
                   child: Padding(
                     padding:
-                        const EdgeInsets.only(left: 20, right: 20, bottom: 20),
+                        const EdgeInsets.only(left: 20, right: 20, top: 20, bottom: 20),
                     child: Column(
                       children: [
                         // const LoginDataPelangganScreen(),
@@ -130,7 +146,7 @@ class _DataPelangganTambahScreenState extends State<DataPelangganTambahScreen> {
 
                         TextFormField(
                           decoration: const InputDecoration(
-                            prefixIcon: Icon(Icons.book),
+                            prefixIcon: Icon(Icons.person),
                             border: OutlineInputBorder(),
                             labelText: 'Nama',
                           ),
@@ -140,7 +156,7 @@ class _DataPelangganTambahScreenState extends State<DataPelangganTambahScreen> {
 
                         TextFormField(
                           decoration: const InputDecoration(
-                            prefixIcon: Icon(Icons.book),
+                            prefixIcon: Icon(Icons.location_on),
                             border: OutlineInputBorder(),
                             labelText: 'Alamat',
                           ),
@@ -150,7 +166,7 @@ class _DataPelangganTambahScreenState extends State<DataPelangganTambahScreen> {
 
                         TextFormField(
                           decoration: const InputDecoration(
-                            prefixIcon: Icon(Icons.book),
+                            prefixIcon: Icon(Icons.phone),
                             border: OutlineInputBorder(),
                             labelText: 'No Telepon',
                           ),
@@ -160,7 +176,7 @@ class _DataPelangganTambahScreenState extends State<DataPelangganTambahScreen> {
 
                         TextFormField(
                           decoration: const InputDecoration(
-                            prefixIcon: Icon(Icons.book),
+                            prefixIcon: Icon(Icons.email),
                             border: OutlineInputBorder(),
                             labelText: 'Email',
                           ),
@@ -170,7 +186,7 @@ class _DataPelangganTambahScreenState extends State<DataPelangganTambahScreen> {
 
                         TextFormField(
                           decoration: const InputDecoration(
-                            prefixIcon: Icon(Icons.book),
+                            prefixIcon: Icon(Icons.account_circle),
                             border: OutlineInputBorder(),
                             labelText: 'Username',
                           ),
@@ -181,7 +197,7 @@ class _DataPelangganTambahScreenState extends State<DataPelangganTambahScreen> {
                         TextFormField(
                           obscureText: true,
                           decoration: const InputDecoration(
-                            prefixIcon: Icon(Icons.book),
+                            prefixIcon: Icon(Icons.lock),
                             border: OutlineInputBorder(),
                             labelText: 'Password',
                           ),
@@ -215,19 +231,14 @@ class _DataPelangganTambahScreenState extends State<DataPelangganTambahScreen> {
                                 child: SizedBox(
                                   height: 50,
                                   width: double.infinity,
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: const [
-                                      Icon(Icons.save),
-                                      SizedBox(width: 5),
-                                      Text(
-                                        "Sign Up",
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                        ),
+                                  child: Center(
+                                    child: Text(
+                                      "Sign Up",
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.white,
                                       ),
-                                    ],
+                                    ),
                                   ),
                                 ),
 
@@ -251,7 +262,10 @@ class _DataPelangganTambahScreenState extends State<DataPelangganTambahScreen> {
                             },
                             child: const Text(
                               "Log In",
-                              style: TextStyle(fontWeight: FontWeight.bold),
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
                             ),
                           ),
                         ),

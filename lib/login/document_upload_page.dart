@@ -57,16 +57,34 @@ class _DocumentUploadPageState extends State<DocumentUploadPage> {
         const SizedBox(height: 8),
         Row(
           children: [
-            ElevatedButton.icon(
-              onPressed: () => _takePhoto(title),
-              icon: const Icon(Icons.camera_alt),
-              label: const Text("Take Photo"),
+            Expanded(
+              child: ElevatedButton.icon(
+                onPressed: () => _takePhoto(title),
+                icon: const Icon(Icons.camera_alt),
+                label: const Text("Take Photo"),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF11316C),
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+              ),
             ),
             const SizedBox(width: 8),
-            ElevatedButton.icon(
-              onPressed: () => _uploadDocument(title),
-              icon: const Icon(Icons.upload_file),
-              label: const Text("Upload Document"),
+            Expanded(
+              child: ElevatedButton.icon(
+                onPressed: () => _uploadDocument(title),
+                icon: const Icon(Icons.upload_file),
+                label: const Text("Upload"),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.grey[600],
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+              ),
             ),
           ],
         ),
@@ -104,14 +122,38 @@ class _DocumentUploadPageState extends State<DocumentUploadPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xFF11316C),
       appBar: AppBar(
-        title: const Text("Upload Requirements Documents"),
-        backgroundColor: Colors.indigo,
+        title: const Text(
+          'Upload Requirements Documents',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 20,
+          ),
+        ),
+        backgroundColor: const Color(0xFF11316C),
+        foregroundColor: Colors.white,
+        elevation: 0,
+        centerTitle: true,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          children: [
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Card(
+              elevation: 8,
+              color: Colors.white.withOpacity(0.95),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  children: [
             _buildUploadRow("ID Card", required: true),
             _buildUploadRow("Face Capture", required: true),
             _buildUploadRow("Driving License", required: true),
@@ -163,19 +205,32 @@ class _DocumentUploadPageState extends State<DocumentUploadPage> {
             const SizedBox(height: 16),
             SizedBox(
               width: double.infinity,
+              height: 50,
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.indigo,
+                  backgroundColor: const Color(0xFF11316C),
+                  foregroundColor: Colors.white,
                   padding: const EdgeInsets.symmetric(vertical: 14),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8),
                   ),
                 ),
                 onPressed: _submitForm,
-                child: const Text("REGISTER", style: TextStyle(fontSize: 16, color: Colors.white)),
+                child: const Text(
+                  "REGISTER", 
+                  style: TextStyle(
+                    fontSize: 16, 
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
               ),
             ),
-          ],
+                  ],
+                ),
+              ),
+            ),
+          ),
         ),
       ),
     );

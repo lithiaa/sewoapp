@@ -37,6 +37,15 @@ class _DataCartTampilState extends State<DataCartTampil> {
     _retrievalDate = DateTime.now();
   }
 
+  @override
+  void didUpdateWidget(DataCartTampil oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // Update _jumlah if the data from parent has changed
+    if (oldWidget.data.jumlah != widget.data.jumlah) {
+      _jumlah = (int.tryParse(widget.data.jumlah ?? '1') ?? 1).toString();
+    }
+  }
+
   String get _returnDate {
     if (_retrievalDate == null) return '-';
     final days = int.tryParse(_jumlah) ?? 1;
@@ -354,14 +363,6 @@ class NumericStepButton extends StatefulWidget {
 }
 
 class _NumericStepButtonState extends State<NumericStepButton> {
-  late int counter;
-
-  @override
-  void initState() {
-    super.initState();
-    counter = widget.value;
-  }
-
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -375,18 +376,15 @@ class _NumericStepButtonState extends State<NumericStepButton> {
           padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 3),
           iconSize: 32.0,
           onPressed: () {
-            setState(() {
-              if (counter <= widget.minValue) {
-                widget.onChanged(counter - 1); // Trigger alert for < 1
-              } else {
-                counter--;
-                widget.onChanged(counter);
-              }
-            });
+            if (widget.value <= widget.minValue) {
+              widget.onChanged(widget.value - 1); // Trigger alert for < 1
+            } else {
+              widget.onChanged(widget.value - 1);
+            }
           },
         ),
         Text(
-          '$counter',
+          '${widget.value}',
           textAlign: TextAlign.center,
           style: const TextStyle(
             color: Colors.black87,
@@ -402,12 +400,9 @@ class _NumericStepButtonState extends State<NumericStepButton> {
           padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 3),
           iconSize: 32.0,
           onPressed: () {
-            setState(() {
-              if (counter < widget.maxValue) {
-                counter++;
-                widget.onChanged(counter);
-              }
-            });
+            if (widget.value < widget.maxValue) {
+              widget.onChanged(widget.value + 1);
+            }
           },
         ),
       ],

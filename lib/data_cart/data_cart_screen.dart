@@ -45,9 +45,9 @@ class _DataCartScreenState extends State<DataCartScreen> {
 
   LoginApiData? session;
 
-  // Track locally changed quantities
-  Map<String, String> _changedQuantities = {};
-  
+  // Track local quantity changes (temporarily, will be sent to API later)
+  Map<String, String> _localQuantityChanges = {};
+
   // Promo code variables
   var promoCodeController = TextEditingController();
   bool isPromoApplied = false;
@@ -139,15 +139,6 @@ class _DataCartScreenState extends State<DataCartScreen> {
             },
           ),
         ),
-        floatingActionButton: _changedQuantities.isNotEmpty
-            ? FloatingActionButton.extended(
-                onPressed: _saveChanges,
-                backgroundColor: Colors.green,
-                foregroundColor: Colors.white,
-                icon: const Icon(Icons.save),
-                label: const Text('Save Changes'),
-              )
-            : null,
         body: MultiBlocListener(
           listeners: [
             BlocListener<DataCartHapusBloc, DataCartHapusState>(
@@ -269,7 +260,7 @@ class _DataCartScreenState extends State<DataCartScreen> {
                                           );
                                         }
                                         return const Text(
-                                          'Review items and proceed to checkout',
+                                          'Add items to your cart and complete your rental.',
                                           style: TextStyle(
                                             color: Colors.white70,
                                             fontSize: 14,
@@ -317,8 +308,9 @@ class _DataCartScreenState extends State<DataCartScreen> {
                     var harga = "-";
                     if (stateData is DataCartLoadSuccess) {
                       if (!stateData.data.cartEmpty()) {
-                        var total = stateData.data.result.first.totalHargaProduk();
-                        double originalTotal = double.tryParse(total.toString()) ?? 0.0;
+                        // Calculate total with current cart data
+                        final cartItems = stateData.data.result.first.details!;
+                        double originalTotal = _calculateTotal(cartItems);
                         double discountAmount = originalTotal * discountPercentage;
                         double finalTotal = originalTotal - discountAmount;
                         harga = finalTotal.toString();
@@ -350,7 +342,7 @@ class _DataCartScreenState extends State<DataCartScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               if (isPromoApplied && stateData is DataCartLoadSuccess && !stateData.data.cartEmpty()) ...[
-                                // Show original price
+                                // Show original price with current cart data
                                 Text(
                                   "Original Price",
                                   style: TextStyle(
@@ -359,7 +351,7 @@ class _DataCartScreenState extends State<DataCartScreen> {
                                   ),
                                 ),
                                 Text(
-                                  ConfigGlobal.formatRupiah(stateData.data.result.first.totalHargaProduk().toString()),
+                                  ConfigGlobal.formatRupiah(_calculateTotal(stateData.data.result.first.details!).toString()),
                                   style: TextStyle(
                                     fontSize: 12,
                                     color: Colors.grey[600],
@@ -376,7 +368,7 @@ class _DataCartScreenState extends State<DataCartScreen> {
                                   ),
                                 ),
                                 Text(
-                                  "- ${ConfigGlobal.formatRupiah((double.tryParse(stateData.data.result.first.totalHargaProduk().toString()) ?? 0.0 * discountPercentage).toString())}",
+                                  "- ${ConfigGlobal.formatRupiah((_calculateTotal(stateData.data.result.first.details!) * discountPercentage).toString())}",
                                   style: const TextStyle(
                                     fontSize: 12,
                                     color: Colors.green,
@@ -408,19 +400,23 @@ class _DataCartScreenState extends State<DataCartScreen> {
                             bloc: BlocProvider.of<DataCartSelesaiBloc>(context),
                             listener: (context, state) {
                               if (state is DataCartSelesaiLoadSuccess) {
+                                // Clear local quantity changes on successful checkout
+                                setState(() {
+                                  _localQuantityChanges.clear();
+                                });
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(
                                     backgroundColor: Style.buttonBackgroundColor,
-                                    content: Text('Payment processed successfully!'),
+                                    content: Text('Rental confirmed successfully!'),
                                   ),
                                 );
                                 Navigator.of(context).pop();
                               } else if (state is DataCartSelesaiLoadFailure) {
-                                print('Payment failed: ${state.pesan}');
+                                print('Rental failed: ${state.pesan}');
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(
                                     backgroundColor: Colors.red,
-                                    content: Text('Payment failed: ${state.pesan}'),
+                                    content: Text('Rental failed: ${state.pesan}'),
                                   ),
                                 );
                               }
@@ -450,7 +446,7 @@ class _DataCartScreenState extends State<DataCartScreen> {
                                         ),
                                       );
                                     } else {
-                                      print('Payment button pressed - calling _onPressSelesai');
+                                      print('Rent button pressed - calling _onPressSelesai');
                                       _onPressSelesai();
                                     }
                                   },
@@ -463,9 +459,9 @@ class _DataCartScreenState extends State<DataCartScreen> {
                                   child: Row(
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
-                                      Icon(dataFormComplete() ? Icons.done_all : Icons.warning),
+                                      Icon(dataFormComplete() ? Icons.handshake : Icons.warning),
                                       const SizedBox(width: 3),
-                                      Text(dataFormComplete() ? "Rent" : "Complete Info"),
+                                      Text(dataFormComplete() ? "Confirm Rental" : "Complete Info"),
                                     ],
                                   ),
                                 );
@@ -596,7 +592,7 @@ class _DataCartScreenState extends State<DataCartScreen> {
                 ),
               ),
               child: DataCartTampil(
-                data: data[index],
+                data: _getItemWithLocalQuantity(data[index]), // Use item with local quantity changes
                 onTapHapus: (value) async {
                   print('Delete button tapped: idDetailPemesanan=${value.idDetailPemesanan}, idProduk=${value.idProduk}');
                   if (value.idDetailPemesanan == null && value.idProduk == null) {
@@ -667,10 +663,12 @@ class _DataCartScreenState extends State<DataCartScreen> {
                   );
                 },
                 onQuantityChanged: (value) {
-                  // Track quantity changes locally
+                  // Update quantity locally without API call
+                  print('Quantity changed locally for ${value.idProduk}: ${value.jumlah}');
                   setState(() {
-                    _changedQuantities[value.idProduk ?? ''] = value.jumlah ?? '1';
+                    _localQuantityChanges[value.idProduk ?? ''] = value.jumlah ?? '1';
                   });
+                  print('Local quantity changes: $_localQuantityChanges');
                 },
               ),
             );
@@ -897,43 +895,40 @@ class _DataCartScreenState extends State<DataCartScreen> {
       return;
     }
 
+    // Get current cart data
+    final stateData = context.read<DataCartBloc>().state;
+    if (stateData is! DataCartLoadSuccess || stateData.data.cartEmpty()) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Cart is empty'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
     print('Checking saved date...');
     final savedDate = await ConfigSessionManager.getInstance().getRetrievalDate();
 
-    if (savedDate == null) {
-      print('No saved date, showing confirmation dialog');
-      final now = DateTime.now();
-      final confirm = await showDialog<bool>(
-        context: context,
-        builder: (context) => AlertDialog(
-          title: const Text('Confirmation'),
-          content: const Text('Use today\'s date for rental?'),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context, false),
-              child: const Text('Choose Other Date'),
-            ),
-            TextButton(
-              onPressed: () => Navigator.pop(context, true),
-              child: const Text('Use Today'),
-            ),
-          ],
-        ),
-      );
-
-      if (confirm == true) {
-        print('User confirmed to use today\'s date');
-        await ConfigSessionManager.getInstance().saveRetrievalDate(now);
-      } else {
-        print('User cancelled or chose other date');
-        return;
-      }
-    }
-
+    // Use saved date if available, otherwise use today's date
     final finalDate = savedDate ?? DateTime.now();
+    
+    // Save today's date if no date was previously saved
+    if (savedDate == null) {
+      print('No saved date, using today\'s date');
+      await ConfigSessionManager.getInstance().saveRetrievalDate(finalDate);
+    }
     print('Using date: $finalDate');
 
+    // Update quantities in database before checkout if there are local changes
+    if (_localQuantityChanges.isNotEmpty) {
+      print('Updating quantities in database before checkout...');
+      await _updateQuantitiesBeforeCheckout();
+    }
+
     final formatter = DateFormat('dd-MM-yyyy');
+    
+    // Prepare cart data with all items
     var data = DataCart(
       idPelanggan: session!.id,
       idBank: dataBank!.idBank,
@@ -941,22 +936,93 @@ class _DataCartScreenState extends State<DataCartScreen> {
       file: File(_image!.path),
     );
 
-    print('Submitting cart completion with data - idPelanggan: ${data.idPelanggan}, idBank: ${data.idBank}');
+    // Get all cart items and apply local quantity changes
+    final cartItems = stateData.data.result.first.details!;
+    List<Map<String, dynamic>> detailItems = [];
+    
+    print('Processing ${cartItems.length} cart items with local changes: $_localQuantityChanges');
+    
+    for (var item in cartItems) {
+      String originalQuantity = item.jumlah ?? '1';
+      String finalQuantity = originalQuantity;
+      
+      // Apply local quantity changes if exists
+      if (_localQuantityChanges.containsKey(item.idProduk)) {
+        finalQuantity = _localQuantityChanges[item.idProduk!]!;
+        print('Item ${item.idProduk}: original quantity=$originalQuantity, updated quantity=$finalQuantity');
+      } else {
+        print('Item ${item.idProduk}: using original quantity=$originalQuantity');
+      }
+      
+      detailItems.add({
+        'id_produk': item.idProduk,
+        'jumlah': finalQuantity,
+        'harga': item.harga,
+      });
+    }
+
+    print('Final detail items to send: $detailItems');
+
+    print('Submitting checkout with ${detailItems.length} items');
+    print('Cart completion with data - idPelanggan: ${data.idPelanggan}, idBank: ${data.idBank}');
     
     // Show loading message
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
-        content: Text('Processing payment...'),
-        duration: Duration(seconds: 2),
+        content: Text('Processing rental and payment...'),
+        duration: Duration(seconds: 3),
       ),
     );
 
+    // Send data with detail items to be processed
     BlocProvider.of<DataCartSelesaiBloc>(context).add(
-      FetchDataCartSelesai(data),
+      FetchDataCartSelesaiWithDetails(data, detailItems),
     );
 
     await ConfigSessionManager.getInstance().clearRetrievalDate();
     print('Cart completion process initiated');
+  }
+
+  // Update quantities in database before checkout
+  Future<void> _updateQuantitiesBeforeCheckout() async {
+    if (_localQuantityChanges.isEmpty) {
+      print('No local quantity changes to update');
+      return;
+    }
+    
+    print('Updating ${_localQuantityChanges.length} quantity changes before checkout');
+    
+    for (var entry in _localQuantityChanges.entries) {
+      String idProduk = entry.key;
+      String newQuantity = entry.value;
+      
+      try {
+        print('Updating quantity for product $idProduk to $newQuantity');
+        BlocProvider.of<DataCartUbahBloc>(context).add(
+          FetchDataCartUbah(
+            DataFilter(
+              berdasarkan: "id_produk_jumlah",
+              isi: "$idProduk|$newQuantity",
+              idPeserta: "${session!.id}",
+            ),
+          ),
+        );
+        
+        // Wait a bit to avoid overwhelming the server
+        await Future.delayed(const Duration(milliseconds: 300));
+      } catch (e) {
+        print('Failed to update quantity for product $idProduk: $e');
+      }
+    }
+    
+    // Wait for all updates to complete
+    await Future.delayed(const Duration(seconds: 1));
+    
+    // Refresh cart data to get updated quantities
+    fetchData();
+    
+    // Wait for refresh to complete
+    await Future.delayed(const Duration(milliseconds: 500));
   }
 
   void _applyPromoCode() {
@@ -1376,32 +1442,46 @@ class _DataCartScreenState extends State<DataCartScreen> {
     }
   }
 
-  Future<void> _saveChanges() async {
-    try {
-      // Since the API doesn't support direct quantity updates,
-      // we'll show a success message and clear the changes for now
-      // In a real implementation, you'd call an API to save the updated quantities
-      
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Saved ${_changedQuantities.length} quantity changes'),
-          backgroundColor: Colors.green,
-        ),
-      );
-      
-      setState(() {
-        _changedQuantities.clear();
-      });
-      
-      // Refresh the cart data to get latest state
-      fetchData();
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Failed to save changes: $e'),
-          backgroundColor: Colors.red,
-        ),
-      );
+  // Helper method to get cart item with local quantity changes applied
+  DataDetailPemesananApiData _getItemWithLocalQuantity(DataDetailPemesananApiData originalItem) {
+    String currentQuantity = originalItem.jumlah ?? '1';
+    
+    // Apply local quantity changes if exists
+    if (_localQuantityChanges.containsKey(originalItem.idProduk)) {
+      currentQuantity = _localQuantityChanges[originalItem.idProduk!]!;
+      print('Using local quantity for ${originalItem.idProduk}: $currentQuantity (original: ${originalItem.jumlah})');
     }
+    
+    // Return item with updated quantity
+    return DataDetailPemesananApiData(
+      idDetailPemesanan: originalItem.idDetailPemesanan,
+      idPemesanan: originalItem.idPemesanan,
+      idProduk: originalItem.idProduk,
+      jumlah: currentQuantity,
+      harga: originalItem.harga,
+      namaProduk: originalItem.namaProduk,
+      gambar: originalItem.gambar,
+    );
+  }
+
+  // Calculate total price with local quantity changes
+  double _calculateTotal(List<DataDetailPemesananApiData> cartItems) {
+    double total = 0.0;
+    
+    for (var item in cartItems) {
+      String quantity = item.jumlah ?? '1';
+      
+      // Apply local quantity changes if exists
+      if (_localQuantityChanges.containsKey(item.idProduk)) {
+        quantity = _localQuantityChanges[item.idProduk!]!;
+      }
+      
+      double price = double.tryParse(item.harga ?? '0') ?? 0.0;
+      int qty = int.tryParse(quantity) ?? 1;
+      
+      total += (price * qty);
+    }
+    
+    return total;
   }
 }

@@ -185,7 +185,7 @@ class DataCartApiService {
   Future<DataCartResultApi> updateQuantity(String idProduk, String jumlah, String idPelanggan) async {
     try {
       await dio.post(
-        "app/page/data_cart/proses_update_quantity.php",
+        "app/page/data_cart/proses_update.php",
         data: FormData.fromMap({
           'id_produk': idProduk,
           'jumlah': jumlah,
@@ -277,6 +277,70 @@ class DataCartApiService {
       print('Payment completion error: $error');
       print('Payment completion stacktrace: $stacktrace');
       throw Exception("Payment processing failed: $error");
+    }
+  }
+
+  Future<DataCartResultApi> prosesSelesaiWithDetails(DataCart data, List<Map<String, dynamic>> detailItems) async {
+    try {
+      print('Sending rental completion request with data and ${detailItems.length} items:');
+      print('- id_pelanggan: ${data.idPelanggan}');
+      print('- id_bank: ${data.idBank}');
+      print('- id_ongkir: ${data.idOngkir}');
+      print('- file path: ${data.file?.path}');
+      print('- detail items: $detailItems');
+      
+      // Prepare form data for main order
+      Map<String, dynamic> formData = {
+        'id_pelanggan': data.idPelanggan,
+        'id_bank': data.idBank,
+        'id_ongkir': data.idOngkir,
+        'tanggal_pemesanan': DateFormat('yyyy-MM-dd').format(DateTime.now()),
+        'status': 'pending',
+        // Add detail items as JSON string
+        'detail_items': jsonEncode(detailItems),
+      };
+      
+      // Add file if provided
+      if (data.file != null) {
+        formData['file'] = await MultipartFile.fromFile(
+          data.file!.path,
+          filename: "${ConfigGlobal.generateId("UPL")}${data.file!.path.split('/').last}",
+        );
+      }
+      
+      print('Form data prepared: ${formData.keys.toList()}');
+      
+      final response = await dio.post(
+        "app/page/data_cart/proses_selesai.php",
+        data: FormData.fromMap(formData),
+      );
+      
+      print('Rental completion response: ${response.data}');
+      
+      // Check response
+      if (response.data != null) {
+        if (response.data is String) {
+          final responseMap = jsonDecode(response.data);
+          if (responseMap['status'] == 'success' || responseMap['message']?.contains('success') == true) {
+            return DataCartResultApi("success", DataCartApiData());
+          } else {
+            throw Exception("Rental failed: ${responseMap['message'] ?? response.data}");
+          }
+        } else if (response.data is Map) {
+          final responseMap = response.data as Map<String, dynamic>;
+          if (responseMap['status'] == 'success' || responseMap['message']?.contains('success') == true) {
+            return DataCartResultApi("success", DataCartApiData());
+          } else {
+            throw Exception("Rental failed: ${responseMap['message'] ?? 'Unknown error'}");
+          }
+        }
+      }
+      
+      return DataCartResultApi("success", DataCartApiData());
+    } catch (error, stacktrace) {
+      print('Rental completion error: $error');
+      print('Rental completion stacktrace: $stacktrace');
+      throw Exception("Rental processing failed: $error");
     }
   }
 }

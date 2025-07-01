@@ -4,8 +4,8 @@ class EmissionFactorsData {
   static const Map<String, double> emissionFactors = {
     'Motorcycle': 0.092,           // Motor bensin
     'Car': 0.192,                  // Mobil bensin/diesel
-    'Electric Motorcycle': 0.025,  // Motor listrik
-    'Electric Car': 0.04,          // Mobil listrik
+    'Electric Motorcycle': 0.00,  // Motor listrik
+    'Electric Car': 0.00,          // Mobil listrik
   };
 
   /// Mendapatkan deskripsi untuk setiap jenis kendaraan

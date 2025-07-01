@@ -25,6 +25,7 @@ class _LoginWidgetState extends State<LoginWidget> {
     'admin',
     'guru/karyawan',
   ];
+  bool _isObscure = true;
 
   @override
   Widget build(BuildContext context) {
@@ -105,11 +106,21 @@ class _LoginWidgetState extends State<LoginWidget> {
                     const SizedBox(height: 10),
                     TextFormField(
                       readOnly: state is LoginLoading,
-                      obscureText: true,
+                      obscureText: _isObscure,
                       decoration: InputDecoration(
                         filled: true,
                         fillColor: Colors.grey[300],
                         prefixIcon: const Icon(Icons.password),
+                        suffixIcon: IconButton(
+                          icon: Icon(
+                            _isObscure ? Icons.visibility_off : Icons.visibility,
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              _isObscure = !_isObscure;
+                            });
+                          },
+                        ),
                         border: const OutlineInputBorder(
                           borderSide: BorderSide(color: Colors.grey),
                           borderRadius: BorderRadius.all(Radius.circular(90)),

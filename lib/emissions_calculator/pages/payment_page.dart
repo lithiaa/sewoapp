@@ -47,7 +47,7 @@ class _PaymentPageState extends State<PaymentPage> {
   final Map<String, Map<String, String>> paymentDetails = {
     'QRIS': {
       'type': 'qr',
-      'image': 'assets/qris.png',
+      'image': 'assets/qris.jpg',
       'instruction': 'Scan the QR code above with your e-wallet app to complete the donation',
     },
     'Bank Transfer': {

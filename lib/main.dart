@@ -35,6 +35,8 @@ import 'package:sewoapp/login/register_success_widget.dart';
 import 'package:sewoapp/profil/profil_screen.dart';
 import 'package:sewoapp/profil/edit_profil_screen.dart';
 
+import 'home/chat_page.dart';
+
 
 void main() {
   runApp(MyApp());
@@ -184,6 +186,10 @@ class MyApp extends StatelessWidget {
       EditProfilScreen.routeName: (context) => const EditProfilScreen(),
       RegisterSuccessWidget.routeName: (context) => const RegisterSuccessWidget(),
       '/upload-document': (context) => const DocumentUploadPage(),
+      '/chat': (context) {
+        final args = ModalRoute.of(context)!.settings.arguments as Map;
+        return ChatPage(renterName: args['name']);
+      },
     };
   }
 

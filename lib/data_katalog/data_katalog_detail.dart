@@ -11,6 +11,7 @@ import 'package:sewoapp/data_cart/data/data_cart.dart';
 import 'package:sewoapp/data_cart/data_cart_screen.dart';
 import 'package:sewoapp/data_detail_pemesanan/data/data_detail_pemesanan.dart';
 import 'package:sewoapp/data_katalog/data/data_katalog_apidata.dart';
+import 'package:sewoapp/home/chat_page.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -215,31 +216,21 @@ class _DataKatalogDetailState extends State<DataKatalogDetail> {
                                 ],
                               ),
                             ),
-                            IconButton(
-                              onPressed: () async {
-                                print('Share button tapped');
-                                final message = '${data.namaProduk ?? "-"} di aplikasi sewo diharga ${ConfigGlobal.formatRupiah(data.harga)}/day dapatkan promo menarik didalam aplikasi sewo, ayo download aplikasi sewo sekarang juga!';
-                                final encodedMessage = Uri.encodeComponent(message);
-                                final url = Uri.parse('https://wa.me/?text=$encodedMessage');
-                                try {
-                                  if (await canLaunchUrl(url)) {
-                                    await launchUrl(url, mode: LaunchMode.externalApplication);
-                                  } else {
-                                    if (mounted) {
-                                      ScaffoldMessenger.of(context).showSnackBar(
-                                        const SnackBar(content: Text('Gagal membuka WhatsApp')),
-                                      );
-                                    }
-                                  }
-                                } catch (e) {
-                                  if (mounted) {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(content: Text('Terjadi kesalahan saat membuka WhatsApp')),
-                                    );
-                                  }
-                                }
+                            ElevatedButton.icon(
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => ChatPage(renterName: 'Sinagra Rentals'),
+                                  ),
+                                );
                               },
-                              icon: const Icon(Icons.share_rounded),
+                              icon: const Icon(Icons.chat),
+                              label: const Text('Chat Penyewa'),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: const Color(0xFF11316C),
+                                foregroundColor: Colors.white,
+                              ),
                             ),
                           ],
                         ),
@@ -345,7 +336,7 @@ class _DataKatalogDetailState extends State<DataKatalogDetail> {
                                 fontSize: 18,
                               ),
                             ),
-                            const SizedBox(height: 10),
+                            const SizedBox(height: 15),
                             ..._buildVehicleFeatures(vehicleFeatures),
                             const SizedBox(height: 10),
                             Container(
@@ -383,7 +374,7 @@ class _DataKatalogDetailState extends State<DataKatalogDetail> {
                         Expanded(
                           child: Padding(
                             padding: const EdgeInsets.all(8),
-                            child: InkWell(
+                            /*child: InkWell(
                               onTap: () async {
                                 print('Chat button tapped');
                                 final url = Uri.parse('https://wa.me/6285369237896');
@@ -424,7 +415,7 @@ class _DataKatalogDetailState extends State<DataKatalogDetail> {
                                   ),
                                 ),
                               ),
-                            ),
+                            ),*/
                           ),
                         ),
                         Expanded(

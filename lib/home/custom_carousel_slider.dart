@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_carousel_slider/carousel_slider.dart';
 import 'package:sewoapp/data_katalog/data_katalog_screen.dart';
+import 'package:sewoapp/emissions_calculator/emissions_calculator.dart';
 
 class CustomCarouselSlider extends StatefulWidget {
   const CustomCarouselSlider({super.key});
@@ -22,10 +23,13 @@ class _CustomCarouselSliderState extends State<CustomCarouselSlider> {
     );
   }
 
+  void _navigateToEmissionCalculator() {
+    Navigator.of(context).pushNamed(EmissionsCalculatorPage.routeName);
+  }
+
   final List<_SliderItemModel> _sliderItems = const [
-    _SliderItemModel("assets/slide_1.png"),
-    _SliderItemModel("assets/slide_2.png"),
-    _SliderItemModel("assets/slide_3.png"),
+    _SliderItemModel("assets/promotion_slide/slide_1.png", 'products'),
+    _SliderItemModel("assets/promotion_slide/slide_2.png", 'emission_calculator'),
   ];
 
   @override
@@ -38,22 +42,31 @@ class _CustomCarouselSliderState extends State<CustomCarouselSlider> {
           child: Stack(
             children: [
               SizedBox(
-                height: 130.0,
+                height: 180.0,
                 child: CarouselSlider(
                   viewportFraction: 1.0,
                   enableAutoSlider: true,
                   autoSliderDelay: const Duration(milliseconds: 3000),
+                  autoSliderTransitionTime: const Duration(milliseconds: 800),
+                  slideTransform: DefaultTransform(),
+                  unlimitedMode: true,
+                  scrollPhysics: const BouncingScrollPhysics(),
                   onSlideChanged: (index) {
                     setState(() {
-                      _currentIndex = index;
+                      _currentIndex = index % _sliderItems.length;
                     });
                   },
                   children: _sliderItems.asMap().entries.map((entry) {
-                    final idx = entry.key;
                     final item = entry.value;
                     return _SliderItem(
                       item: item,
-                      onTap: () => _navigateToKatalog('Promo', 'Promo ${idx + 1}'),
+                      onTap: () {
+                        if (item.navigationType == 'products') {
+                          _navigateToKatalog('All', '');
+                        } else if (item.navigationType == 'emission_calculator') {
+                          _navigateToEmissionCalculator();
+                        }
+                      },
                     );
                   }).toList(),
                 ),
@@ -62,6 +75,7 @@ class _CustomCarouselSliderState extends State<CustomCarouselSlider> {
                 bottom: 10,
                 right: 10,
                 child: Row(
+                  mainAxisSize: MainAxisSize.min,
                   children: _sliderItems.asMap().entries.map((entry) {
                     return Container(
                       width: 8.0,
@@ -70,7 +84,7 @@ class _CustomCarouselSliderState extends State<CustomCarouselSlider> {
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         color: Colors.white.withOpacity(
-                          _currentIndex == entry.key ? 0.9 : 0.4,
+                          (_currentIndex % _sliderItems.length) == entry.key ? 0.9 : 0.4,
                         ),
                       ),
                     );
@@ -108,6 +122,35 @@ class _SliderItem extends StatelessWidget {
             item.assetPath,
             fit: BoxFit.cover,
             width: double.infinity,
+            errorBuilder: (context, error, stackTrace) {
+              return Container(
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  color: Colors.grey[300],
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: const Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.image_not_supported,
+                        size: 30,
+                        color: Colors.grey,
+                      ),
+                      SizedBox(height: 5),
+                      Text(
+                        'Image not found',
+                        style: TextStyle(
+                          color: Colors.grey,
+                          fontSize: 12,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            },
           ),
         ),
       ),
@@ -117,5 +160,6 @@ class _SliderItem extends StatelessWidget {
 
 class _SliderItemModel {
   final String assetPath;
-  const _SliderItemModel(this.assetPath);
+  final String navigationType;
+  const _SliderItemModel(this.assetPath, this.navigationType);
 }

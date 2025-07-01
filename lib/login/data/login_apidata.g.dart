@@ -7,11 +7,11 @@ part of 'login_apidata.dart';
 // **************************************************************************
 
 LoginApiData _$LoginApiDataFromJson(Map<String, dynamic> json) => LoginApiData(
-      id: json['id'] as String?,
-      jabatan: json['jabatan'] as String?,
-      namaPegawai: json['nama_pegawai'] as String?,
-      tkn: json['tkn'] as String?,
-    );
+  id: json['id'] as String?,
+  jabatan: json['jabatan'] as String?,
+  namaPegawai: json['nama_pegawai'] as String?,
+  tkn: json['tkn'] as String?,
+);
 
 Map<String, dynamic> _$LoginApiDataToJson(LoginApiData instance) =>
     <String, dynamic>{

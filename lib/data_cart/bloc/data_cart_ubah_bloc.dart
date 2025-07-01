@@ -20,11 +20,28 @@ class DataCartUbahBloc extends Bloc<DataCartUbahEvent, DataCartUbahState> {
         return;
       }
       try {
-        final DataCartApi response = await remoteRepo.getData(event.filter);
-        emit(DataCartUbahLoadSuccess(data: response));
+        // Check if this is an update quantity request
+        if (event.filter.berdasarkan == "id_produk_jumlah") {
+          // For quantity updates, we now handle them locally
+          // Don't make API calls immediately - just emit success
+          emit(DataCartUbahLoadSuccess(data: DataCartApi("success", [])));
+        } else {
+          // Regular data fetch
+          final DataCartApi response = await remoteRepo.getData(event.filter);
+          emit(DataCartUbahLoadSuccess(data: response));
+        }
       } catch (e) {
-        debugPrint(e.toString());
-        emit(const DataCartUbahLoadFailure(pesan: "Gagal mengubah, Pastikan hp terhubung ke internet"));
+        debugPrint('DataCartUbah Error: $e');
+        String errorMessage = "Failed to update cart. Please check your internet connection.";
+        
+        // Parse specific error messages
+        if (e.toString().contains('500')) {
+          errorMessage = "Server error occurred. Please try again later.";
+        } else if (e.toString().contains('timeout')) {
+          errorMessage = "Request timeout. Please check your internet connection.";
+        }
+        
+        emit(DataCartUbahLoadFailure(pesan: errorMessage));
       }
     }));
   }

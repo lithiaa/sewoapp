@@ -23,7 +23,7 @@ class _JudulEPromotioanState extends State<JudulEPromotioan> {
               widget.judul,
               style: GoogleFonts.openSans(
                 textStyle: TextStyle(
-                  color: Colors.white,
+                  color: Colors.black,
                   fontSize: 15,
                   fontWeight: FontWeight.bold,
                 ),

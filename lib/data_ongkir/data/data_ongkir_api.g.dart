@@ -15,7 +15,4 @@ DataOngkirApi _$DataOngkirApiFromJson(Map<String, dynamic> json) =>
     );
 
 Map<String, dynamic> _$DataOngkirApiToJson(DataOngkirApi instance) =>
-    <String, dynamic>{
-      'status': instance.status,
-      'result': instance.result,
-    };
+    <String, dynamic>{'status': instance.status, 'result': instance.result};

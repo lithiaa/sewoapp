@@ -23,7 +23,7 @@ class _JudulEkatalogState extends State<JudulEkatalog> {
               widget.judul,
               style: GoogleFonts.openSans(
                 textStyle: TextStyle(
-                  color: Colors.white,
+                  color: Colors.black87,
                   fontSize: 15,
                   fontWeight: FontWeight.bold,
                 ),
@@ -48,16 +48,16 @@ class _JudulEkatalogState extends State<JudulEkatalog> {
           },
           child: Row(children: [
             Text(
-              "All Product",
+              "See More",
               style: GoogleFonts.openSans(
                 textStyle: TextStyle(
-                  color: Colors.white,
+                  color: Colors.blue[600],
                   fontSize: 12,
                   fontWeight: FontWeight.bold,
                 ),
               ),
             ),
-            const Icon(Icons.arrow_right),
+            Icon(Icons.arrow_right, color: Colors.blue[600]),
           ]),
         )
       ]),

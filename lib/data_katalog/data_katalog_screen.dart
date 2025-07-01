@@ -11,9 +11,8 @@ import 'package:sewoapp/data_katalog/bloc/data_katalog_state.dart';
 import 'package:sewoapp/data_katalog/data/data_katalog_apidata.dart';
 import 'package:sewoapp/data_katalog/data_katalog_tampil.dart';
 import 'package:sewoapp/login/data/login_apidata.dart';
-import 'package:sewoapp/widgets/loading_widget.dart';
+import 'package:sewoapp/home/custom_bottom_navbar.dart';
 import '../config/config_global.dart';
-import 'package:sewoapp/config/color.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -144,9 +143,36 @@ class _DataKatalogScreenState extends State<DataKatalogScreen> {
               const SizedBox(height: 16),
               Expanded(
                 child: isLoadingAreas
-                    ? const Center(child: CircularProgressIndicator())
+                    ? Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: const [
+                            CircularProgressIndicator(
+                              valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF11316C)),
+                              strokeWidth: 3,
+                            ),
+                            SizedBox(height: 16),
+                            Text(
+                              'Loading areas...',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w500,
+                                color: Colors.grey,
+                              ),
+                            ),
+                          ],
+                        ),
+                      )
                     : areas.isEmpty
-                    ? const Center(child: Text('No areas available'))
+                        ? const Center(
+                            child: Text(
+                              'No areas available',
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: Colors.grey,
+                              ),
+                            ),
+                          )
                     : CustomScrollView(
                   slivers: [
                     SliverList(
@@ -197,7 +223,7 @@ class _DataKatalogScreenState extends State<DataKatalogScreen> {
             child: SingleChildScrollView(
               physics: const AlwaysScrollableScrollPhysics(),
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 40),
+                padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 10),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -223,35 +249,33 @@ class _DataKatalogScreenState extends State<DataKatalogScreen> {
                       ),
                     ),
                     const SizedBox(height: 16),
-                    TextFormField(
-                      controller: pencarianController,
-                      onChanged: (value) {
-                        filter.type = 'semua'; // Ensure broad search
-                        stream.add(value);
-                      },
-                      onFieldSubmitted: (value) {
-                        filter.type = 'semua'; // Ensure broad search
-                        stream.add(value);
-                      },
-                      textInputAction: TextInputAction.search,
-                      cursorColor: Style.buttonBackgroundColor,
-                      style: const TextStyle(color: Colors.black),
-                      decoration: InputDecoration(
-                        suffixIcon: const Icon(
-                          Icons.search_rounded,
-                          color: Colors.black,
-                        ),
-                        filled: true,
-                        fillColor: Colors.grey[300],
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),
-                          borderSide: BorderSide.none,
-                        ),
-                        hintText: 'Pencarian',
-                        hintStyle: const TextStyle(color: Colors.black54),
-                        contentPadding: const EdgeInsets.symmetric(
-                          vertical: 15.0,
-                          horizontal: 10.0,
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 10),
+                      child: TextFormField(
+                        controller: pencarianController,
+                        onChanged: (value) {
+                          filter.type = 'semua'; // Ensure broad search
+                          stream.add(value);
+                        },
+                        onFieldSubmitted: (value) {
+                          filter.type = 'semua'; // Ensure broad search
+                          stream.add(value);
+                        },
+                        textInputAction: TextInputAction.search,
+                        style: const TextStyle(color: Colors.black),
+                        decoration: const InputDecoration(
+                          suffixIcon: Icon(Icons.search_rounded),
+                          filled: true,
+                          fillColor: Colors.white,
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(15)),
+                            borderSide: BorderSide(color: Colors.white),
+                          ),
+                          hintText: 'Search',
+                          contentPadding: EdgeInsets.symmetric(
+                            vertical: 5.0,
+                            horizontal: 20.0,
+                          ),
                         ),
                       ),
                     ),
@@ -287,7 +311,41 @@ class _DataKatalogScreenState extends State<DataKatalogScreen> {
                       child: BlocBuilder<DataKatalogBloc, DataKatalogState>(
                         builder: ((context, state) {
                           if (state is DataKatalogLoading) {
-                            return const LoadingWidget();
+                            return Center(
+                              child: Container(
+                                padding: const EdgeInsets.all(40),
+                                margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 50),
+                                decoration: BoxDecoration(
+                                  color: Colors.white.withOpacity(0.1),
+                                  borderRadius: BorderRadius.circular(15),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(0.2),
+                                      blurRadius: 10,
+                                      offset: const Offset(0, 4),
+                                    ),
+                                  ],
+                                ),
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: const [
+                                    CircularProgressIndicator(
+                                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                                      strokeWidth: 3,
+                                    ),
+                                    SizedBox(height: 20),
+                                    Text(
+                                      'Loading products...',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            );
                           }
                           if (state is DataKatalogLoadSuccess) {
                             List<DataKatalogApiData> data = state.data.result;
@@ -391,6 +449,14 @@ class _DataKatalogScreenState extends State<DataKatalogScreen> {
             ),
           ),
         ),
+      ),
+      bottomNavigationBar: CustomBottomNavbar(
+        currentIndex: 1, // Products tab index
+        onTap: (index) {
+          if (index != 1) { // Jika bukan tab Products yang sedang aktif
+            BottomNavHandler.handleNavigation(context, index);
+          }
+        },
       ),
     );
   }

@@ -17,19 +17,62 @@ class DataCartSelesaiBloc
     on<FetchDataCartSelesai>(
       (event, emit) async {
         emit(DataCartSelesaiLoading());
-        /* if (!await networkInfo.isConnected) {
-        emit(DataCartSelesaiNoInternet());
-        return;
-      } */
         try {
+          print('Starting payment completion process');
           await remoteRepo.prosesSelesai(event.data);
+          print('Payment completion process successful');
           emit(DataCartSelesaiLoadSuccess());
         } catch (e) {
+          print('Payment completion failed: $e');
           debugPrint(e.toString());
-          emit(
-            const DataCartSelesaiLoadFailure(
-                pesan: "Gagal menyimpan, Pastikan hp terhubung ke internet"),
-          );
+          
+          // Extract more specific error message
+          String errorMessage = "Payment processing failed";
+          if (e.toString().contains("Payment processing failed:")) {
+            errorMessage = e.toString().replaceAll("Exception: ", "");
+          } else if (e.toString().contains("SocketException")) {
+            errorMessage = "Network connection error. Please check your internet connection.";
+          } else if (e.toString().contains("TimeoutException")) {
+            errorMessage = "Request timeout. Please try again.";
+          } else if (e.toString().contains("FileSystemException")) {
+            errorMessage = "Error accessing payment proof file. Please select the image again.";
+          } else {
+            errorMessage = "Payment processing failed. Please try again.";
+          }
+          
+          emit(DataCartSelesaiLoadFailure(pesan: errorMessage));
+        }
+      },
+      transformer: restartable(),
+    );
+
+    on<FetchDataCartSelesaiWithDetails>(
+      (event, emit) async {
+        emit(DataCartSelesaiLoading());
+        try {
+          print('Starting rental with detail items processing');
+          await remoteRepo.prosesSelesaiWithDetails(event.data, event.detailItems);
+          print('Rental with detail items processing successful');
+          emit(DataCartSelesaiLoadSuccess());
+        } catch (e) {
+          print('Rental processing failed: $e');
+          debugPrint(e.toString());
+          
+          // Extract more specific error message
+          String errorMessage = "Rental processing failed";
+          if (e.toString().contains("Payment processing failed:")) {
+            errorMessage = e.toString().replaceAll("Exception: ", "");
+          } else if (e.toString().contains("SocketException")) {
+            errorMessage = "Network connection error. Please check your internet connection.";
+          } else if (e.toString().contains("TimeoutException")) {
+            errorMessage = "Request timeout. Please try again.";
+          } else if (e.toString().contains("FileSystemException")) {
+            errorMessage = "Error accessing payment proof file. Please select the image again.";
+          } else {
+            errorMessage = "Rental processing failed. Please try again.";
+          }
+          
+          emit(DataCartSelesaiLoadFailure(pesan: errorMessage));
         }
       },
       transformer: restartable(),
@@ -51,6 +94,16 @@ class FetchDataCartSelesai extends DataCartSelesaiEvent {
   final DataCart data;
 
   const FetchDataCartSelesai(this.data);
+}
+
+class FetchDataCartSelesaiWithDetails extends DataCartSelesaiEvent {
+  final DataCart data;
+  final List<Map<String, dynamic>> detailItems;
+
+  const FetchDataCartSelesaiWithDetails(this.data, this.detailItems);
+
+  @override
+  List<Object> get props => [data, detailItems];
 }
 
 /*

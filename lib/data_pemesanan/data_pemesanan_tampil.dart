@@ -20,6 +20,39 @@ class DataPemesananTampil extends StatefulWidget {
 }
 
 class _DataPemesananTampilState extends State<DataPemesananTampil> {
+  // Safe format rupiah to handle null values
+  String _safeFormatRupiah(dynamic value) {
+    if (value == null) return 'Rp 0';
+    if (value is String && (value.isEmpty || value == 'null')) return 'Rp 0';
+    if (value is num && value == 0) return 'Rp 0';
+    
+    try {
+      return ConfigGlobal.formatRupiah(value.toString());
+    } catch (e) {
+      print('Error formatting rupiah for value: $value, error: $e');
+      return 'Rp 0';
+    }
+  }
+
+  // Safe get integer value
+  int _safeGetInt(dynamic value) {
+    if (value == null) return 0;
+    if (value is int) return value;
+    if (value is double) return value.toInt();
+    if (value is String) {
+      if (value.isEmpty || value == 'null') return 0;
+      return int.tryParse(value) ?? 0;
+    }
+    return 0;
+  }
+
+  // Safe get string value
+  String _safeGetString(dynamic value) {
+    if (value == null) return '-';
+    if (value is String && (value.isEmpty || value == 'null')) return '-';
+    return value.toString();
+  }
+
   // Parse the keterangan JSON field into a Map
   Map<String, dynamic> parseKeterangan() {
     try {
@@ -51,20 +84,17 @@ class _DataPemesananTampilState extends State<DataPemesananTampil> {
   String getReturnDay() {
     final details = parseKeterangan();
     final dateTime = widget.data.tanggalPemesanan != null
-        ? DateTime.parse(widget.data.tanggalPemesanan!)
+        ? DateTime.tryParse(widget.data.tanggalPemesanan!) ?? DateTime.now()
         : DateTime.now();
-    final duration = details['duration'] is int ? details['duration'] : 0;
+    final duration = _safeGetInt(details['duration']);
     final returnDate = dateTime.add(Duration(days: duration));
-    return ConfigGlobal.formatTanggal(returnDate.toString());
+    return ConfigGlobal.formatTanggal(returnDate.toString().split(' ')[0]); // Extract date part only
   }
 
   @override
   Widget build(BuildContext context) {
     final details = parseKeterangan();
     final vehicle = details['vehicle'] as Map<String, dynamic>;
-    final dateTime = widget.data.tanggalPemesanan != null
-        ? DateTime.parse(widget.data.tanggalPemesanan!)
-        : DateTime.now();
 
     return Card(
       elevation: 3,
@@ -88,8 +118,8 @@ class _DataPemesananTampilState extends State<DataPemesananTampil> {
             ),
             const Divider(thickness: 1),
             _buildDetailRow_nosymbol(
-              '${vehicle['name']}',
-              ConfigGlobal.formatTanggal(widget.data.tanggalPemesanan ?? DateTime.now().toString()),
+              _safeGetString(vehicle['name']),
+              ConfigGlobal.formatTanggal((widget.data.tanggalPemesanan ?? DateTime.now().toString()).split(' ')[0]),
             ),
           ],
         ),
@@ -110,14 +140,14 @@ class _DataPemesananTampilState extends State<DataPemesananTampil> {
                   ),
                 ),
                 const SizedBox(height: 8),
-                _buildDetailRow('Vehicle', '${vehicle['name']}'),
-                _buildDetailRow('Rental Duration', '${details['duration']} ${details['duration_unit'] ?? 'days'}'),
+                _buildDetailRow('Vehicle', _safeGetString(vehicle['name'])),
+                _buildDetailRow('Rental Duration', '${_safeGetInt(details['duration'])} ${_safeGetString(details['duration_unit'])}'),
                 _buildDetailRow(
                   'Rental Fee',
-                  '${ConfigGlobal.formatRupiah(details['rental_fee'].toString())}/${details['rental_fee_unit']?.replaceAll('_', ' ') ?? 'day'}',
+                  '${_safeFormatRupiah(details['rental_fee'])}/${_safeGetString(details['rental_fee_unit']).replaceAll('_', ' ')}',
                 ),
-                _buildDetailRow('Select Retrieval', '${details['retrieval']}'), // Placeholder as not in JSON
-                _buildDetailRow('Return Day', '${details['return']}'),
+                _buildDetailRow('Select Retrieval', _safeGetString(details['retrieval'])),
+                _buildDetailRow('Return Day', _safeGetString(details['return'])),
                 const SizedBox(height: 16),
                 const Text(
                   'PAYMENT',
@@ -127,10 +157,10 @@ class _DataPemesananTampilState extends State<DataPemesananTampil> {
                   ),
                 ),
                 const Divider(thickness: 1),
-                _buildDetailRow('Payment Method', details['payment_method']),
+                _buildDetailRow('Payment Method', _safeGetString(details['payment_method'])),
                 _buildDetailRow(
                   'Total Bill',
-                  ConfigGlobal.formatRupiah(details['grand_total'].toString()),
+                  _safeFormatRupiah(details['grand_total']),
                   isBold: true,
                   isLarge: true,
                 ),
@@ -159,7 +189,7 @@ class _DataPemesananTampilState extends State<DataPemesananTampil> {
                   mainAxisSize: MainAxisSize.max,
                   children: [
                     Text(
-                      ConfigGlobal.formatTanggal("${widget.data.tanggalPemesanan}"),
+                      ConfigGlobal.formatTanggal((widget.data.tanggalPemesanan ?? DateTime.now().toString()).split(' ')[0]),
                       overflow: TextOverflow.fade,
                       maxLines: 2,
                       style: const TextStyle(

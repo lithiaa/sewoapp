@@ -31,4 +31,12 @@ class DataCartRemote {
   Future<DataCartResultApi> ubah(DataCart data) {
     return _serviceApi.prosesUbah(data);
   }
+
+  Future<DataCartResultApi> updateQuantity(String idProduk, String jumlah, String idPelanggan) {
+    return _serviceApi.updateQuantity(idProduk, jumlah, idPelanggan);
+  }
+
+  Future<DataCartResultApi> prosesSelesaiWithDetails(DataCart data, List<Map<String, dynamic>> detailItems) {
+    return _serviceApi.prosesSelesaiWithDetails(data, detailItems);
+  }
 }

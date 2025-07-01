@@ -13,54 +13,81 @@ class PromoCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Responsive sizing based on screen width
+    double screenWidth = MediaQuery.of(context).size.width;
+    bool isTablet = screenWidth > 600;
+    
+    // Responsive values
+    double containerMarginVertical = isTablet ? 10 : 6;
+    double containerMarginHorizontal = isTablet ? 16 : 10;
+    double borderRadius = isTablet ? 20 : 15;
+    double containerPadding = isTablet ? 20 : 12;
+    
+    double iconWidth = isTablet ? 40 : 25;
+    double iconHeight = isTablet ? 60 : 40;
+    double iconSize = isTablet ? 40 : 28;
+    
+    double titleFontSize = isTablet ? 24 : 16;
+    double descriptionFontSize = isTablet ? 14 : 10;
+    double spacingBetweenTexts = isTablet ? 8 : 4;
+    double horizontalSpacing = isTablet ? 20 : 12;
+    
+    double buttonWidth = isTablet ? 120 : 80;
+    double buttonPadding = isTablet ? 12 : 8;
+    double buttonBorderRadius = isTablet ? 12 : 8;
+    double buttonFontSize = isTablet ? 14 : 10;
+    
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+      margin: EdgeInsets.symmetric(
+        horizontal: containerMarginHorizontal, 
+        vertical: containerMarginVertical
+      ),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(borderRadius),
         color: const Color(0xFFFFE868), // Yellow background
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.1),
-            blurRadius: 6,
-            offset: const Offset(0, 3),
+            blurRadius: isTablet ? 8 : 4,
+            offset: Offset(0, isTablet ? 4 : 2),
           ),
         ],
       ),
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: EdgeInsets.all(containerPadding),
         child: Row(
           children: [
             // Column 1: Moped Icon
             SizedBox(
-              width: 30,
-              height: 60,
-              child: const Icon(
+              width: iconWidth,
+              height: iconHeight,
+              child: Icon(
                 Icons.moped,
-                size: 40,
+                size: iconSize,
                 color: Colors.black,
               ),
             ),
 
-            const SizedBox(width: 16),
+            SizedBox(width: horizontalSpacing),
 
             // Column 2: Text Content
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
+                  Text(
                     "SeMolis",
                     style: TextStyle(
-                      fontSize: 20,
+                      fontSize: titleFontSize,
                       fontWeight: FontWeight.bold,
                       color: Colors.black,
                     ),
                   ),
-                  const SizedBox(height: 8),
-                  const Text(
+                  SizedBox(height: spacingBetweenTexts),
+                  Text(
                     '"Use an electric motor, more environmentally friendly!"',
                     style: TextStyle(
-                      fontSize: 12,
+                      fontSize: descriptionFontSize,
                       color: Colors.black,
                       fontStyle: FontStyle.italic,
                     ),
@@ -69,11 +96,11 @@ class PromoCard extends StatelessWidget {
               ),
             ),
 
-            const SizedBox(width: 16),
+            SizedBox(width: horizontalSpacing),
 
             // Column 3: Rent Now Button
             SizedBox(
-              width: 100,
+              width: buttonWidth,
               child: ElevatedButton(
                 onPressed: () {
                   Navigator.of(context).pushNamed(
@@ -85,18 +112,21 @@ class PromoCard extends StatelessWidget {
                   );
                 },
                 style: ElevatedButton.styleFrom(
-                  foregroundColor: Colors.white, backgroundColor: Color(0xFF11316C),
+                  foregroundColor: Colors.white, 
+                  backgroundColor: Color(0xFF11316C),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
+                    borderRadius: BorderRadius.circular(buttonBorderRadius),
                   ),
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 12, vertical: 12),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: buttonPadding, 
+                    vertical: buttonPadding
+                  ),
                 ),
-                child: const Text(
+                child: Text(
                   "RENT NOW !",
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
-                    fontSize: 12,
+                    fontSize: buttonFontSize,
                   ),
                 ),
               ),

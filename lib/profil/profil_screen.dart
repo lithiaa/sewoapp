@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
-import 'package:sewoapp/config/color.dart';
 import 'package:sewoapp/config/config_session_manager.dart';
 import 'package:sewoapp/data/data_filter.dart';
-import 'package:sewoapp/data_peserta/bloc/data_peserta_bloc.dart';
-import 'package:sewoapp/data_peserta/data/data_peserta.dart';
-import 'package:sewoapp/data_peserta/data/data_peserta_apidata.dart';
-import 'package:sewoapp/enum/enum_widget.dart';
-import 'package:sewoapp/enum/repo/enum_remote.dart';
+import 'package:sewoapp/data_pelanggan/bloc/data_pelanggan_bloc.dart';
+import 'package:sewoapp/data_pelanggan/data/data_pelanggan.dart';
+import 'package:sewoapp/data_pelanggan/data/data_pelanggan_apidata.dart';
+import 'package:sewoapp/home/custom_bottom_navbar.dart';
+import 'package:sewoapp/home/about_card.dart';
 import 'package:sewoapp/login/data/login_apidata.dart';
 import 'package:sewoapp/login/login_screen.dart';
+import 'package:sewoapp/profil/edit_profil_screen.dart';
 
 class ProfilScreen extends StatefulWidget {
   static const routeName = "profil";
@@ -22,302 +21,58 @@ class ProfilScreen extends StatefulWidget {
 
 class _ProfilScreenState extends State<ProfilScreen> {
   LoginApiData? data;
-  EnumRemote enumRemote = EnumRemote();
+  DataPelangganBloc bloc = DataPelangganBloc();
+  DataPelanggan form = DataPelanggan();
+  DataPelangganApiData? profileData;
 
-  DataPesertaBloc bloc = DataPesertaBloc();
-
-  DataPeserta form = DataPeserta();
-
-  var idPesertaController = TextEditingController();
+  // Simplified controllers for basic info
   var namaController = TextEditingController();
-  var nipController = TextEditingController();
-  var nikController = TextEditingController();
-  var tempatLahirController = TextEditingController();
-  var tanggalLahirController = TextEditingController();
-  var agamaController = TextEditingController();
-  var jenisKelaminController = TextEditingController();
-  var statusPerkawinanController = TextEditingController();
-  var idPangkatGolonganController = TextEditingController();
-  var pangkatGolonganController = TextEditingController();
-  var idJabatanController = TextEditingController();
-  var jabatanController = TextEditingController();
-  var namaJabatanController = TextEditingController();
-  var idUnitKerjaController = TextEditingController();
-  var unitKerjaController = TextEditingController();
-  var idUnitController = TextEditingController();
-  var unitController = TextEditingController();
-  var alamatUnitKerjaController = TextEditingController();
-  var idPendidikanController = TextEditingController();
-  var pendidikanController = TextEditingController();
-  var alamatRumahController = TextEditingController();
-  var noTeleponController = TextEditingController();
-  var pekerjaanController = TextEditingController();
-  var kelompokOrganisasiController = TextEditingController();
-  var idJabatanDalamKelompokController = TextEditingController();
-  var jabatanDalamKelompokController = TextEditingController();
-  var idDesaKelurahanController = TextEditingController();
-  var desaKelurahanController = TextEditingController();
-  var idKecamatanController = TextEditingController();
-  var kecamatanController = TextEditingController();
-  var idKabupatenController = TextEditingController();
-  var kabupatenController = TextEditingController();
-  var idProvinsiController = TextEditingController();
-  var provinsiController = TextEditingController();
-  var telpFaxController = TextEditingController();
   var emailController = TextEditingController();
-  var pengalamanPelatihanController = TextEditingController();
-  var keteranganController = TextEditingController();
-  var statusController = TextEditingController();
-  var usernameController = TextEditingController();
-  var passwordController = TextEditingController();
-
-  List<String> agama = [];
-
-  Future<void> fetchAgama() async {
-    var data = await enumRemote.getData('data_peserta', 'agama');
-    agama = data.result;
-  }
-
-  List<String> jenisKelamin = [];
-
-  Future<void> fetchJenisKelamin() async {
-    var data = await enumRemote.getData('data_peserta', 'jenis_kelamin');
-    jenisKelamin = data.result;
-  }
-
-  List<String> statusPerkawinan = [];
-
-  Future<void> fetchStatusPerkawinan() async {
-    var data = await enumRemote.getData('data_peserta', 'status_perkawinan');
-    statusPerkawinan = data.result;
-  }
-
-  List<String> status = [];
-
-  Future<void> fetchStatus() async {
-    var data = await enumRemote.getData('data_peserta', 'status');
-    status = data.result;
-  }
+  var noTeleponController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
 
-    idPesertaController.addListener(() {
-      form.idPeserta = idPesertaController.text;
-    });
-
+    // Setup basic listeners for profile preview
     namaController.addListener(() {
       setState(() {
         form.nama = namaController.text;
       });
     });
 
-    nipController.addListener(() {
-      form.nip = nipController.text;
-    });
-
-    nikController.addListener(() {
-      form.nik = nikController.text;
-    });
-
-    tempatLahirController.addListener(() {
-      form.tempatLahir = tempatLahirController.text;
-    });
-
-    tanggalLahirController.addListener(() {
-      form.tanggalLahir = tanggalLahirController.text;
-    });
-
-    agamaController.addListener(() {
-      form.agama = agamaController.text;
-    });
-
-    jenisKelaminController.addListener(() {
-      form.jenisKelamin = jenisKelaminController.text;
-    });
-
-    statusPerkawinanController.addListener(() {
-      form.statusPerkawinan = statusPerkawinanController.text;
-    });
-
-    idPangkatGolonganController.addListener(() {
-      form.idPangkatGolongan = idPangkatGolonganController.text;
-    });
-
-    // pangkatGolonganController.addListener(() {
-    //   pangkatGolonganController.text;
-    // });
-
-    idJabatanController.addListener(() {
-      form.idJabatan = idJabatanController.text;
-    });
-
-    // jabatanController.addListener(() {
-    //   form.idJabatan = jabatanController.text;
-    // });
-
-    namaJabatanController.addListener(() {
-      form.namaJabatan = namaJabatanController.text;
-    });
-
-    idUnitKerjaController.addListener(() {
-      form.idUnitKerja = idUnitKerjaController.text;
-    });
-
-    idUnitController.addListener(() {
-      form.idUnit = idUnitController.text;
-    });
-
-    alamatUnitKerjaController.addListener(() {
-      form.alamatUnitKerja = alamatUnitKerjaController.text;
-    });
-
-    idPendidikanController.addListener(() {
-      form.idPendidikan = idPendidikanController.text;
-    });
-
-    alamatRumahController.addListener(() {
-      form.alamatRumah = alamatRumahController.text;
+    emailController.addListener(() {
+      form.email = emailController.text;
     });
 
     noTeleponController.addListener(() {
       form.noTelepon = noTeleponController.text;
     });
 
-    pekerjaanController.addListener(() {
-      form.pekerjaan = pekerjaanController.text;
-    });
-
-    kelompokOrganisasiController.addListener(() {
-      form.kelompokOrganisasi = kelompokOrganisasiController.text;
-    });
-
-    idJabatanDalamKelompokController.addListener(() {
-      form.idJabatanDalamKelompok = idJabatanDalamKelompokController.text;
-    });
-
-    idDesaKelurahanController.addListener(() {
-      form.idDesaKelurahan = idDesaKelurahanController.text;
-    });
-
-    idKecamatanController.addListener(() {
-      form.idKecamatan = idKecamatanController.text;
-      idDesaKelurahanController.text = "";
-      desaKelurahanController.text = "";
-    });
-
-    idKabupatenController.addListener(() {
-      form.idKabupaten = idKabupatenController.text;
-      idKecamatanController.text = "";
-      kecamatanController.text = "";
-    });
-
-    idProvinsiController.addListener(() {
-      form.idProvinsi = idProvinsiController.text;
-      idKabupatenController.text = "";
-      kabupatenController.text = "";
-    });
-
-    telpFaxController.addListener(() {
-      form.telpFax = telpFaxController.text;
-    });
-
-    emailController.addListener(() {
-      form.email = emailController.text;
-    });
-
-    pengalamanPelatihanController.addListener(() {
-      form.pengalamanPelatihan = pengalamanPelatihanController.text;
-    });
-
-    keteranganController.addListener(() {
-      form.keterangan = keteranganController.text;
-    });
-
-    statusController.addListener(() {
-      form.status = statusController.text;
-    });
-
-    usernameController.addListener(() {
-      form.username = usernameController.text;
-    });
-
-    passwordController.addListener(() {
-      form.password = passwordController.text;
-    });
-
     bloc.stream.listen((event) {
-      if (event is DataPesertaLoadSuccess) {
-        setForm(event.data);
+      if (event is DataPelangganLoadSuccess) {
+        setForm(event.data.result.isNotEmpty ? event.data.result.first : null);
+      }
+      if (event is DataPelangganLoadFailure) {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          backgroundColor: Colors.red,
+          content: Text("Unable to fetch data, please check your internet connection"),
+        ));
       }
     });
-
-    fetchAgama();
-    fetchJenisKelamin();
-    fetchStatusPerkawinan();
-    fetchStatus();
 
     getData();
   }
 
-  void setForm(DataPesertaApiData? data) {
-    if (data == null) {
-      return;
-    }
-    namaController.text = data.nama ?? "-";
-    nipController.text = data.nip ?? "-";
-    nikController.text = data.nik ?? "-";
-    tempatLahirController.text = data.tempatLahir ?? "-";
-    tanggalLahirController.text = data.tanggalLahir ?? "-";
-    agamaController.text = data.agama ?? "-";
-    jenisKelaminController.text = data.jenisKelamin ?? "-";
-    statusPerkawinanController.text = data.statusPerkawinan ?? "-";
-
-    idPangkatGolonganController.text = data.idPangkatGolongan ?? "-";
-    pangkatGolonganController.text = data.pangkatGolongan ?? "-";
-
-    idJabatanController.text = data.idJabatan ?? "-";
-    jabatanController.text = data.jabatan ?? "-";
-
-    namaJabatanController.text = data.namaJabatan ?? "-";
-
-    idUnitKerjaController.text = data.idUnitKerja ?? "-";
-    unitKerjaController.text = data.unitKerja ?? "-";
-
-    idUnitController.text = data.idUnit ?? "-";
-    unitController.text = data.unit ?? "-";
-
-    alamatUnitKerjaController.text = data.alamatUnitKerja ?? "-";
-    idPendidikanController.text = data.idPendidikan ?? "-";
-    pendidikanController.text = data.pendidikan ?? "-";
-
-    alamatRumahController.text = data.alamatRumah ?? "-";
-    noTeleponController.text = data.noTelepon ?? "-";
-    pekerjaanController.text = data.pekerjaan ?? "-";
-    kelompokOrganisasiController.text = data.kelompokOrganisasi ?? "-";
-
-    idJabatanDalamKelompokController.text = data.idJabatanDalamKelompok ?? "-";
-    jabatanDalamKelompokController.text = data.jabatanDalamKelompok ?? "-";
-
-    idProvinsiController.text = data.idProvinsi ?? "-";
-    provinsiController.text = data.provinsi ?? "-";
-
-    idKabupatenController.text = data.idKabupaten ?? "-";
-    kabupatenController.text = data.kabupaten ?? "-";
-
-    idKecamatanController.text = data.idKecamatan ?? "-";
-    kecamatanController.text = data.kecamatan ?? "-";
-
-    idDesaKelurahanController.text = data.idDesaKelurahan ?? "-";
-    desaKelurahanController.text = data.desaKelurahan ?? "-";
-
-    telpFaxController.text = data.telpFax ?? "-";
-    emailController.text = data.email ?? "-";
-    pengalamanPelatihanController.text = data.pengalamanPelatihan ?? "-";
-    keteranganController.text = data.keterangan ?? "-";
-    statusController.text = data.status ?? "-";
-    usernameController.text = data.username ?? "-";
+  void setForm(DataPelangganApiData? data) {
+    if (data == null) return;
+    
+    setState(() {
+      profileData = data;
+      namaController.text = data.nama ?? "-";
+      emailController.text = data.email ?? "-";
+      noTeleponController.text = data.noTelepon ?? "-";
+    });
   }
 
   void getData() async {
@@ -325,31 +80,11 @@ class _ProfilScreenState extends State<ProfilScreen> {
     if (data != null) {
       setState(() {
         this.data = data;
-        idPesertaController.text = this.data?.id ?? "-";
-      });
-
-      bloc.stream.listen((event) {
-        if (event is DataPesertaSimpanSuccess) {
-          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-            backgroundColor: Style.buttonBackgroundColor,
-            content: Text('Berhasil disimpan!'),
-          ));
-          setForm(event.data.result);
-        }
-        if (event is DataPesertaLoadFailure) {
-          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-            backgroundColor: Colors.red,
-            content: Text(
-                "Tidak dapat mengambil data, periksa sambungan internet anda"),
-          ));
-          Navigator.of(context).pop();
-        }
       });
 
       bloc.add(
-        FetchDataPeserta(DataFilter(idPeserta: this.data?.id ?? "***")),
+        FetchDataPelanggan(DataFilter(berdasarkan: "id_pelanggan", isi: this.data?.id ?? "***")),
       );
-
       return;
     }
     await ConfigSessionManager.getInstance().setSudahLogin(false);
@@ -358,409 +93,350 @@ class _ProfilScreenState extends State<ProfilScreen> {
     }
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("Profil"),
-        actions: [
-          IconButton(
-              onPressed: () {
-                bloc.add(SimpanDataPeserta(data: form));
-              },
-              icon: const Icon(Icons.save)),
-          IconButton(
-              onPressed: () async {
-                await ConfigSessionManager.getInstance().logout();
-                if (mounted) {
-                  Navigator.pushNamedAndRemoveUntil(context,
-                      LoginScreen.routeName, (Route<dynamic> route) => false);
-                }
-              },
-              icon: const Icon(Icons.power_settings_new)),
-        ],
-      ),
-      body: data == null
-          ? Container(
-              width: 30,
-              height: 30,
-              margin: const EdgeInsets.all(3),
-              child: const Center(child: CircularProgressIndicator()),
-            )
-          : Stack(children: [
-              SingleChildScrollView(
-                child: Stack(
-                  children: [
-                    ListView(
-                      physics: const NeverScrollableScrollPhysics(),
-                      shrinkWrap: true,
+  void _navigateToEditProfile() {
+    Navigator.pushNamed(context, EditProfilScreen.routeName);
+  }
+
+  void _showAboutUs() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: Container(
+            constraints: const BoxConstraints(
+              maxWidth: 400,
+              maxHeight: 500,
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Flexible(
+                  child: SingleChildScrollView(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
                       children: [
-                        Image.asset(
-                          'assets/background_login.png',
-                          width: double.infinity,
-                          fit: BoxFit.fitWidth,
+                        const AboutCard(),
+                        Padding(
+                          padding: const EdgeInsets.all(16),
+                          child: SizedBox(
+                            width: double.infinity,
+                            child: ElevatedButton(
+                              onPressed: () => Navigator.of(context).pop(),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: const Color(0xFF11316C),
+                                foregroundColor: Colors.white,
+                                padding: const EdgeInsets.symmetric(vertical: 12),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                              ),
+                              child: const Text(
+                                'Close',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ),
+                          ),
                         ),
                       ],
                     ),
-                    Padding(
-                      padding: const EdgeInsets.all(15),
-                      child: Card(
-                        child: Padding(
-                          padding: const EdgeInsets.all(15),
-                          child: ListView(
-                            physics: const NeverScrollableScrollPhysics(),
-                            shrinkWrap: true,
-                            children: [
-                              Image.asset("assets/logo.png", height: 80),
-                              Padding(
-                                padding:
-                                    const EdgeInsets.only(top: 10, bottom: 10),
-                                child: Text(
-                                  form.nama ?? '-',
-                                  textAlign: TextAlign.center,
-                                  style: const TextStyle(
-                                    fontSize: 25,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: const Color(0xFF11316C),
+      appBar: AppBar(
+        title: const Text(
+          'Profile',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 20,
+          ),
+        ),
+        backgroundColor: const Color(0xFF11316C),
+        foregroundColor: Colors.white,
+        elevation: 0,
+        centerTitle: true,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
+      ),
+      bottomNavigationBar: CustomBottomNavbar(
+        currentIndex: 4, // Profile tab index
+        onTap: (index) {
+          if (index != 4) { // Only navigate if not already on profile
+            BottomNavHandler.handleNavigation(context, index);
+          }
+        },
+      ),
+      body: data == null
+          ? const Center(
+              child: CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+              ),
+            )
+          : SafeArea(
+        child: RefreshIndicator(
+          onRefresh: () async {
+            getData();
+          },
+          child: SingleChildScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Profile Content
+                  StreamBuilder(
+                    stream: bloc.stream,
+                    builder: (context, snapshot) {
+                      if (snapshot.data is DataPelangganLoading || profileData == null) {
+                        return Container(
+                          height: 300,
+                          child: Card(
+                            elevation: 8,
+                            color: Colors.white.withOpacity(0.95),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: Center(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: const [
+                                  CircularProgressIndicator(
+                                    valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF11316C)),
+                                    strokeWidth: 3,
                                   ),
+                                  SizedBox(height: 20),
+                                  Text(
+                                    'Loading profile...',
+                                    style: TextStyle(
+                                      color: Color(0xFF11316C),
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        );
+                      }
+                      
+                      return Card(
+                        elevation: 8,
+                        color: Colors.white.withOpacity(0.95),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(24),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              // Profile Picture
+                              Container(
+                                width: 80,
+                                height: 80,
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFF11316C).withOpacity(0.1),
+                                  shape: BoxShape.circle,
+                                ),
+                                child: Icon(
+                                  Icons.person,
+                                  size: 40,
+                                  color: const Color(0xFF11316C),
                                 ),
                               ),
-                              const SizedBox(height: 10),
-                              // TextFormField(
-                              //   decoration: const InputDecoration(
-                              //     prefixIcon: Icon(Icons.book),
-                              //     border: OutlineInputBorder(),
-                              //     labelText: 'Id Peserta',
-                              //   ),
-                              //   controller: idPesertaController,
-                              // ),
-                              // const SizedBox(height: 15),
-                              TextFormField(
-                                decoration: const InputDecoration(
-                                  prefixIcon: Icon(Icons.book),
-                                  border: OutlineInputBorder(),
-                                  labelText: 'Nama',
-                                ),
-                                controller: namaController,
-                              ),
-                              const SizedBox(height: 15),
-                              TextFormField(
-                                decoration: const InputDecoration(
-                                  prefixIcon: Icon(Icons.book),
-                                  border: OutlineInputBorder(),
-                                  labelText: 'Nip',
-                                ),
-                                controller: nipController,
-                              ),
-                              const SizedBox(height: 15),
-                              TextFormField(
-                                decoration: const InputDecoration(
-                                  prefixIcon: Icon(Icons.book),
-                                  border: OutlineInputBorder(),
-                                  labelText: 'Nik',
-                                ),
-                                controller: nikController,
-                              ),
-                              const SizedBox(height: 15),
-                              TextFormField(
-                                decoration: const InputDecoration(
-                                  prefixIcon: Icon(Icons.book),
-                                  border: OutlineInputBorder(),
-                                  labelText: 'Tempat Lahir',
-                                ),
-                                controller: tempatLahirController,
-                              ),
-                              const SizedBox(height: 15),
-                              TextFormField(
-                                controller: tanggalLahirController,
-                                readOnly: true,
-                                validator: (value) {
-                                  if (value == null || value.isEmpty) {
-                                    return 'Harus disi!';
-                                  }
-                                  return null;
-                                },
-                                onTap: () {
-                                  showDatePicker(
-                                    context: context,
-                                    initialDate: DateTime.now(),
-                                    firstDate: DateTime(1950, 1),
-                                    lastDate: DateTime(2025, 12),
-                                  ).then((pickedDate) {
-                                    if (pickedDate != null) {
-                                      tanggalLahirController.text =
-                                          DateFormat('y-M-d')
-                                              .format(pickedDate);
-                                    }
-                                  });
-                                },
-                                decoration: const InputDecoration(
-                                  prefixIcon: Icon(Icons.book),
-                                  border: OutlineInputBorder(),
-                                  labelText: 'Tanggal Lahir',
-                                ),
-                              ),
-                              const SizedBox(height: 15),
-                              TextFormField(
-                                readOnly: true,
-                                validator: (value) {
-                                  if (value == null || value.isEmpty) {
-                                    return 'Harus disi!';
-                                  }
-                                  return null;
-                                },
-                                onTap: () {
-                                  showDialog(
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      return AlertDialog(
-                                        title: const Text('Pilih agama'),
-                                        content: EnumWidget(
-                                          items: agama,
-                                          onChange: (String value) {
-                                            agamaController.text = value;
-                                            Navigator.of(context).pop();
-                                          },
+                              const SizedBox(width: 20),
+                              // Profile Information
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    // Name
+                                    Text(
+                                      profileData?.nama ?? '-',
+                                      style: const TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 8),
+                                    // Email
+                                    Text(
+                                      profileData?.email ?? '-',
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        color: Colors.grey[600],
+                                      ),
+                                    ),
+                                    const SizedBox(height: 16),
+                                    // Phone
+                                    Row(
+                                      children: [
+                                        Icon(
+                                          Icons.phone,
+                                          size: 16,
+                                          color: Colors.grey[600],
                                         ),
-                                      );
-                                    },
-                                  );
-                                },
-                                controller: agamaController,
-                                decoration: const InputDecoration(
-                                  prefixIcon: Icon(Icons.book),
-                                  suffixIcon: Icon(Icons.keyboard_arrow_down),
-                                  border: OutlineInputBorder(),
-                                  labelText: 'Agama',
-                                ),
-                              ),
-                              const SizedBox(height: 15),
-                              TextFormField(
-                                readOnly: true,
-                                validator: (value) {
-                                  if (value == null || value.isEmpty) {
-                                    return 'Harus disi!';
-                                  }
-                                  return null;
-                                },
-                                onTap: () {
-                                  showDialog(
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      return AlertDialog(
-                                        title:
-                                            const Text('Pilih jenis kelamin'),
-                                        content: EnumWidget(
-                                          items: jenisKelamin,
-                                          onChange: (String value) {
-                                            jenisKelaminController.text = value;
-                                            Navigator.of(context).pop();
-                                          },
+                                        const SizedBox(width: 8),
+                                        Text(
+                                          profileData?.noTelepon ?? '-',
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            color: Colors.grey[600],
+                                          ),
                                         ),
-                                      );
-                                    },
-                                  );
-                                },
-                                controller: jenisKelaminController,
-                                decoration: const InputDecoration(
-                                  prefixIcon: Icon(Icons.book),
-                                  suffixIcon: Icon(Icons.keyboard_arrow_down),
-                                  border: OutlineInputBorder(),
-                                  labelText: 'Jenis Kelamin',
+                                      ],
+                                    ),
+                                    if (profileData?.alamat != null && profileData!.alamat!.isNotEmpty) ...[
+                                      const SizedBox(height: 8),
+                                      // Address
+                                      Row(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Icon(
+                                            Icons.location_on,
+                                            size: 16,
+                                            color: Colors.grey[600],
+                                          ),
+                                          const SizedBox(width: 8),
+                                          Expanded(
+                                            child: Text(
+                                              profileData?.alamat ?? '-',
+                                              style: TextStyle(
+                                                fontSize: 14,
+                                                color: Colors.grey[600],
+                                              ),
+                                              maxLines: 3,
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ],
                                 ),
                               ),
-                              const SizedBox(height: 15),
-                              TextFormField(
-                                readOnly: true,
-                                validator: (value) {
-                                  if (value == null || value.isEmpty) {
-                                    return 'Harus disi!';
-                                  }
-                                  return null;
-                                },
-                                onTap: () {
-                                  showDialog(
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      return AlertDialog(
-                                        title: const Text(
-                                            'Pilih status perkawinan'),
-                                        content: EnumWidget(
-                                          items: statusPerkawinan,
-                                          onChange: (String value) {
-                                            statusPerkawinanController.text =
-                                                value;
-                                            Navigator.of(context).pop();
-                                          },
-                                        ),
-                                      );
-                                    },
-                                  );
-                                },
-                                controller: statusPerkawinanController,
-                                decoration: const InputDecoration(
-                                  prefixIcon: Icon(Icons.book),
-                                  suffixIcon: Icon(Icons.keyboard_arrow_down),
-                                  border: OutlineInputBorder(),
-                                  labelText: 'Status Perkawinan',
-                                ),
-                              ),
-                              const SizedBox(height: 15),
-                              TextFormField(
-                                decoration: const InputDecoration(
-                                  prefixIcon: Icon(Icons.book),
-                                  border: OutlineInputBorder(),
-                                  labelText: 'Telp Fax',
-                                ),
-                                controller: telpFaxController,
-                              ),
-                              const SizedBox(height: 15),
-                              TextFormField(
-                                decoration: const InputDecoration(
-                                  prefixIcon: Icon(Icons.book),
-                                  border: OutlineInputBorder(),
-                                  labelText: 'Email',
-                                ),
-                                controller: emailController,
-                              ),
-                              const SizedBox(height: 15),
-                              TextFormField(
-                                decoration: const InputDecoration(
-                                  prefixIcon: Icon(Icons.book),
-                                  border: OutlineInputBorder(),
-                                  labelText: 'Pengalaman Pelatihan',
-                                ),
-                                controller: pengalamanPelatihanController,
-                              ),
-                              const SizedBox(height: 15),
-                              TextFormField(
-                                decoration: const InputDecoration(
-                                  prefixIcon: Icon(Icons.book),
-                                  border: OutlineInputBorder(),
-                                  labelText: 'Keterangan',
-                                ),
-                                controller: keteranganController,
-                              ),
-                              // const SizedBox(height: 15),
-                              // TextFormField(
-                              //   readOnly: true,
-                              //   onTap: () {
-                              //     showDialog(
-                              //       context: context,
-                              //       builder: (BuildContext context) {
-                              //         return AlertDialog(
-                              //           title: const Text('Pilih Status'),
-                              //           content: EnumWidget(
-                              //             items: status,
-                              //             onChange: (String value) {
-                              //               statusController.text = value;
-                              //               Navigator.of(context).pop();
-                              //             },
-                              //           ),
-                              //         );
-                              //       },
-                              //     );
-                              //   },
-                              //   controller: statusController,
-                              //   decoration: const InputDecoration(
-                              //     prefixIcon: Icon(Icons.book),
-                              //     suffixIcon: Icon(Icons.keyboard_arrow_down),
-                              //     border: OutlineInputBorder(),
-                              //     labelText: 'Status',
-                              //   ),
-                              // ),
-                              const SizedBox(height: 15),
-                              TextFormField(
-                                decoration: const InputDecoration(
-                                  prefixIcon: Icon(Icons.book),
-                                  border: OutlineInputBorder(),
-                                  labelText: 'Username',
-                                ),
-                                controller: usernameController,
-                              ),
-                              const SizedBox(height: 15),
-                              TextFormField(
-                                decoration: const InputDecoration(
-                                  prefixIcon: Icon(Icons.book),
-                                  border: OutlineInputBorder(),
-                                  labelText: 'Password',
-                                ),
-                                controller: passwordController,
-                              ),
-                              const SizedBox(height: 15),
                             ],
                           ),
                         ),
-                      ),
+                      );
+                    },
+                  ),
+                        const SizedBox(height: 20),
+                        // Action Buttons
+                        Card(
+                          elevation: 4,
+                          color: Colors.white.withOpacity(0.95),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Column(
+                            children: [
+                              ListTile(
+                                leading: Icon(
+                                  Icons.edit,
+                                  color: const Color(0xFF11316C),
+                                ),
+                                title: const Text('Edit Profile'),
+                                trailing: const Icon(Icons.arrow_forward_ios),
+                                onTap: _navigateToEditProfile,
+                              ),
+                              const Divider(height: 1),
+                              ListTile(
+                                leading: Icon(
+                                  Icons.info,
+                                  color: const Color(0xFF11316C),
+                                ),
+                                title: const Text('About Us'),
+                                trailing: const Icon(Icons.arrow_forward_ios),
+                                onTap: _showAboutUs,
+                              ),
+                              const Divider(height: 1),
+                              ListTile(
+                                leading: const Icon(
+                                  Icons.logout,
+                                  color: Colors.red,
+                                ),
+                                title: const Text(
+                                  'Logout',
+                                  style: TextStyle(color: Colors.red),
+                                ),
+                                trailing: const Icon(Icons.arrow_forward_ios),
+                                onTap: () async {
+                                  showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return AlertDialog(
+                                        title: const Text('Logout Confirmation'),
+                                        content: const Text(
+                                          'Are you sure you want to logout from the application?',
+                                        ),
+                                        actions: [
+                                          TextButton(
+                                            onPressed: () => Navigator.of(context).pop(),
+                                            child: const Text('Cancel'),
+                                          ),
+                                          TextButton(
+                                            onPressed: () async {
+                                              Navigator.of(context).pop();
+                                              await ConfigSessionManager.getInstance().logout();
+                                              if (mounted) {
+                                                Navigator.pushNamedAndRemoveUntil(
+                                                  context,
+                                                  LoginScreen.routeName,
+                                                  (Route<dynamic> route) => false,
+                                                );
+                                              }
+                                            },
+                                            style: TextButton.styleFrom(
+                                              foregroundColor: Colors.red,
+                                            ),
+                                            child: const Text('Logout'),
+                                          ),
+                                        ],
+                                      );
+                                    },
+                                  );
+                                },
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(height: 20),
+                      ],
                     ),
-                  ],
+                  ),
                 ),
               ),
-              StreamBuilder(
-                stream: bloc.stream,
-                builder: (context, snapshot) {
-                  if (snapshot.data is DataPesertaLoading) {
-                    return Positioned.fill(
-                      child: SizedBox.expand(
-                        child: Container(
-                          color: Colors.grey[200]!.withOpacity(0.7),
-                          alignment: Alignment.center,
-                          child: const CircularProgressIndicator(),
-                        ),
-                      ),
-                    );
-                  }
-                  return const Text("");
-                },
-              ),
-            ]),
+            ),
     );
   }
 
   @override
   void dispose() {
-    idPesertaController.dispose();
     namaController.dispose();
-    nipController.dispose();
-    nikController.dispose();
-    tempatLahirController.dispose();
-    tanggalLahirController.dispose();
-    agamaController.dispose();
-    jenisKelaminController.dispose();
-    statusPerkawinanController.dispose();
-    idPangkatGolonganController.dispose();
-    pangkatGolonganController.dispose();
-    idJabatanController.dispose();
-    jabatanController.dispose();
-    namaJabatanController.dispose();
-    idUnitKerjaController.dispose();
-    unitKerjaController.dispose();
-    idUnitController.dispose();
-    unitController.dispose();
-    alamatUnitKerjaController.dispose();
-    idPendidikanController.dispose();
-    pendidikanController.dispose();
-    alamatRumahController.dispose();
-    noTeleponController.dispose();
-    pekerjaanController.dispose();
-    kelompokOrganisasiController.dispose();
-    idJabatanDalamKelompokController.dispose();
-    jabatanDalamKelompokController.dispose();
-    desaKelurahanController.dispose();
-    idKecamatanController.dispose();
-    kecamatanController.dispose();
-    idKabupatenController.dispose();
-    kabupatenController.dispose();
-    idProvinsiController.dispose();
-    provinsiController.dispose();
-    telpFaxController.dispose();
     emailController.dispose();
-    pengalamanPelatihanController.dispose();
-    keteranganController.dispose();
-    statusController.dispose();
-    usernameController.dispose();
-    passwordController.dispose();
-
+    noTeleponController.dispose();
     bloc.close();
-
     super.dispose();
   }
 }

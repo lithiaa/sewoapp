@@ -13,8 +13,5 @@ DataProdukResultApi _$DataProdukResultApiFromJson(Map<String, dynamic> json) =>
     );
 
 Map<String, dynamic> _$DataProdukResultApiToJson(
-        DataProdukResultApi instance) =>
-    <String, dynamic>{
-      'status': instance.status,
-      'result': instance.result,
-    };
+  DataProdukResultApi instance,
+) => <String, dynamic>{'status': instance.status, 'result': instance.result};

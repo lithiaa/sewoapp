@@ -18,8 +18,10 @@ DataCartApiData _$DataCartApiDataFromJson(Map<String, dynamic> json) =>
       uploadBuktiPembayaran: json['upload_bukti_pembayaran'] as String?,
       status: json['status'] as String?,
       details: (json['details'] as List<dynamic>?)
-          ?.map((e) =>
-              DataDetailPemesananApiData.fromJson(e as Map<String, dynamic>))
+          ?.map(
+            (e) =>
+                DataDetailPemesananApiData.fromJson(e as Map<String, dynamic>),
+          )
           .toList(),
     );
 

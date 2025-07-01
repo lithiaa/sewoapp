@@ -177,40 +177,52 @@ class _DataPelangganUbahScreenState extends State<DataPelangganUbahScreen> {
 */
 
                     TextFormField(
-                      decoration: const InputDecoration(
-                        prefixIcon: Icon(Icons.book),
-                        border: OutlineInputBorder(),
+                      decoration: InputDecoration(
+                        prefixIcon: Icon(Icons.person, color: Style.buttonBackgroundColor),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
                         labelText: 'Nama',
+                        labelStyle: TextStyle(color: Style.buttonBackgroundColor),
                       ),
                       controller: namaController,
                     ),
                     const SizedBox(height: 15),
 
                     TextFormField(
-                      decoration: const InputDecoration(
-                        prefixIcon: Icon(Icons.book),
-                        border: OutlineInputBorder(),
+                      decoration: InputDecoration(
+                        prefixIcon: Icon(Icons.location_on, color: Style.buttonBackgroundColor),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
                         labelText: 'Alamat',
+                        labelStyle: TextStyle(color: Style.buttonBackgroundColor),
                       ),
                       controller: alamatController,
                     ),
                     const SizedBox(height: 15),
 
                     TextFormField(
-                      decoration: const InputDecoration(
-                        prefixIcon: Icon(Icons.book),
-                        border: OutlineInputBorder(),
+                      decoration: InputDecoration(
+                        prefixIcon: Icon(Icons.phone, color: Style.buttonBackgroundColor),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
                         labelText: 'No Telepon',
+                        labelStyle: TextStyle(color: Style.buttonBackgroundColor),
                       ),
                       controller: noTeleponController,
                     ),
                     const SizedBox(height: 15),
 
                     TextFormField(
-                      decoration: const InputDecoration(
-                        prefixIcon: Icon(Icons.book),
-                        border: OutlineInputBorder(),
+                      decoration: InputDecoration(
+                        prefixIcon: Icon(Icons.email, color: Style.buttonBackgroundColor),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
                         labelText: 'Email',
+                        labelStyle: TextStyle(color: Style.buttonBackgroundColor),
                       ),
                       controller: emailController,
                     ),
@@ -218,10 +230,13 @@ class _DataPelangganUbahScreenState extends State<DataPelangganUbahScreen> {
 
                     TextFormField(
                       readOnly: true,
-                      decoration: const InputDecoration(
-                        prefixIcon: Icon(Icons.book),
-                        border: OutlineInputBorder(),
+                      decoration: InputDecoration(
+                        prefixIcon: Icon(Icons.person_outline, color: Style.buttonBackgroundColor),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
                         labelText: 'Username',
+                        labelStyle: TextStyle(color: Style.buttonBackgroundColor),
                       ),
                       controller: usernameController,
                     ),
@@ -229,10 +244,13 @@ class _DataPelangganUbahScreenState extends State<DataPelangganUbahScreen> {
 
                     TextFormField(
                       obscureText: true,
-                      decoration: const InputDecoration(
-                        prefixIcon: Icon(Icons.book),
-                        border: OutlineInputBorder(),
+                      decoration: InputDecoration(
+                        prefixIcon: Icon(Icons.lock, color: Style.buttonBackgroundColor),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
                         labelText: 'Password',
+                        labelStyle: TextStyle(color: Style.buttonBackgroundColor),
                       ),
                       controller: passwordController,
                     ),

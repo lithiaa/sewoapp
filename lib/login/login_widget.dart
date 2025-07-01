@@ -148,7 +148,9 @@ class _LoginWidgetState extends State<LoginWidget> {
                             height: 50,
                             child: ElevatedButton(
                               style: ElevatedButton.styleFrom(
-                                shape: const StadiumBorder(), backgroundColor: Style.buttonBackgroundColor,
+                                shape: const StadiumBorder(), 
+                                backgroundColor: Style.buttonBackgroundColor,
+                                foregroundColor: Colors.white, // Add white text color
                               ),
                               onPressed: () {
                                 if (_formKey.currentState!.validate()) {
@@ -163,7 +165,8 @@ class _LoginWidgetState extends State<LoginWidget> {
                                   : const Text(
                                       "Log In",
                                       style: TextStyle(
-                                          fontWeight: FontWeight.bold),
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.white), // Explicit white color
                                     ),
                             ),
                           ),
@@ -187,7 +190,9 @@ class _LoginWidgetState extends State<LoginWidget> {
                       height: 50,
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
-                          shape: const StadiumBorder(), backgroundColor: Style.buttonBackgroundColor,
+                          shape: const StadiumBorder(), 
+                          backgroundColor: Style.buttonBackgroundColor,
+                          foregroundColor: Colors.white, // Add white text color
                         ),
                         onPressed: () {
                           // BlocProvider.of<LoginFormBloc>(context)
@@ -201,7 +206,9 @@ class _LoginWidgetState extends State<LoginWidget> {
                         },
                         child: const Text(
                           "Sign Up",
-                          style: TextStyle(fontWeight: FontWeight.bold),
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white), // Explicit white color
                         ),
                       ),
 

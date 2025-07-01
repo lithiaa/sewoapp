@@ -15,7 +15,4 @@ DataPemesananApi _$DataPemesananApiFromJson(Map<String, dynamic> json) =>
     );
 
 Map<String, dynamic> _$DataPemesananApiToJson(DataPemesananApi instance) =>
-    <String, dynamic>{
-      'status': instance.status,
-      'result': instance.result,
-    };
+    <String, dynamic>{'status': instance.status, 'result': instance.result};

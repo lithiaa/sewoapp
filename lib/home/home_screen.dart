@@ -199,7 +199,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                       children: [
                         // Nearby Car Section
                         const SizedBox(height: 10),
-                        JudulEkatalog(judul: "Car"),
+                        JudulEkatalog(judul: "Car", filter: "SeMobil"),
                         const SizedBox(height: 0),
                         BlocListener(
                           bloc: BlocProvider.of<DataKatalogBloc>(context),
@@ -226,7 +226,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                         
                         // Nearby Motorcycle Section
                         const SizedBox(height: 20),
-                        JudulEkatalog(judul: "Motorcycle"),
+                        JudulEkatalog(judul: "Motorcycle", filter: "SeMotor"),
                         const SizedBox(height: 0),
                         BlocBuilder<DataKatalogBloc, DataKatalogState>(
                           builder: ((context, state) {
@@ -244,7 +244,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
 
                         // Nearby Electric Vehicle Section
                         const SizedBox(height: 20),
-                        JudulEkatalog(judul: "Electric vehicle"),
+                        JudulEkatalog(judul: "Electric vehicle", filter: "SeMolis"),
                         const SizedBox(height: 0),
                         BlocBuilder<DataKatalogBloc, DataKatalogState>(
                           builder: ((context, state) {

@@ -4,7 +4,8 @@ import 'package:sewoapp/data_katalog/data_katalog_screen.dart';
 
 class JudulEkatalog extends StatefulWidget {
   final String judul;
-  const JudulEkatalog({super.key, required this.judul});
+  final String? filter;
+  const JudulEkatalog({super.key, required this.judul, this.filter});
 
   @override
   State<JudulEkatalog> createState() => _JudulEkatalogState();
@@ -44,7 +45,13 @@ class _JudulEkatalogState extends State<JudulEkatalog> {
         const Spacer(),
         InkWell(
           onTap: () {
-            Navigator.of(context).pushNamed(DataKatalogScreen.routeName);
+            Navigator.of(context).pushNamed(DataKatalogScreen.routeName, 
+                arguments: 
+                {
+                  'category': widget.filter,
+                  'searchText': widget.filter,
+                }
+            );
           },
           child: Row(children: [
             Text(

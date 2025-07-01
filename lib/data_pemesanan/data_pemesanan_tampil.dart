@@ -150,6 +150,18 @@ class _DataPemesananTampilState extends State<DataPemesananTampil> {
                 _buildDetailRow('Return Day', _safeGetString(details['return'])),
                 const SizedBox(height: 16),
                 const Text(
+                  'PICKUP INFORMATION',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const Divider(thickness: 1),
+                _buildDetailRow('Due', '2025-01-01'), // Placeholder for due date,
+                _buildDetailRow('Location', 'Jl. Kesumba No.7 RT.4 RW.2, Kec. Cakung, Jakarta Timur'), // Placeholder for location
+                _buildDetailRow('Contact Person', '0888088882'), // Placeholder for contact person
+                const SizedBox(height: 16),
+                const Text(
                   'PAYMENT',
                   style: TextStyle(
                     fontSize: 16,

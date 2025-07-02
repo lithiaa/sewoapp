@@ -106,8 +106,12 @@ class _DataCartTampilState extends State<DataCartTampil> {
                   children: [
                     if (showImageCard)
                       Container(
-                        width: 120,
-                        height: 90,
+                        constraints: const BoxConstraints(
+                          minWidth: 120,
+                          maxWidth: 180,
+                          minHeight: 80,
+                          maxHeight: 140,
+                        ),
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(8),
                           color: Colors.grey[200],
@@ -115,11 +119,15 @@ class _DataCartTampilState extends State<DataCartTampil> {
                         clipBehavior: Clip.hardEdge,
                         child: Image.network(
                           "${ConfigGlobal.baseUrl}/admin/upload/${widget.data.gambar}",
-                          fit: BoxFit.cover,
+                          fit: BoxFit.contain,
                           errorBuilder: (context, error, stackTrace) {
-                            return Image.asset(
-                              "assets/image-not-available.jpg",
-                              fit: BoxFit.cover,
+                            return Container(
+                              width: 150,
+                              height: 90,
+                              child: Image.asset(
+                                "assets/image-not-available.jpg",
+                                fit: BoxFit.cover,
+                              ),
                             );
                           },
                         ),
@@ -203,28 +211,8 @@ class _DataCartTampilState extends State<DataCartTampil> {
                       minValue: 1,
                       onChanged: (value) {
                         if (value < 1) {
-                          showDialog<bool>(
-                            context: context,
-                            builder: (context) => AlertDialog(
-                              title: const Text('Batalkan Checkout ?'),
-                              content: const Text(
-                                  'Jumlah hari kurang dari 1. Apakah Anda ingin membatalkan Checkout ?'),
-                              actions: [
-                                TextButton(
-                                  onPressed: () => Navigator.pop(context, false),
-                                  child: const Text('Tidak'),
-                                ),
-                                TextButton(
-                                  onPressed: () => Navigator.pop(context, true),
-                                  child: const Text('ya'),
-                                ),
-                              ],
-                            ),
-                          ).then((confirm) {
-                            if (confirm == true) {
-                              widget.onTapHapus(widget.data);
-                            }
-                          });
+                          // Prevent going below 1, don't trigger delete
+                          return;
                         } else {
                           setState(() {
                             _jumlah = value.toString();
@@ -256,28 +244,8 @@ class _DataCartTampilState extends State<DataCartTampil> {
                       child: IconButton(
                         icon: const Icon(Icons.delete),
                         onPressed: () {
-                          showDialog<bool>(
-                            context: context,
-                            builder: (context) => AlertDialog(
-                              title: const Text('Konfirmasi'),
-                              content: const Text('Apakah akan membatalkan checkout?'),
-                              actions: [
-                                TextButton(
-                                  onPressed: () => Navigator.pop(context, false),
-                                  child: const Text('Tidak'),
-                                ),
-                                TextButton(
-                                  onPressed: () => Navigator.pop(context, true),
-                                  child: const Text('Ya'),
-                                ),
-                              ],
-                            ),
-                          ).then((confirm) {
-                            if (confirm == true) {
-                              print('Delete icon tapped for product: ${widget.data.idProduk}');
-                              widget.onTapHapus(widget.data);
-                            }
-                          });
+                          print('Delete icon tapped for product: ${widget.data.idProduk}');
+                          widget.onTapHapus(widget.data);
                         },
                       ),
                     ),
@@ -376,11 +344,10 @@ class _NumericStepButtonState extends State<NumericStepButton> {
           padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 3),
           iconSize: 32.0,
           onPressed: () {
-            if (widget.value <= widget.minValue) {
-              widget.onChanged(widget.value - 1); // Trigger alert for < 1
-            } else {
+            if (widget.value > widget.minValue) {
               widget.onChanged(widget.value - 1);
             }
+            // Don't call onChanged if already at minimum to prevent triggering callback
           },
         ),
         Text(

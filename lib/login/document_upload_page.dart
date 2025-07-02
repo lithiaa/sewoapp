@@ -119,6 +119,75 @@ class _DocumentUploadPageState extends State<DocumentUploadPage> {
     }
   }
 
+  void _showTermsDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text("Privacy Policy and Terms of Use"),
+          content: SizedBox(
+            width: double.maxFinite,
+            height: 400,
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: const [
+                  Text("By registering an account and using our vehicle rental services, you agree to the collection and processing of your personal data as described below."),
+                  SizedBox(height: 12),
+                  Text("1. Collection of Personal Data", style: TextStyle(fontWeight: FontWeight.bold)),
+                  Text("In order to provide and secure our services, we collect essential personal information, including but not limited to: Identity Card (KTP), Family Card (KK), Spouse's ID, Driver's License (SIM), Vehicle Registration Document (BPKB), Tax Identification Number (NPWP), and other relevant personal data."),
+                  SizedBox(height: 8),
+                  Text("2. Purpose of Data Use", style: TextStyle(fontWeight: FontWeight.bold)),
+                  Text("The personal data collected will be used solely for the following purposes:"),
+                  SizedBox(height: 4),
+                  Text("• Verification of identity and completeness of documentation during the rental process."),
+                  Text("• Ensuring the security and integrity of transactions and vehicle usage."),
+                  Text("• Addressing urgent or emergency situations where access to personal data is necessary to protect the safety of all parties involved."),
+                  SizedBox(height: 8),
+                  Text("3. Data Protection and Confidentiality", style: TextStyle(fontWeight: FontWeight.bold)),
+                  Text("We are committed to safeguarding your personal data by implementing appropriate technical and organizational measures to prevent unauthorized access, disclosure, alteration, or destruction of your information. Access to personal data is strictly limited to authorized personnel who require it for legitimate business purposes."),
+                  SizedBox(height: 8),
+                  Text("4. Data Sharing and Disclosure", style: TextStyle(fontWeight: FontWeight.bold)),
+                  Text("Your personal data will not be disclosed to any third party except under the following conditions:"),
+                  SizedBox(height: 4),
+                  Text("• When required by law or governmental authorities."),
+                  Text("• In urgent circumstances related to security or safety concerns."),
+                  SizedBox(height: 8),
+                  Text("5. Consent and Rights", style: TextStyle(fontWeight: FontWeight.bold)),
+                  Text("By proceeding with registration, you provide explicit consent for the collection and use of your personal data as outlined herein. You retain the right to access, correct, or request deletion of your personal data in accordance with applicable data protection laws."),
+                ],
+              ),
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                setState(() {
+                  policyAccepted = false;
+                });
+              },
+              child: const Text("Decline"),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                setState(() {
+                  policyAccepted = true;
+                });
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF11316C),
+                foregroundColor: Colors.white,
+              ),
+              child: const Text("Accept"),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -164,40 +233,31 @@ class _DocumentUploadPageState extends State<DocumentUploadPage> {
 
             const SizedBox(height: 8),
             const Divider(),
-            const SizedBox(height: 8),
-
-            // Terms and Privacy Policy
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.grey.shade400),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: const Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text("1. Definition", style: TextStyle(fontWeight: FontWeight.bold)),
-                  Text("Sewaapp: A digital platform that brings together vehicle renters with trusted vehicle provider partners."),
-                  Text("Guest: Sewaapp app user who rents a vehicle."),
-                  Text("Host: Vehicle rental service provider partners who have been registered and verified on Sewaapp."),
-                  SizedBox(height: 8),
-                  Text("2. General Terms", style: TextStyle(fontWeight: FontWeight.bold)),
-                  Text("By registering and using Sewaapp, users agree to all applicable Terms and Conditions."),
-                  SizedBox(height: 8),
-                  Text("3. User Account", style: TextStyle(fontWeight: FontWeight.bold)),
-                  Text("Users are responsible for providing accurate and up-to-date information."),
-                ],
-              ),
-            ),
+            const SizedBox(height: 16),
 
             Row(
               children: [
                 Checkbox(
                   value: policyAccepted,
-                  onChanged: (val) => setState(() => policyAccepted = val ?? false),
+                  onChanged: (val) {
+                    if (val == true) {
+                      _showTermsDialog();
+                    } else {
+                      setState(() => policyAccepted = false);
+                    }
+                  },
                 ),
-                const Expanded(
-                  child: Text("I confirm that I have read, consent, and agree to the terms and privacy policy."),
+                Expanded(
+                  child: GestureDetector(
+                    onTap: () => _showTermsDialog(),
+                    child: const Text(
+                      "I confirm that I have read, consent, and agree to the terms and privacy policy.",
+                      style: TextStyle(
+                        decoration: TextDecoration.underline,
+                        color: Color(0xFF11316C),
+                      ),
+                    ),
+                  ),
                 )
               ],
             ),

@@ -52,6 +52,47 @@ class _DataKatalogTampilState extends State<DataKatalogTampil> {
                     ),
                   ],
                 ),
+                const SizedBox(height: 6),
+                // Area/Location below partner name
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
+                      decoration: BoxDecoration(
+                        color: Colors.blue.withOpacity(0.05),
+                        borderRadius: BorderRadius.circular(6),
+                        border: Border.all(color: Colors.blue.withOpacity(0.1)),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(1),
+                            decoration: BoxDecoration(
+                              color: Colors.blue.withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(3),
+                            ),
+                            child: const Icon(
+                              Icons.location_on,
+                              color: Colors.blue,
+                              size: 10,
+                            ),
+                          ),
+                          const SizedBox(width: 4),
+                          Text(
+                            widget.data.area ?? 'Lokasi tidak tersedia',
+                            style: const TextStyle(
+                              fontSize: 10,
+                              fontWeight: FontWeight.w500,
+                              color: Colors.blue,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
                 const SizedBox(height: 8),
                 Hero(
                   tag: "${widget.data.namaProduk}",
@@ -93,7 +134,10 @@ class _DataKatalogTampilState extends State<DataKatalogTampil> {
                             "${widget.data.kategori}",
                             maxLines: 1,
                             overflow: TextOverflow.fade,
-                            style: const TextStyle(fontSize: 14),
+                            style: const TextStyle(
+                              fontSize: 14,
+                              color: Colors.grey,
+                            ),
                           ),
                         ],
                       ),
@@ -121,6 +165,27 @@ class _DataKatalogTampilState extends State<DataKatalogTampil> {
                             ),
                           ],
                         ),
+                        const SizedBox(height: 6),
+                        // Rating below price
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Icon(
+                              Icons.star,
+                              color: Colors.amber,
+                              size: 14,
+                            ),
+                            const SizedBox(width: 3),
+                            const Text(
+                              '4.0',
+                              style: TextStyle(
+                                fontSize: 11,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.amber,
+                              ),
+                            ),
+                          ],
+                        ),
                       ],
                     ),
                   ],
@@ -130,15 +195,6 @@ class _DataKatalogTampilState extends State<DataKatalogTampil> {
           ),
         ),
       ),
-    );
-  }
-
-  Route _createRoute() {
-    return PageRouteBuilder(
-      settings: RouteSettings(
-          name: DataKatalogDetail.routeName, arguments: widget.data),
-      pageBuilder: (context, animation, _) => const DataKatalogDetail(),
-      transitionDuration: const Duration(milliseconds: 700),
     );
   }
 }

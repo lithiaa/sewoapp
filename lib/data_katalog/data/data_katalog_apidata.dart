@@ -18,6 +18,7 @@ class DataKatalogApiData {
     this.total,
     this.spesifikasi,
     this.namaPartner,
+    this.area,
   });
 
   @JsonKey(name: "id_produk")
@@ -48,6 +49,9 @@ class DataKatalogApiData {
 
   @JsonKey(name: "nama_partner")
   final String? namaPartner;
+
+  @JsonKey(name: "area")
+  final String? area;
 
   factory DataKatalogApiData.fromJson(Map<String, dynamic> json) =>
       _$DataKatalogApiDataFromJson(json);

@@ -19,6 +19,7 @@ DataKatalogApiData _$DataKatalogApiDataFromJson(Map<String, dynamic> json) =>
       total: json['total'] as String?,
       spesifikasi: json['spesifikasi'] as String?,
       namaPartner: json['nama_partner'] as String?,
+      area: json['area'] as String?,
     );
 
 Map<String, dynamic> _$DataKatalogApiDataToJson(DataKatalogApiData instance) =>
@@ -34,4 +35,5 @@ Map<String, dynamic> _$DataKatalogApiDataToJson(DataKatalogApiData instance) =>
       'deskripsi': instance.deskripsi,
       'total': instance.total,
       'nama_partner': instance.namaPartner,
+      'area': instance.area,
     };

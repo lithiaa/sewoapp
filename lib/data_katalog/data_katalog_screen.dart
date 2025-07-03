@@ -134,7 +134,7 @@ class _DataKatalogScreenState extends State<DataKatalogScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const Text(
-                'Pilih Area',
+                'Select Location',
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
@@ -232,7 +232,7 @@ class _DataKatalogScreenState extends State<DataKatalogScreen> {
                       child: Row(
                         children: [
                           const Text(
-                            'Select location',
+                            'Select Location',
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 14,

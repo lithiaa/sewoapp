@@ -90,9 +90,9 @@ class _DataCartTampilState extends State<DataCartTampil> {
                       size: 24,
                     ),
                     const SizedBox(width: 8),
-                    const Text(
-                      'Sinagra Rentals',
-                      style: TextStyle(
+                    Text(
+                      widget.data.namaPartner ?? 'Unknown Partner',
+                      style: const TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.bold, // Bold text
                       ),

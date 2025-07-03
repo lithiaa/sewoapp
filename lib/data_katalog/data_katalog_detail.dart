@@ -238,7 +238,7 @@ class _DataKatalogDetailState extends State<DataKatalogDetail> {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => ChatPage(renterName: 'Sinagra Rentals'),
+                                  builder: (context) => ChatPage(renterName: data.namaPartner ?? "Unknown Partner"),
                                 ),
                               );
                             },
@@ -468,7 +468,7 @@ class _DataKatalogDetailState extends State<DataKatalogDetail> {
                                   context,
                                   MaterialPageRoute(
                                     builder: (context) => ChatPage(
-                                      renterName: "Sinagra Rentals", // ganti dengan variabel nama penyewa
+                                      renterName: data.namaPartner ?? "Unknown Partner",
                                     ),
                                   ),
                                 );

@@ -19,6 +19,7 @@ class DataDetailPemesananApiData implements DataHapus {
     this.harga,
     this.namaProduk,
     this.gambar,
+    this.namaPartner,
   });
 
   @JsonKey(name: "nama_produk")
@@ -26,6 +27,9 @@ class DataDetailPemesananApiData implements DataHapus {
 
   @JsonKey(name: "gambar")
   final String? gambar;
+
+  @JsonKey(name: "nama_partner")
+  final String? namaPartner;
 
   @JsonKey(name: "id_detail_pemesanan")
   final String? idDetailPemesanan;

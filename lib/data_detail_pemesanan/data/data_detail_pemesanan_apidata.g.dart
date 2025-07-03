@@ -16,6 +16,7 @@ DataDetailPemesananApiData _$DataDetailPemesananApiDataFromJson(
   harga: _convertToString(json['harga']),
   namaProduk: json['nama_produk'] as String?,
   gambar: json['gambar'] as String?,
+  namaPartner: json['nama_partner'] as String?,
 );
 
 Map<String, dynamic> _$DataDetailPemesananApiDataToJson(
@@ -23,6 +24,7 @@ Map<String, dynamic> _$DataDetailPemesananApiDataToJson(
 ) => <String, dynamic>{
   'nama_produk': instance.namaProduk,
   'gambar': instance.gambar,
+  'nama_partner': instance.namaPartner,
   'id_detail_pemesanan': instance.idDetailPemesanan,
   'id_pemesanan': instance.idPemesanan,
   'id_produk': instance.idProduk,

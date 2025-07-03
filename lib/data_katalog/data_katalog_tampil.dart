@@ -35,8 +35,7 @@ class _DataKatalogTampilState extends State<DataKatalogTampil> {
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10), // Adjusted padding
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Row(
+              children: [                  Row(
                   mainAxisAlignment: MainAxisAlignment.start, // Top-left alignment
                   children: [
                     const Icon(
@@ -44,9 +43,9 @@ class _DataKatalogTampilState extends State<DataKatalogTampil> {
                       size: 24,
                     ),
                     const SizedBox(width: 8),
-                    const Text(
-                      'Sinagra Rentals',
-                      style: TextStyle(
+                    Text(
+                      widget.data.namaPartner ?? 'Unknown Partner',
+                      style: const TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.bold, // Bold text
                       ),

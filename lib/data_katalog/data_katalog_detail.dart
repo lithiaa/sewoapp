@@ -118,9 +118,23 @@ class _DataKatalogDetailState extends State<DataKatalogDetail> {
 
     return Scaffold(
       backgroundColor: const Color(0xFFFFFFFF),
-      appBar: AppBar(
-        title: Text(data.namaProduk ?? "", style: const TextStyle(color: Colors.white),),
-        actions: [],
+            appBar: AppBar(
+        title: Text(
+          data.namaProduk ?? "",
+          style: const TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+            fontSize: 20,
+          ),
+        ),
+        backgroundColor: const Color(0xFF11316C),
+        foregroundColor: Colors.white,
+        elevation: 0,
+        centerTitle: true,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
       ),
       body: BlocListener(
         bloc: BlocProvider.of<DataCartSimpanBloc>(context),
@@ -144,9 +158,7 @@ class _DataKatalogDetailState extends State<DataKatalogDetail> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Card(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30),
-                      ),
+
                       color: const Color(0xFFDDDDDD),
                       child: Hero(
                         tag: "${data.namaProduk}",
@@ -435,16 +447,17 @@ class _DataKatalogDetailState extends State<DataKatalogDetail> {
                   ],
                 ),
               ),
-              ),
+            ),
             Align(
               alignment: Alignment.bottomCenter,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    color: Colors.white,
-                    child: Row(
+              child: SafeArea(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      color: Colors.white,
+                      child: Row(
                       children: [
                         Expanded(
                           child: Padding(
@@ -461,21 +474,33 @@ class _DataKatalogDetailState extends State<DataKatalogDetail> {
                                 );
                               },
                               splashColor: Colors.grey[400],
-                              borderRadius: BorderRadius.circular(30),
+                              borderRadius: BorderRadius.circular(16),
                               child: Container(
                                 height: 60,
                                 decoration: BoxDecoration(
                                   color: Colors.grey[200],
-                                  borderRadius: BorderRadius.circular(30),
+                                  borderRadius: BorderRadius.circular(16),
                                 ),
                                 padding: const EdgeInsets.all(15),
                                 child: const Center(
-                                  child: Text(
-                                    "Chat",
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 16,
-                                    ),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Icon(
+                                        Icons.chat_bubble_outline,
+                                        color: Colors.black87,
+                                        size: 20,
+                                      ),
+                                      SizedBox(width: 8),
+                                      Text(
+                                        "Chat",
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16,
+                                          color: Colors.black87,
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
                               ),
@@ -492,21 +517,23 @@ class _DataKatalogDetailState extends State<DataKatalogDetail> {
                                 _tambahKeranjang(data);
                               },
                               splashColor: Colors.blue[200],
-                              borderRadius: BorderRadius.circular(30),
+                              borderRadius: BorderRadius.circular(16),
                               child: Container(
                                 height: 60,
                                 decoration: BoxDecoration(
                                   color: Style.buttonBackgroundColor,
-                                  borderRadius: BorderRadius.circular(30),
+                                  borderRadius: BorderRadius.circular(16),
                                 ),
                                 padding: const EdgeInsets.all(15),
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     const Icon(
-                                      Icons.add,
+                                      Icons.car_rental,
                                       color: Colors.white,
+                                      size: 20,
                                     ),
+                                    const SizedBox(width: 8),
                                     const Text(
                                       "Rent",
                                       style: TextStyle(
@@ -526,6 +553,7 @@ class _DataKatalogDetailState extends State<DataKatalogDetail> {
                   ),
                 ],
               ),
+            ),
             ),
           ],
         ),

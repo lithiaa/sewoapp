@@ -96,17 +96,11 @@ class _DataKatalogDetailState extends State<DataKatalogDetail> {
     fetchCart();
   }
 
-  /*@override
-  String getEnergyLabel(String spesifikasi) {
-    final lower = spesifikasi.toLowerCase();
-    if (lower.contains('electric')) {
-      return 'Battery';
-    } else if (RegExp(r'\d+\s*cc').hasMatch(lower)) {
-      return 'Fuel';
-    } else {
-      return '-';
-    }
-  }*/
+  // Function to check if engine is electric
+  bool _isElectricEngine(String? engine) {
+    if (engine == null) return false;
+    return engine.toLowerCase().contains('electric');
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -157,291 +151,395 @@ class _DataKatalogDetailState extends State<DataKatalogDetail> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Card(
-
-                      color: const Color(0xFFDDDDDD),
-                      child: Hero(
-                        tag: "${data.namaProduk}",
-                        child: Image.network(
-                          "${ConfigGlobal.baseUrl}/admin/upload/${data.gambar}",
-                          width: 400,
-                          height: 220,
-                          fit: BoxFit.fitWidth,
-                          errorBuilder: (context, error, stackTrace) {
-                            return Image.asset(
-                              "assets/image-not-available.jpg",
-                              width: 400,
-                              height: 220,
-                              fit: BoxFit.fitWidth,
-                            );
-                          },
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(10),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                VisibilityDetector(
-                                  key: const Key("harga"),
-                                  onVisibilityChanged: (VisibilityInfo info) {
-                                    var visiblePercentage = info.visibleFraction * 100;
-                                    if (mounted) {
-                                      setState(() {
-                                        showHarga = visiblePercentage == 0.0;
-                                      });
-                                    }
-                                  },
-                                  child: Text.rich(
-                                    TextSpan(
-                                      children: [
-                                        TextSpan(
-                                          text: ConfigGlobal.formatRupiah(data.harga),
-                                          style: const TextStyle(
-                                            color: Colors.black,
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 28,
-                                          ),
-                                        ),
-                                        TextSpan(
-                                          text: "/day",
-                                          style: TextStyle(
-                                            color: Colors.grey,
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 15,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(height: 6),
-                                Text(
-                                  data.namaProduk ?? "-",
-                                  overflow: TextOverflow.fade,
-                                  maxLines: 2,
-                                  style: const TextStyle(
-                                    fontSize: 18,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          /*ElevatedButton.icon(
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => ChatPage(renterName: data.namaPartner ?? "Unknown Partner"),
-                                ),
-                              );
-                            },
-                            icon: const Icon(Icons.chat),
-                            label: const Text('Chat Penyewa'),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: const Color(0xFF11316C),
-                              foregroundColor: Colors.white,
-                            ),
-                          ),*/
-                        ],
-                      ),
-                    ),
+                    // Image section with partner info
                     Container(
-                      height: 3,
-                      color: Colors.grey[200],
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(10),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const SizedBox(height: 20),
-                          const Text(
-                            "Specification",
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 18,
-                            ),
-                          ),
-                          const SizedBox(height: 10),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      margin: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                      child: Card(
+                        color: const Color(0xFFF2F6FF),
+                        elevation: 4,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(15),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              Expanded(
-                                child: Card(
-                                  elevation: 2,
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Column(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      children: [
-                                        const Icon(Icons.settings, size: 24),
-                                        const SizedBox(height: 8),
-                                        const Text(
-                                          "Engine",
-                                          style: TextStyle(fontWeight: FontWeight.bold),
-                                        ),
-                                        const SizedBox(height: 4),
-                                        Text(specification['engine']?.toString() ?? "-"),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(width: 8),
-                              Expanded(
-                                child: Card(
-                                  elevation: 2,
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Column(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      children: [
-                                        const Icon(Icons.local_gas_station, size: 24),
-                                        const SizedBox(height: 8),
-                                        const Text(
-                                          "Fuel",
-                                          style: TextStyle(fontWeight: FontWeight.bold),
-                                        ),
-                                        const SizedBox(height: 4),
-                                        Text(specification['fuel']?.toString() ?? "-"),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(width: 8),
-                              Expanded(
-                                child: Card(
-                                  elevation: 2,
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Column(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      children: [
-                                        const Icon(Icons.speed, size: 24),
-                                        const SizedBox(height: 8),
-                                        const Text(
-                                          "Top Speed",
-                                          style: TextStyle(fontWeight: FontWeight.bold),
-                                        ),
-                                        const SizedBox(height: 4),
-                                        Text(specification['top_speed']?.toString() ?? "-"),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 10),
-                          Container(
-                            height: 3,
-                            color: Colors.grey[200],
-                          ),
-                          const SizedBox(height: 20),
-                          const Text(
-                            "Vehicle Features",
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 18,
-                            ),
-                          ),
-                          const SizedBox(height: 15),
-                          ..._buildVehicleFeatures(vehicleFeatures),
-                          const SizedBox(height: 10),
-                          Container(
-                            height: 3,
-                            color: Colors.grey[200],
-                          ),
-                          const SizedBox(height: 20),
-                          const Text(
-                            "Additional Information",
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 18,
-                            ),
-                          ),
-                          const SizedBox(height: 10),
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const Icon(Icons.location_on_outlined, color: Colors.black54),
-                              const SizedBox(width: 8),
-                              Expanded(
-                                child: Text(
-                                  'Jl. Kayu Manis Timur No.24, Matram, Jakarta Timur',
-                                  style: const TextStyle(
-                                    fontSize: 14,
-                                    color: Colors.black87,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 10),
-                          ..._buildAdditionalInformation(additionalInformation),
-                          Card(
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                            elevation: 2,
-                            margin: const EdgeInsets.only(top: 10),
-                            child: Padding(
-                              padding: const EdgeInsets.all(12),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
+                              // Partner info at top
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
-                                  const Text(
-                                    'User Review',
-                                    style: TextStyle(
-                                      fontSize: 16,
+                                  const Icon(
+                                    Icons.store,
+                                    size: 24,
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Text(
+                                    data.namaPartner ?? 'Unknown Partner',
+                                    style: const TextStyle(
+                                      fontSize: 14,
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
-                                  const SizedBox(height: 12),
-                                  Row(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      const Icon(Icons.account_circle_rounded, size: 40, color: Colors.black),
-                                      const SizedBox(width: 10),
-                                      Expanded(
-                                        child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: [
-                                            const Text(
-                                              'Muhammad Agusdin',
-                                              style: TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 14,
-                                              ),
-                                            ),
-                                            const SizedBox(height: 4),
-                                            Row(
-                                              children: List.generate(
-                                                5,
-                                                    (index) => const Icon(Icons.star, color: Colors.amber, size: 18),
-                                              ),
-                                            ),
-                                            const SizedBox(height: 6),
-                                            const Text(
-                                              'Kendaraanya terawat dengan baik sehingga enak pada waktu digunakan, tata cara menyewa kendaraannya juga mudah.',
-                                              style: TextStyle(fontSize: 14),
-                                            ),
-                                          ],
-                                        ),
+                                ],
+                              ),
+                              const SizedBox(height: 8),
+                              // Hero image
+                              Hero(
+                                tag: "${data.namaProduk}",
+                                child: Image.network(
+                                  "${ConfigGlobal.baseUrl}/admin/upload/${data.gambar}",
+                                  width: MediaQuery.of(context).size.width,
+                                  height: MediaQuery.of(context).size.width * 0.4,
+                                  fit: BoxFit.contain,
+                                  errorBuilder: (context, error, stackTrace) {
+                                    return Image.asset(
+                                      "assets/image-not-available.jpg",
+                                      width: MediaQuery.of(context).size.width,
+                                      height: MediaQuery.of(context).size.width * 0.4,
+                                      fit: BoxFit.contain,
+                                    );
+                                  },
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                    // Product info section
+                    Container(
+                      margin: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                      child: Card(
+                        color: const Color(0xFFF2F6FF),
+                        elevation: 4,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(15),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(15),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      data.namaProduk ?? "-",
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                      softWrap: false,
+                                      style: const TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold,
                                       ),
-                                    ],
+                                    ),
+                                    const SizedBox(height: 6),
+                                    Text(
+                                      data.kategori ?? "-",
+                                      maxLines: 1,
+                                      overflow: TextOverflow.fade,
+                                      style: const TextStyle(fontSize: 14),
+                                    ),
+                                    const SizedBox(height: 8),
+                                    // Rating dummy
+                                    Row(
+                                      children: [
+                                        const Icon(
+                                          Icons.star,
+                                          color: Colors.amber,
+                                          size: 16,
+                                        ),
+                                        const SizedBox(width: 4),
+                                        const Text(
+                                          '4.0 (24 reviews)',
+                                          style: TextStyle(
+                                            fontSize: 12,
+                                            color: Colors.grey,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                children: [
+                                  VisibilityDetector(
+                                    key: const Key("harga"),
+                                    onVisibilityChanged: (VisibilityInfo info) {
+                                      var visiblePercentage = info.visibleFraction * 100;
+                                      if (mounted) {
+                                        setState(() {
+                                          showHarga = visiblePercentage == 0.0;
+                                        });
+                                      }
+                                    },
+                                    child: Row(
+                                      children: [
+                                        Text(
+                                          ConfigGlobal.formatRupiah(data.harga),
+                                          style: const TextStyle(
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.bold,
+                                            color: Style.buttonBackgroundColor,
+                                          ),
+                                        ),
+                                        const Text(
+                                          "/day",
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            color: Style.buttonBackgroundColor,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 ],
                               ),
-                            ),
+                            ],
                           ),
-                        ],
+                        ),
+                      ),
+                    ),
+                    // Specifications section
+                    Container(
+                      margin: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                      child: Card(
+                        color: const Color(0xFFF2F6FF),
+                        elevation: 4,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(15),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(15),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text(
+                                "Specification",
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 18,
+                                ),
+                              ),
+                              const SizedBox(height: 10),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Expanded(
+                                    child: Card(
+                                      elevation: 2,
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Column(
+                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          children: [
+                                            const Icon(Icons.settings, size: 24),
+                                            const SizedBox(height: 8),
+                                            const Text(
+                                              "Engine",
+                                              style: TextStyle(fontWeight: FontWeight.bold),
+                                            ),
+                                            const SizedBox(height: 4),
+                                            Text(specification['engine']?.toString() ?? "-"),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Expanded(
+                                    child: Card(
+                                      elevation: 2,
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Column(
+                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          children: [
+                                            Icon(
+                                              _isElectricEngine(specification['engine']?.toString()) 
+                                                ? Icons.battery_charging_full 
+                                                : Icons.local_gas_station, 
+                                              size: 24
+                                            ),
+                                            const SizedBox(height: 8),
+                                            Text(
+                                              _isElectricEngine(specification['engine']?.toString()) 
+                                                ? "Battery" 
+                                                : "Fuel",
+                                              style: const TextStyle(fontWeight: FontWeight.bold),
+                                            ),
+                                            const SizedBox(height: 4),
+                                            Text(specification['fuel']?.toString() ?? "-"),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Expanded(
+                                    child: Card(
+                                      elevation: 2,
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Column(
+                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          children: [
+                                            const Icon(Icons.speed, size: 24),
+                                            const SizedBox(height: 8),
+                                            const Text(
+                                              "Top Speed",
+                                              style: TextStyle(fontWeight: FontWeight.bold),
+                                            ),
+                                            const SizedBox(height: 4),
+                                            Text(specification['top_speed']?.toString() ?? "-"),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                    // Vehicle Features section  
+                    Container(
+                      margin: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                      child: Card(
+                        color: const Color(0xFFF2F6FF),
+                        elevation: 4,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(15),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(15),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text(
+                                "Vehicle Features",
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 18,
+                                ),
+                              ),
+                              const SizedBox(height: 15),
+                              ..._buildVehicleFeatures(vehicleFeatures),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                    // Additional Information section
+                    Container(
+                      margin: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                      child: Card(
+                        color: const Color(0xFFF2F6FF),
+                        elevation: 4,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(15),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(15),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text(
+                                "Additional Information",
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 18,
+                                ),
+                              ),
+                              const SizedBox(height: 10),
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const Icon(Icons.location_on_outlined, color: Colors.black54),
+                                  const SizedBox(width: 8),
+                                  Expanded(
+                                    child: Text(
+                                      'Jl. Kayu Manis Timur No.24, Matram, Jakarta Timur',
+                                      style: const TextStyle(
+                                        fontSize: 14,
+                                        color: Colors.black87,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 10),
+                              ..._buildAdditionalInformation(additionalInformation),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                    // User Review section
+                    Container(
+                      margin: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                      child: Card(
+                        color: const Color(0xFFF2F6FF),
+                        elevation: 4,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(15),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(15),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text(
+                                'User Review',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              const SizedBox(height: 12),
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const Icon(Icons.account_circle_rounded, size: 40, color: Colors.black),
+                                  const SizedBox(width: 10),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        const Text(
+                                          'Muhammad Agusdin',
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 14,
+                                          ),
+                                        ),
+                                        const SizedBox(height: 4),
+                                        Row(
+                                          children: List.generate(
+                                            5,
+                                            (index) => const Icon(Icons.star, color: Colors.amber, size: 18),
+                                          ),
+                                        ),
+                                        const SizedBox(height: 6),
+                                        const Text(
+                                          'Kendaraanya terawat dengan baik sehingga enak pada waktu digunakan, tata cara menyewa kendaraannya juga mudah.',
+                                          style: TextStyle(fontSize: 14),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
                       ),
                     ),
                   ],

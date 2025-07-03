@@ -13,16 +13,6 @@ class CustomCarouselSlider extends StatefulWidget {
 class _CustomCarouselSliderState extends State<CustomCarouselSlider> {
   int _currentIndex = 0;
 
-  void _navigateToKatalog(String category, String searchText) {
-    Navigator.of(context).pushNamed(
-      DataKatalogScreen.routeName,
-      arguments: {
-        'category': category,
-        'searchText': searchText,
-      },
-    );
-  }
-
   void _navigateToEmissionCalculator() {
     Navigator.of(context).pushNamed(EmissionsCalculatorPage.routeName);
   }
@@ -62,7 +52,7 @@ class _CustomCarouselSliderState extends State<CustomCarouselSlider> {
                       item: item,
                       onTap: () {
                         if (item.navigationType == 'products') {
-                          _navigateToKatalog('All', '');
+                          Navigator.of(context).pushNamed(DataKatalogScreen.routeName);
                         } else if (item.navigationType == 'emission_calculator') {
                           _navigateToEmissionCalculator();
                         }

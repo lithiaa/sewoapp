@@ -71,7 +71,7 @@ class AboutCard extends StatelessWidget {
                   ),
                   const SizedBox(height: 16),
                   const Text(
-                    "Version 1.0.0",
+                    "Version 1.0.2",
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize: 14,

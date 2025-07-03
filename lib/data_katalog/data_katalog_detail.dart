@@ -323,7 +323,7 @@ class _DataKatalogDetailState extends State<DataKatalogDetail> {
                                       ],
                                     ),
                                   ),
-                                  const SizedBox(height: 8),
+                                  const SizedBox(height: 6),
                                   // Rating below price
                                   Row(
                                     mainAxisSize: MainAxisSize.min,

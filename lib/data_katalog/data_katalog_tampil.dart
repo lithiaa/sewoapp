@@ -165,7 +165,7 @@ class _DataKatalogTampilState extends State<DataKatalogTampil> {
                             ),
                           ],
                         ),
-                        const SizedBox(height: 6),
+                        const SizedBox(height: 4),
                         // Rating below price
                         Row(
                           mainAxisSize: MainAxisSize.min,
@@ -179,7 +179,7 @@ class _DataKatalogTampilState extends State<DataKatalogTampil> {
                             const Text(
                               '4.0',
                               style: TextStyle(
-                                fontSize: 11,
+                                fontSize: 12,
                                 fontWeight: FontWeight.bold,
                                 color: Colors.amber,
                               ),

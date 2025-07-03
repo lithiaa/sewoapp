@@ -125,79 +125,127 @@ class _DataKatalogScreenState extends State<DataKatalogScreen> {
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       isScrollControlled: true,
+      useSafeArea: true,
       builder: (BuildContext modalContext) {
-        return Container(
-          height: MediaQuery.of(modalContext).size.height * 0.5,
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text(
-                'Select Location',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
+        return SafeArea(
+          child: Container(
+            height: MediaQuery.of(modalContext).size.height * 0.4,
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'Select Location',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
-              ),
-              const SizedBox(height: 16),
-              Expanded(
-                child: isLoadingAreas
-                    ? Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: const [
-                            CircularProgressIndicator(
-                              valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF11316C)),
-                              strokeWidth: 3,
-                            ),
-                            SizedBox(height: 16),
-                            Text(
-                              'Loading areas...',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w500,
-                                color: Colors.grey,
+                const Divider(
+                  height: 20,
+                  thickness: 1,
+                  color: Colors.grey,
+                ),
+                Expanded(
+                  child: isLoadingAreas
+                      ? Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: const [
+                              CircularProgressIndicator(
+                                valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF11316C)),
+                                strokeWidth: 3,
                               ),
-                            ),
-                          ],
-                        ),
-                      )
-                    : areas.isEmpty
-                        ? const Center(
-                            child: Text(
-                              'No areas available',
-                              style: TextStyle(
-                                fontSize: 16,
-                                color: Colors.grey,
+                              SizedBox(height: 16),
+                              Text(
+                                'Loading areas...',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w500,
+                                  color: Colors.grey,
+                                ),
                               ),
-                            ),
-                          )
-                    : CustomScrollView(
-                  slivers: [
-                    SliverList(
-                      delegate: SliverChildBuilderDelegate(
-                            (context, index) {
-                          return ListTile(
-                            title: Text(areas[index]),
-                            onTap: () {
-                              setState(() {
-                                selectedArea = areas[index];
-                                pencarianController.text = 'AREA ${areas[index].toUpperCase()}';
-                                filter.type = 'semua'; // Ensure broad search
-                                stream.add(pencarianController.text);
-                              });
-                              Navigator.pop(modalContext);
+                            ],
+                          ),
+                        )
+                      : areas.isEmpty
+                          ? const Center(
+                              child: Text(
+                                'No areas available',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  color: Colors.grey,
+                                ),
+                              ),
+                            )
+                      : Scrollbar(
+                          thumbVisibility: true,
+                          child: ListView.builder(
+                            itemCount: areas.length,
+                            itemBuilder: (context, index) {
+                              return Container(
+                                decoration: BoxDecoration(
+                                  border: Border(
+                                    bottom: BorderSide(
+                                      color: Colors.grey.withOpacity(0.2),
+                                      width: 0.5,
+                                    ),
+                                  ),
+                                ),
+                                child: ListTile(
+                                  contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                                  leading: const Icon(
+                                    Icons.location_on_outlined,
+                                    color: Colors.blue,
+                                    size: 20,
+                                  ),
+                                  title: Text(
+                                    areas[index],
+                                    style: const TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                  trailing: const Icon(
+                                    Icons.arrow_forward_ios,
+                                    size: 16,
+                                    color: Colors.grey,
+                                  ),
+                                  onTap: () {
+                                    setState(() {
+                                      selectedArea = areas[index];
+                                      pencarianController.text = 'AREA ${areas[index].toUpperCase()}';
+                                      filter.type = 'semua'; // Ensure broad search
+                                      stream.add(pencarianController.text);
+                                    });
+                                    Navigator.pop(modalContext);
+                                  },
+                                ),
+                              );
                             },
-                          );
-                        },
-                        childCount: areas.length,
-                      ),
-                    ),
-                  ],
+                          ),
+                        ),
                 ),
-              ),
-            ],
+                // Add visual hint for scrolling
+                Container(
+                  padding: const EdgeInsets.symmetric(vertical: 8),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Container(
+                        width: 30,
+                        height: 3,
+                        decoration: BoxDecoration(
+                          color: Colors.grey.withOpacity(0.5),
+                          borderRadius: BorderRadius.circular(2),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
         );
       },

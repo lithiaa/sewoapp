@@ -96,6 +96,18 @@ class _DataKatalogDetailState extends State<DataKatalogDetail> {
     fetchCart();
   }
 
+  /*@override
+  String getEnergyLabel(String spesifikasi) {
+    final lower = spesifikasi.toLowerCase();
+    if (lower.contains('electric')) {
+      return 'Battery';
+    } else if (RegExp(r'\d+\s*cc').hasMatch(lower)) {
+      return 'Fuel';
+    } else {
+      return '-';
+    }
+  }*/
+
   @override
   Widget build(BuildContext context) {
     final data = ModalRoute.of(context)!.settings.arguments as DataKatalogApiData;
@@ -105,9 +117,9 @@ class _DataKatalogDetailState extends State<DataKatalogDetail> {
     final additionalInformation = detailData['additional_information'] as List<dynamic>? ?? [];
 
     return Scaffold(
-      backgroundColor: const Color(0xFF11316C),
+      backgroundColor: const Color(0xFFFFFFFF),
       appBar: AppBar(
-        title: Text(data.namaProduk ?? ""),
+        title: Text(data.namaProduk ?? "", style: const TextStyle(color: Colors.white),),
         actions: [],
       ),
       body: BlocListener(
@@ -125,244 +137,307 @@ class _DataKatalogDetailState extends State<DataKatalogDetail> {
         },
         child: Stack(
           children: [
-            Card(
-              color: const Color(0xFFF2F6FF),
-              margin: const EdgeInsets.all(10),
-              elevation: 4,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(30),
-              ),
-              child: Padding(
-                padding: EdgeInsets.only(bottom: showHarga ? 115 : 75),
-                child: SingleChildScrollView(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Card(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30),
-                        ),
-                        color: const Color(0xFFDDDDDD),
-                        child: Hero(
-                          tag: "${data.namaProduk}",
-                          child: Image.network(
-                            "${ConfigGlobal.baseUrl}/admin/upload/${data.gambar}",
-                            width: 400,
-                            height: 220,
-                            fit: BoxFit.fitWidth,
-                            errorBuilder: (context, error, stackTrace) {
-                              return Image.asset(
-                                "assets/image-not-available.jpg",
-                                width: 400,
-                                height: 220,
-                                fit: BoxFit.fitWidth,
-                              );
-                            },
-                          ),
+            Padding(
+              padding: EdgeInsets.only(bottom: showHarga ? 115 : 75),
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Card(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30),
+                      ),
+                      color: const Color(0xFFDDDDDD),
+                      child: Hero(
+                        tag: "${data.namaProduk}",
+                        child: Image.network(
+                          "${ConfigGlobal.baseUrl}/admin/upload/${data.gambar}",
+                          width: 400,
+                          height: 220,
+                          fit: BoxFit.fitWidth,
+                          errorBuilder: (context, error, stackTrace) {
+                            return Image.asset(
+                              "assets/image-not-available.jpg",
+                              width: 400,
+                              height: 220,
+                              fit: BoxFit.fitWidth,
+                            );
+                          },
                         ),
                       ),
-                      Padding(
-                        padding: const EdgeInsets.all(10),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  VisibilityDetector(
-                                    key: const Key("harga"),
-                                    onVisibilityChanged: (VisibilityInfo info) {
-                                      var visiblePercentage = info.visibleFraction * 100;
-                                      if (mounted) {
-                                        setState(() {
-                                          showHarga = visiblePercentage == 0.0;
-                                        });
-                                      }
-                                    },
-                                    child: Text.rich(
-                                      TextSpan(
-                                        children: [
-                                          TextSpan(
-                                            text: ConfigGlobal.formatRupiah(data.harga),
-                                            style: const TextStyle(
-                                              color: Colors.black,
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 28,
-                                            ),
-                                          ),
-                                          TextSpan(
-                                            text: "/day",
-                                            style: TextStyle(
-                                              color: Colors.grey,
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 15,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                  const SizedBox(height: 6),
-                                  Text(
-                                    data.namaProduk ?? "-",
-                                    overflow: TextOverflow.fade,
-                                    maxLines: 2,
-                                    style: const TextStyle(
-                                      fontSize: 18,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            ElevatedButton.icon(
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => ChatPage(renterName: 'Sinagra Rentals'),
-                                  ),
-                                );
-                              },
-                              icon: const Icon(Icons.chat),
-                              label: const Text('Chat Penyewa'),
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: const Color(0xFF11316C),
-                                foregroundColor: Colors.white,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Container(
-                        height: 3,
-                        color: Colors.grey[200],
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(10),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const SizedBox(height: 20),
-                            const Text(
-                              "Specification",
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 18,
-                              ),
-                            ),
-                            const SizedBox(height: 10),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(10),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Expanded(
-                                  child: Card(
-                                    elevation: 2,
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: Column(
-                                        mainAxisAlignment: MainAxisAlignment.center,
-                                        children: [
-                                          const Icon(Icons.engineering, size: 24),
-                                          const SizedBox(height: 8),
-                                          const Text(
-                                            "Engine",
-                                            style: TextStyle(fontWeight: FontWeight.bold),
+                                VisibilityDetector(
+                                  key: const Key("harga"),
+                                  onVisibilityChanged: (VisibilityInfo info) {
+                                    var visiblePercentage = info.visibleFraction * 100;
+                                    if (mounted) {
+                                      setState(() {
+                                        showHarga = visiblePercentage == 0.0;
+                                      });
+                                    }
+                                  },
+                                  child: Text.rich(
+                                    TextSpan(
+                                      children: [
+                                        TextSpan(
+                                          text: ConfigGlobal.formatRupiah(data.harga),
+                                          style: const TextStyle(
+                                            color: Colors.black,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 28,
                                           ),
-                                          const SizedBox(height: 4),
-                                          Text(specification['engine']?.toString() ?? "-"),
-                                        ],
-                                      ),
+                                        ),
+                                        TextSpan(
+                                          text: "/day",
+                                          style: TextStyle(
+                                            color: Colors.grey,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 15,
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                   ),
                                 ),
-                                const SizedBox(width: 8),
-                                Expanded(
-                                  child: Card(
-                                    elevation: 2,
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: Column(
-                                        mainAxisAlignment: MainAxisAlignment.center,
-                                        children: [
-                                          const Icon(Icons.local_gas_station, size: 24),
-                                          const SizedBox(height: 8),
-                                          const Text(
-                                            "Fuel",
-                                            style: TextStyle(fontWeight: FontWeight.bold),
-                                          ),
-                                          const SizedBox(height: 4),
-                                          Text(specification['fuel']?.toString() ?? "-"),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(width: 8),
-                                Expanded(
-                                  child: Card(
-                                    elevation: 2,
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: Column(
-                                        mainAxisAlignment: MainAxisAlignment.center,
-                                        children: [
-                                          const Icon(Icons.speed, size: 24),
-                                          const SizedBox(height: 8),
-                                          const Text(
-                                            "Top Speed",
-                                            style: TextStyle(fontWeight: FontWeight.bold),
-                                          ),
-                                          const SizedBox(height: 4),
-                                          Text(specification['top_speed']?.toString() ?? "-"),
-                                        ],
-                                      ),
-                                    ),
+                                const SizedBox(height: 6),
+                                Text(
+                                  data.namaProduk ?? "-",
+                                  overflow: TextOverflow.fade,
+                                  maxLines: 2,
+                                  style: const TextStyle(
+                                    fontSize: 18,
                                   ),
                                 ),
                               ],
                             ),
-                            const SizedBox(height: 10),
-                            Container(
-                              height: 3,
-                              color: Colors.grey[200],
+                          ),
+                          /*ElevatedButton.icon(
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => ChatPage(renterName: 'Sinagra Rentals'),
+                                ),
+                              );
+                            },
+                            icon: const Icon(Icons.chat),
+                            label: const Text('Chat Penyewa'),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: const Color(0xFF11316C),
+                              foregroundColor: Colors.white,
                             ),
-                            const SizedBox(height: 20),
-                            const Text(
-                              "Vehicle Features",
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 18,
-                              ),
-                            ),
-                            const SizedBox(height: 15),
-                            ..._buildVehicleFeatures(vehicleFeatures),
-                            const SizedBox(height: 10),
-                            Container(
-                              height: 3,
-                              color: Colors.grey[200],
-                            ),
-                            const SizedBox(height: 20),
-                            const Text(
-                              "Additional Information",
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 18,
-                              ),
-                            ),
-                            const SizedBox(height: 10),
-                            ..._buildAdditionalInformation(additionalInformation),
-                          ],
-                        ),
+                          ),*/
+                        ],
                       ),
-                    ],
-                  ),
+                    ),
+                    Container(
+                      height: 3,
+                      color: Colors.grey[200],
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(10),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const SizedBox(height: 20),
+                          const Text(
+                            "Specification",
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 18,
+                            ),
+                          ),
+                          const SizedBox(height: 10),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Expanded(
+                                child: Card(
+                                  elevation: 2,
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Column(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        const Icon(Icons.settings, size: 24),
+                                        const SizedBox(height: 8),
+                                        const Text(
+                                          "Engine",
+                                          style: TextStyle(fontWeight: FontWeight.bold),
+                                        ),
+                                        const SizedBox(height: 4),
+                                        Text(specification['engine']?.toString() ?? "-"),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              Expanded(
+                                child: Card(
+                                  elevation: 2,
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Column(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        const Icon(Icons.local_gas_station, size: 24),
+                                        const SizedBox(height: 8),
+                                        const Text(
+                                          "Fuel",
+                                          style: TextStyle(fontWeight: FontWeight.bold),
+                                        ),
+                                        const SizedBox(height: 4),
+                                        Text(specification['fuel']?.toString() ?? "-"),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              Expanded(
+                                child: Card(
+                                  elevation: 2,
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Column(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        const Icon(Icons.speed, size: 24),
+                                        const SizedBox(height: 8),
+                                        const Text(
+                                          "Top Speed",
+                                          style: TextStyle(fontWeight: FontWeight.bold),
+                                        ),
+                                        const SizedBox(height: 4),
+                                        Text(specification['top_speed']?.toString() ?? "-"),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 10),
+                          Container(
+                            height: 3,
+                            color: Colors.grey[200],
+                          ),
+                          const SizedBox(height: 20),
+                          const Text(
+                            "Vehicle Features",
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 18,
+                            ),
+                          ),
+                          const SizedBox(height: 15),
+                          ..._buildVehicleFeatures(vehicleFeatures),
+                          const SizedBox(height: 10),
+                          Container(
+                            height: 3,
+                            color: Colors.grey[200],
+                          ),
+                          const SizedBox(height: 20),
+                          const Text(
+                            "Additional Information",
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 18,
+                            ),
+                          ),
+                          const SizedBox(height: 10),
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Icon(Icons.location_on_outlined, color: Colors.black54),
+                              const SizedBox(width: 8),
+                              Expanded(
+                                child: Text(
+                                  'Jl. Kayu Manis Timur No.24, Matram, Jakarta Timur',
+                                  style: const TextStyle(
+                                    fontSize: 14,
+                                    color: Colors.black87,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 10),
+                          ..._buildAdditionalInformation(additionalInformation),
+                          Card(
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                            elevation: 2,
+                            margin: const EdgeInsets.only(top: 10),
+                            child: Padding(
+                              padding: const EdgeInsets.all(12),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const Text(
+                                    'User Review',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 12),
+                                  Row(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      const Icon(Icons.account_circle_rounded, size: 40, color: Colors.black),
+                                      const SizedBox(width: 10),
+                                      Expanded(
+                                        child: Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            const Text(
+                                              'Muhammad Agusdin',
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 14,
+                                              ),
+                                            ),
+                                            const SizedBox(height: 4),
+                                            Row(
+                                              children: List.generate(
+                                                5,
+                                                    (index) => const Icon(Icons.star, color: Colors.amber, size: 18),
+                                              ),
+                                            ),
+                                            const SizedBox(height: 6),
+                                            const Text(
+                                              'Kendaraanya terawat dengan baik sehingga enak pada waktu digunakan, tata cara menyewa kendaraannya juga mudah.',
+                                              style: TextStyle(fontSize: 14),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
               ),
-            ),
+              ),
             Align(
-              alignment: Alignment.bottomLeft,
+              alignment: Alignment.bottomCenter,
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -374,27 +449,16 @@ class _DataKatalogDetailState extends State<DataKatalogDetail> {
                         Expanded(
                           child: Padding(
                             padding: const EdgeInsets.all(8),
-                            /*child: InkWell(
-                              onTap: () async {
-                                print('Chat button tapped');
-                                final url = Uri.parse('https://wa.me/6285369237896');
-                                try {
-                                  if (await canLaunchUrl(url)) {
-                                    await launchUrl(url, mode: LaunchMode.externalApplication);
-                                  } else {
-                                    if (mounted) {
-                                      ScaffoldMessenger.of(context).showSnackBar(
-                                        const SnackBar(content: Text('Gagal membuka WhatsApp')),
-                                      );
-                                    }
-                                  }
-                                } catch (e) {
-                                  if (mounted) {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(content: Text('Terjadi kesalahan saat membuka WhatsApp')),
-                                    );
-                                  }
-                                }
+                            child: InkWell(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => ChatPage(
+                                      renterName: "Sinagra Rentals", // ganti dengan variabel nama penyewa
+                                    ),
+                                  ),
+                                );
                               },
                               splashColor: Colors.grey[400],
                               borderRadius: BorderRadius.circular(30),
@@ -415,7 +479,8 @@ class _DataKatalogDetailState extends State<DataKatalogDetail> {
                                   ),
                                 ),
                               ),
-                            ),*/
+                            ),
+
                           ),
                         ),
                         Expanded(

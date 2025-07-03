@@ -4,6 +4,8 @@ part 'data_katalog_apidata.g.dart';
 
 @JsonSerializable()
 class DataKatalogApiData {
+  final String? spesifikasi;
+
   DataKatalogApiData({
     this.idProduk,
     this.namaProduk,
@@ -14,6 +16,7 @@ class DataKatalogApiData {
     this.jumlah,
     this.deskripsi,
     this.total,
+    this.spesifikasi,
   });
 
   @JsonKey(name: "id_produk")
@@ -44,6 +47,8 @@ class DataKatalogApiData {
 
   factory DataKatalogApiData.fromJson(Map<String, dynamic> json) =>
       _$DataKatalogApiDataFromJson(json);
+
+
 
   Map<String, dynamic> toJson() => _$DataKatalogApiDataToJson(this);
 }

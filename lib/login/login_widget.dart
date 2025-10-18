@@ -68,13 +68,7 @@ class _LoginWidgetState extends State<LoginWidget> {
                         // ),
                       ),
                     ),
-                    // const SizedBox(
-                    //   width: double.infinity,
-                    //   child: Text(
-                    //     'Silahkan login',
-                    //     textAlign: TextAlign.left,
-                    //   ),
-                    // ),
+
                     const SizedBox(height: 15),
                     TextFormField(
                       readOnly: state is LoginLoading,

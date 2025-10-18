@@ -7,7 +7,6 @@ import 'package:sewoapp/login/bloc/login_form_bloc.dart';
 import 'package:sewoapp/login/bloc/login_form_event.dart';
 import 'package:intl/intl.dart';
 import 'package:sewoapp/login/bloc/register_bloc.dart';
-import 'package:sewoapp/login/bloc/register_event.dart';
 import 'package:sewoapp/login/bloc/register_state.dart';
 import 'package:sewoapp/login/data/data_register.dart';
 
@@ -82,14 +81,10 @@ class _RegisterWidgetState extends State<RegisterWidget> {
       bloc: BlocProvider.of<RegisterBloc>(context),
       listener: ((context, state) {
         if (state is RegisterSuccess) {
-          // Navigator.pushReplacementNamed(context, HomeScreen.routeName);
           BlocProvider.of<LoginFormBloc>(context).add(ShowLogin());
           const snackBar = SnackBar(
             content: Text('Registrasi berhasil, silahkan login!'),
           );
-
-// Find the ScaffoldMessenger in the widget tree
-// and use it to show a SnackBar.
           ScaffoldMessenger.of(context).showSnackBar(snackBar);
         }
       }),

@@ -36,12 +36,7 @@ class _LoginScreenState extends State<LoginScreen> {
         ],
         child: Stack(children: [
           ListView(
-            children: [
-              // Image.asset(
-              //   "assets/background.png",
-              //   fit: BoxFit.fitWidth,
-              // ),
-            ],
+            children: [],
           ),
           SingleChildScrollView(
             child: Container(
@@ -52,11 +47,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 children: [
                   const SizedBox(height: 50),
 
-                  /* const SizedBox(height: 20), */
-                  /* const Text( */
-                  /*   ConfigGlobal.namaAplikasi, */
-                  /*   style: TextStyle(fontSize: 20), */
-                  /* ), */
+
                   const SizedBox(height: 20),
                   BlocBuilder<LoginFormBloc, LoginFormState>(
                       builder: (context, state) {
